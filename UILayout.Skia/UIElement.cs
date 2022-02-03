@@ -15,6 +15,8 @@ namespace UILayout
             set { backgroundPaint.Color = value; }
         }
 
+        public SKSize BackgroundRoundRadius { get; set; }
+
         SKPaint backgroundPaint = new SKPaint
         {
             Color = SKColors.Transparent,
@@ -23,8 +25,14 @@ namespace UILayout
         };
 
         public void Draw()
-        {   
-            Canvas.DrawRect(LayoutBounds.ToSKRect(), backgroundPaint);
+        {
+            if (backgroundPaint.Color.Alpha > 0)
+            {
+                if ((BackgroundRoundRadius.Width > 0) || (BackgroundRoundRadius.Height > 0))
+                    Canvas.DrawRoundRect(LayoutBounds.ToSKRect(), BackgroundRoundRadius, backgroundPaint);
+                else
+                    Canvas.DrawRect(LayoutBounds.ToSKRect(), backgroundPaint);
+            }
 
             DrawContents();
         }

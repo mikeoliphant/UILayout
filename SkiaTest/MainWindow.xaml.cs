@@ -36,6 +36,7 @@ namespace SkiaTest
             HorizontalStack stack = new HorizontalStack
             {
                 BackgroundColor = SKColors.Blue,
+                BackgroundRoundRadius = new SKSize(10, 10),
                 HorizontalAlignment = EHorizontalAlignment.Right,
                 VerticalAlignment = EVerticalAlignment.Top,
                 Padding = new LayoutPadding(10),
@@ -62,7 +63,6 @@ namespace SkiaTest
                 TextPaint = new SKPaint
                 {
                     TextSize = 24,
-                    TextAlign = SKTextAlign.Left,
                     Color = SKColors.Black,
                     IsAntialias = true,
                     Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright)
