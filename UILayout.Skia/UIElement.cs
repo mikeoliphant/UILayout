@@ -5,8 +5,6 @@ using SkiaSharp;
 
 namespace UILayout
 {
-
-
     public partial class UIElement
     {
         public static SKCanvas Canvas { get; set; }
@@ -19,13 +17,14 @@ namespace UILayout
 
         SKPaint backgroundPaint = new SKPaint
         {
+            Color = SKColors.Transparent,
             IsAntialias = true,
             Style = SKPaintStyle.StrokeAndFill
         };
 
         public void Draw()
         {   
-            Canvas.DrawRect(ContentBounds.ToSKRect(), backgroundPaint);
+            Canvas.DrawRect(LayoutBounds.ToSKRect(), backgroundPaint);
 
             DrawContents();
         }

@@ -53,17 +53,24 @@ namespace UILayout
         {
             return new RectangleF(toShrink.Left + Left, toShrink.Top + Top, toShrink.Width - (Left + Right), toShrink.Height - (Top + Bottom));
         }
+
+        public RectangleF PadRectangle(RectangleF toShrink)
+        {
+            return new RectangleF(toShrink.Left - Left, toShrink.Top - Top, toShrink.Width + (Left + Right), toShrink.Height + (Top + Bottom));
+        }
     }
 
     public partial class UIElement
     {
         public bool Visible { get; set; }
         public LayoutPadding Margin { get; set; }
+        public LayoutPadding Padding { get; set; }
         public EHorizontalAlignment HorizontalAlignment { get; set; }
         public EVerticalAlignment VerticalAlignment { get; set; }
         public bool MatchParentHorizontalAlignment { get; set; }
         public bool MatchParentVerticalAlignment { get; set; }
         public RectangleF ContentBounds { get; protected set; }
+        public RectangleF LayoutBounds { get; protected set; }
         public float DesiredWidth { get; set; }
         public float DesiredHeight { get; set; }
 
@@ -81,7 +88,7 @@ namespace UILayout
                 if (DesiredWidth != 0)
                     width = DesiredWidth;
 
-                width += Margin.Left + Margin.Right;
+                width += Margin.Left + Margin.Right + Padding.Left + Padding.Top;
             }
 
             if (VerticalAlignment != EVerticalAlignment.Absolute)
@@ -89,7 +96,7 @@ namespace UILayout
                 if (DesiredHeight != 0)
                     height = DesiredHeight;
 
-                height += Margin.Top + Margin.Bottom;
+                height += Margin.Top + Margin.Bottom + Padding.Left + Padding.Top;
             }
         }
 
@@ -117,63 +124,64 @@ namespace UILayout
             if (!Visible)
                 return;
 
-            float contentWidth;
-            float contentHeight;
+            float layoutWidth;
+            float layoutHeight;
 
-            GetSize(out contentWidth, out contentHeight);
+            GetSize(out layoutWidth, out layoutHeight);
 
-            float contentLeft = 0;
-            float contentTop = 0;
+            float layoutLeft = 0;
+            float layoutTop = 0;
 
             switch (HorizontalAlignment)
             {
                 case EHorizontalAlignment.Left:
-                    contentLeft = bounds.Left + Margin.Left;
+                    layoutLeft = bounds.Left + Margin.Left;
                     break;
 
                 case EHorizontalAlignment.Right:
-                    contentLeft = bounds.Right - contentWidth - Margin.Right;
+                    layoutLeft = bounds.Right - layoutWidth - Margin.Right;
                     break;
 
                 case EHorizontalAlignment.Center:
-                    contentLeft = bounds.Left + (bounds.Width - contentWidth) / 2;
+                    layoutLeft = bounds.Left + (bounds.Width - layoutWidth) / 2;
                     break;
 
                 case EHorizontalAlignment.Stretch:
-                    contentLeft = bounds.Left + Margin.Left;
-                    contentWidth = bounds.Width - (Margin.Left + Margin.Right);
+                    layoutLeft = bounds.Left + Margin.Left;
+                    layoutWidth = bounds.Width - (Margin.Left + Margin.Right);
                     break;
 
                 case EHorizontalAlignment.Absolute:
-                    contentLeft = bounds.Left + Margin.Left;
+                    layoutLeft = bounds.Left + Margin.Left;
                     break;
             }
 
             switch (VerticalAlignment)
             {
                 case EVerticalAlignment.Top:
-                    contentTop = bounds.Top + Margin.Top;
+                    layoutTop = bounds.Top + Margin.Top;
                     break;
 
                 case EVerticalAlignment.Bottom:
-                    contentTop = bounds.Bottom - contentHeight - Margin.Bottom;
+                    layoutTop = bounds.Bottom - layoutHeight - Margin.Bottom;
                     break;
 
                 case EVerticalAlignment.Center:
-                    contentTop = bounds.Top + (bounds.Height - contentHeight) / 2;
+                    layoutTop = bounds.Top + (bounds.Height - layoutHeight) / 2;
                     break;
 
                 case EVerticalAlignment.Stretch:
-                    contentTop = bounds.Top + Margin.Top;
-                    contentHeight = bounds.Height - (Margin.Top + Margin.Bottom);
+                    layoutTop = bounds.Top + Margin.Top;
+                    layoutHeight = bounds.Height - (Margin.Top + Margin.Bottom);
                     break;
 
                 case EVerticalAlignment.Absolute:
-                    contentTop = bounds.Top + Margin.Top;
+                    layoutTop = bounds.Top + Margin.Top;
                     break;
             }
 
-            ContentBounds = new RectangleF(contentLeft, contentTop, contentWidth, contentHeight);
+            LayoutBounds = new RectangleF(layoutLeft, layoutTop, layoutWidth, layoutHeight);
+            ContentBounds = Padding.ShrinkRectangle(LayoutBounds);
 
             UpdateContentLayout();
         }

@@ -7,7 +7,6 @@ namespace UILayout
 {
     public class LayoutElement : UIElement
     {
-        public LayoutPadding InteriorPadding { get; set; }
     }
 
     public class ListUIElement : LayoutElement
@@ -115,16 +114,11 @@ namespace UILayout
                     height += ChildSpacing;
                 }
             }
-
-            width += (InteriorPadding.Left + InteriorPadding.Top);
-            height += (InteriorPadding.Left + InteriorPadding.Top);
         }
 
         public override void UpdateContentLayout()
         {
             base.UpdateContentLayout();
-
-            RectangleF childLayoutBounds = InteriorPadding.ShrinkRectangle(ContentBounds);
 
             float neededHeight = 0;
 
@@ -153,7 +147,7 @@ namespace UILayout
                     greedyChildCount++;
             }
 
-            float extraHeight = (childLayoutBounds.Height - neededHeight) / greedyChildCount;
+            float extraHeight = (ContentBounds.Height - neededHeight) / greedyChildCount;
 
             float yOffset = 0;
 
@@ -166,9 +160,9 @@ namespace UILayout
 
                 if (ChildrenEqualSize)
                 {
-                    float height = childLayoutBounds.Height / greedyChildCount;
+                    float height = ContentBounds.Height / greedyChildCount;
 
-                    child.SetBounds(new RectangleF(childLayoutBounds.Left, childLayoutBounds.Top + yOffset, childLayoutBounds.Width, height), this);
+                    child.SetBounds(new RectangleF(ContentBounds.Left, ContentBounds.Top + yOffset, ContentBounds.Width, height), this);
 
                     yOffset += height;
                 }
@@ -181,13 +175,13 @@ namespace UILayout
 
                     if (child.VerticalAlignment == EVerticalAlignment.Stretch)
                     {
-                        child.SetBounds(new RectangleF(childLayoutBounds.Left, childLayoutBounds.Height + yOffset, childLayoutBounds.Width, childHeight + extraHeight), this);
+                        child.SetBounds(new RectangleF(ContentBounds.Left, ContentBounds.Height + yOffset, ContentBounds.Width, childHeight + extraHeight), this);
 
                         yOffset += childHeight + extraHeight;
                     }
                     else
                     {
-                        child.SetBounds(new RectangleF(childLayoutBounds.Left, childLayoutBounds.Height + yOffset, childLayoutBounds.Width, childHeight), this);
+                        child.SetBounds(new RectangleF(ContentBounds.Left, ContentBounds.Height + yOffset, ContentBounds.Width, childHeight), this);
 
                         yOffset += childHeight;
                     }
@@ -231,16 +225,11 @@ namespace UILayout
                     width += ChildSpacing;
                 }
             }
-
-            width += (InteriorPadding.Left + InteriorPadding.Top);
-            height += (InteriorPadding.Left + InteriorPadding.Top);
         }
 
         public override void UpdateContentLayout()
         {
             base.UpdateContentLayout();
-
-            RectangleF childLayoutBounds = InteriorPadding.ShrinkRectangle(ContentBounds);
 
             float neededWidth = 0;
 
@@ -269,7 +258,7 @@ namespace UILayout
                     greedyChildCount++;
             }
 
-            float extraWidth = (childLayoutBounds.Width - neededWidth) / greedyChildCount;
+            float extraWidth = (ContentBounds.Width - neededWidth) / greedyChildCount;
 
             float xOffset = 0;
 
@@ -282,9 +271,9 @@ namespace UILayout
 
                 if (ChildrenEqualSize)
                 {
-                    float width = childLayoutBounds.Width / greedyChildCount;
+                    float width = ContentBounds.Width / greedyChildCount;
 
-                    child.SetBounds(new RectangleF(childLayoutBounds.Left + xOffset, childLayoutBounds.Top, width, childLayoutBounds.Height), this);
+                    child.SetBounds(new RectangleF(ContentBounds.Left + xOffset, ContentBounds.Top, width, ContentBounds.Height), this);
 
                     xOffset += width;
                 }
@@ -297,13 +286,13 @@ namespace UILayout
 
                     if (child.HorizontalAlignment == EHorizontalAlignment.Stretch)
                     {
-                        child.SetBounds(new RectangleF(childLayoutBounds.Left + xOffset, childLayoutBounds.Top, childWidth + extraWidth, childLayoutBounds.Height), this);
+                        child.SetBounds(new RectangleF(ContentBounds.Left + xOffset, ContentBounds.Top, childWidth + extraWidth, ContentBounds.Height), this);
 
                         xOffset += childWidth + extraWidth;
                     }
                     else
                     {
-                        child.SetBounds(new RectangleF(childLayoutBounds.Left + xOffset, childLayoutBounds.Top, childWidth, childLayoutBounds.Height), this);
+                        child.SetBounds(new RectangleF(ContentBounds.Left + xOffset, ContentBounds.Top, childWidth, ContentBounds.Height), this);
 
                         xOffset += childWidth;
                     }
@@ -349,13 +338,11 @@ namespace UILayout
         {
             base.UpdateContentLayout();
 
-            RectangleF childLayoutBounds = InteriorPadding.ShrinkRectangle(ContentBounds);
-
             foreach (UIElement child in children)
             {
                 if (child.Visible)
                 {
-                    child.SetBounds(childLayoutBounds, this);
+                    child.SetBounds(ContentBounds, this);
                 }
             }
         }

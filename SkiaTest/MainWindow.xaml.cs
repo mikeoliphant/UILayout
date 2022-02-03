@@ -29,7 +29,8 @@ namespace SkiaTest
             Dock dock = new Dock()
             {
                 BackgroundColor = SKColors.Yellow,
-                InteriorPadding = new LayoutPadding(10)
+                Margin = new LayoutPadding(5),
+                Padding = new LayoutPadding(10)
             };
 
             HorizontalStack stack = new HorizontalStack
@@ -37,7 +38,7 @@ namespace SkiaTest
                 BackgroundColor = SKColors.Blue,
                 HorizontalAlignment = EHorizontalAlignment.Right,
                 VerticalAlignment = EVerticalAlignment.Top,
-                InteriorPadding = new LayoutPadding(10),
+                Padding = new LayoutPadding(10),
                 DesiredHeight = 100,
                 DesiredWidth = 100,
                 ChildSpacing = 10                
@@ -54,6 +55,23 @@ namespace SkiaTest
                     //Margin = new LayoutPadding(10)
                 });
             }
+
+            dock.Children.Add(new TextBlock
+            {
+                Text = "Hello World",
+                TextPaint = new SKPaint
+                {
+                    TextSize = 24,
+                    TextAlign = SKTextAlign.Left,
+                    Color = SKColors.Black,
+                    IsAntialias = true,
+                    Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright)
+                },
+                BackgroundColor = SKColors.Green,
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Bottom,
+                Padding = new LayoutPadding(10)
+            });
 
             dock.SetBounds(new RectangleF(0, 0, scaledSize.Width, scaledSize.Height), null);
 
