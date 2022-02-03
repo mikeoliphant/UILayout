@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.187" />
+    <PackageReference Include="SkiaSharp.Views" Version="2.88.0-preview.187" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0-preview.187" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UILayout.Skia\UILayout.Skia.csproj" />
+  </ItemGroup>
+
+</Project>

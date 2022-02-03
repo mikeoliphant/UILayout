@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout", "UILayout\UILayout.shproj", "{7DA2B397-A39F-4E5B-96ED-F206329982C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UILayout.Skia", "UILayout.Skia\UILayout.Skia.csproj", "{8C8CD599-CF81-4789-8AA3-E3882EB3655F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkiaTest", "SkiaTest\SkiaTest.csproj", "{91DEC317-23AC-42A0-8A09-6B719B3F8444}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		UILayout\UILayout.projitems*{7da2b397-a39f-4e5b-96ed-f206329982c9}*SharedItemsImports = 13
+		UILayout\UILayout.projitems*{8c8cd599-cf81-4789-8aa3-e3882eb3655f}*SharedItemsImports = 5
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C8CD599-CF81-4789-8AA3-E3882EB3655F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C8CD599-CF81-4789-8AA3-E3882EB3655F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C8CD599-CF81-4789-8AA3-E3882EB3655F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C8CD599-CF81-4789-8AA3-E3882EB3655F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91DEC317-23AC-42A0-8A09-6B719B3F8444}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91DEC317-23AC-42A0-8A09-6B719B3F8444}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91DEC317-23AC-42A0-8A09-6B719B3F8444}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91DEC317-23AC-42A0-8A09-6B719B3F8444}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B3DE844C-79C2-4FC9-9C96-5457339160C3}
+	EndGlobalSection
+EndGlobal
