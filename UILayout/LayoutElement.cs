@@ -181,7 +181,7 @@ namespace UILayout
                     }
                     else
                     {
-                        child.SetBounds(new RectangleF(ContentBounds.Left, ContentBounds.Height + yOffset, ContentBounds.Width, childHeight), this);
+                        child.SetBounds(new RectangleF(ContentBounds.Left, ContentBounds.Top + yOffset, ContentBounds.Width, childHeight), this);
 
                         yOffset += childHeight;
                     }

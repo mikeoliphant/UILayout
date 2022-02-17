@@ -11,11 +11,11 @@ namespace UILayout
 
         public SKColor BackgroundColor
         {
-            get { return backgroundPaint.Color; }
-            set { backgroundPaint.Color = value; }
+            get { return BackgroundPaint.Color; }
+            set { BackgroundPaint.Color = value; }
         }
-
         public SKSize BackgroundRoundRadius { get; set; }
+        public SKPaint BackgroundPaint { get => backgroundPaint; set => backgroundPaint = value; }
 
         SKPaint backgroundPaint = new SKPaint
         {
@@ -26,12 +26,12 @@ namespace UILayout
 
         public void Draw()
         {
-            if (backgroundPaint.Color.Alpha > 0)
+            if (BackgroundPaint.Color.Alpha > 0)
             {
                 if ((BackgroundRoundRadius.Width > 0) || (BackgroundRoundRadius.Height > 0))
-                    Canvas.DrawRoundRect(LayoutBounds.ToSKRect(), BackgroundRoundRadius, backgroundPaint);
+                    Canvas.DrawRoundRect(LayoutBounds.ToSKRect(), BackgroundRoundRadius, BackgroundPaint);
                 else
-                    Canvas.DrawRect(LayoutBounds.ToSKRect(), backgroundPaint);
+                    Canvas.DrawRect(LayoutBounds.ToSKRect(), BackgroundPaint);
             }
 
             DrawContents();

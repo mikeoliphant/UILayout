@@ -10,25 +10,16 @@ namespace SkiaTest
     /// </summary>
     public partial class MainWindow : System.Windows.Window
     {
+        Dock dock;
+
         public MainWindow()
         {
             InitializeComponent();
-        }
 
-        private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
-        {
-            SKCanvas canvas = e.Surface.Canvas;
-
-            float scale = (float)System.Windows.PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice.M11;
-            SKSize scaledSize = new SKSize(e.Info.Width / scale, e.Info.Height / scale);
-
-            canvas.Scale(scale);
-
-            UIElement.Canvas = canvas;
-
-            Dock dock = new Dock()
+            dock = new Dock()
             {
-                BackgroundColor = SKColors.Yellow,
+                BackgroundPaint = new SKPaint { Color = SKColors.Yellow, Style = SKPaintStyle.Stroke, StrokeWidth = 1 },
+                BackgroundRoundRadius = new SKSize(5, 5),
                 Margin = new LayoutPadding(5),
                 Padding = new LayoutPadding(10)
             };
@@ -42,7 +33,7 @@ namespace SkiaTest
                 Padding = new LayoutPadding(10),
                 DesiredHeight = 100,
                 DesiredWidth = 100,
-                ChildSpacing = 10                
+                ChildSpacing = 10
             };
             dock.Children.Add(stack);
 
@@ -72,6 +63,18 @@ namespace SkiaTest
                 VerticalAlignment = EVerticalAlignment.Bottom,
                 Padding = new LayoutPadding(10)
             });
+        }
+
+        private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
+        {
+            SKCanvas canvas = e.Surface.Canvas;
+
+            float scale = (float)System.Windows.PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice.M11;
+            SKSize scaledSize = new SKSize(e.Info.Width / scale, e.Info.Height / scale);
+
+            canvas.Scale(scale);
+
+            UIElement.Canvas = canvas;
 
             dock.SetBounds(new RectangleF(0, 0, scaledSize.Width, scaledSize.Height), null);
 
