@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections;
+#if SUPPORTS_GENERIC
 using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
+#endif
 
 namespace UILayout
 {
@@ -11,13 +12,21 @@ namespace UILayout
 
     public class ListUIElement : LayoutElement
     {
+#if SUPPORTS_GENERIC
         protected List<UIElement> children = new List<UIElement>();
+#else
+        protected ArrayList children = new ArrayList();
+#endif
 
         public bool DrawInReverse { get; set; }
         public float ChildSpacing { get; set; }
         public bool ChildrenEqualSize { get; set; }
 
+#if SUPPORTS_GENERIC
         public virtual List<UIElement> Children
+#else
+        public virtual ArrayList Children
+#endif
         {
             get { return children; }
             set { children = value; }
@@ -32,7 +41,7 @@ namespace UILayout
             {
                 for (int i = children.Count - 1; i >= 0; i--)
                 {
-                    children[i].Draw();
+                    (children[i] as UIElement).Draw();
                 }
             }
             else
@@ -48,7 +57,7 @@ namespace UILayout
         {
             for (int i = Children.Count - 1; i >= 0; i--)
             {
-                UIElement child = Children[i];
+                UIElement child = Children[i] as UIElement;
 
                 if (child.Visible && child.ContentBounds.Contains(x, y))
                 {
@@ -66,7 +75,7 @@ namespace UILayout
 
             for (int i = Children.Count - 1; i >= 0; i--)
             {
-                UIElement child = Children[i];
+                UIElement child = Children[i] as UIElement;
 
                 if (child.Visible)
                 {
@@ -83,6 +92,22 @@ namespace UILayout
 
             return minChild;
         }
+
+        public override bool HandleTouch(Touch touch)
+        {
+            for (int i = Children.Count - 1; i >= 0; i--)
+            {
+                UIElement child = Children[i] as UIElement;
+
+                if (child.Visible && child.LayoutBounds.Contains(touch.Position))
+                {
+                    if (child.HandleTouch(touch))
+                        return true;
+                }
+            }
+
+            return base.HandleTouch(touch);
+        }
     }
 
     public class VerticalStack : ListUIElement
@@ -94,7 +119,7 @@ namespace UILayout
 
             for (int i = 0; i < children.Count; i++)
             {
-                UIElement child = children[i];
+                UIElement child = children[i] as UIElement;
 
                 if (!child.Visible)
                     continue;
@@ -126,7 +151,7 @@ namespace UILayout
 
             for (int i = 0; i < children.Count; i++)
             {
-                UIElement child = children[i];
+                UIElement child = children[i] as UIElement;
 
                 if (!child.Visible)
                     continue;
@@ -153,7 +178,7 @@ namespace UILayout
 
             for (int i = 0; i < children.Count; i++)
             {
-                UIElement child = children[i];
+                UIElement child = children[i] as UIElement;
 
                 if (!child.Visible)
                     continue;
@@ -162,7 +187,7 @@ namespace UILayout
                 {
                     float height = ContentBounds.Height / greedyChildCount;
 
-                    child.SetBounds(new RectangleF(ContentBounds.Left, ContentBounds.Top + yOffset, ContentBounds.Width, height), this);
+                    child.SetBounds(new RectF(ContentBounds.Left, ContentBounds.Top + yOffset, ContentBounds.Width, height), this);
 
                     yOffset += height;
                 }
@@ -175,13 +200,13 @@ namespace UILayout
 
                     if (child.VerticalAlignment == EVerticalAlignment.Stretch)
                     {
-                        child.SetBounds(new RectangleF(ContentBounds.Left, ContentBounds.Height + yOffset, ContentBounds.Width, childHeight + extraHeight), this);
+                        child.SetBounds(new RectF(ContentBounds.Left, ContentBounds.Height + yOffset, ContentBounds.Width, childHeight + extraHeight), this);
 
                         yOffset += childHeight + extraHeight;
                     }
                     else
                     {
-                        child.SetBounds(new RectangleF(ContentBounds.Left, ContentBounds.Top + yOffset, ContentBounds.Width, childHeight), this);
+                        child.SetBounds(new RectF(ContentBounds.Left, ContentBounds.Top + yOffset, ContentBounds.Width, childHeight), this);
 
                         yOffset += childHeight;
                     }
@@ -205,7 +230,7 @@ namespace UILayout
 
             for (int i = 0; i < children.Count; i++)
             {
-                UIElement child = children[i];
+                UIElement child = children[i] as UIElement;
 
                 if (!child.Visible)
                     continue;
@@ -237,7 +262,7 @@ namespace UILayout
 
             for (int i = 0; i < children.Count; i++)
             {
-                UIElement child = children[i];
+                UIElement child = children[i] as UIElement;
 
                 if (!child.Visible)
                     continue;
@@ -264,7 +289,7 @@ namespace UILayout
 
             for (int i = 0; i < children.Count; i++)
             {
-                UIElement child = children[i];
+                UIElement child = children[i] as UIElement;
 
                 if (!child.Visible)
                     continue;
@@ -273,7 +298,7 @@ namespace UILayout
                 {
                     float width = ContentBounds.Width / greedyChildCount;
 
-                    child.SetBounds(new RectangleF(ContentBounds.Left + xOffset, ContentBounds.Top, width, ContentBounds.Height), this);
+                    child.SetBounds(new RectF(ContentBounds.Left + xOffset, ContentBounds.Top, width, ContentBounds.Height), this);
 
                     xOffset += width;
                 }
@@ -286,13 +311,13 @@ namespace UILayout
 
                     if (child.HorizontalAlignment == EHorizontalAlignment.Stretch)
                     {
-                        child.SetBounds(new RectangleF(ContentBounds.Left + xOffset, ContentBounds.Top, childWidth + extraWidth, ContentBounds.Height), this);
+                        child.SetBounds(new RectF(ContentBounds.Left + xOffset, ContentBounds.Top, childWidth + extraWidth, ContentBounds.Height), this);
 
                         xOffset += childWidth + extraWidth;
                     }
                     else
                     {
-                        child.SetBounds(new RectangleF(ContentBounds.Left + xOffset, ContentBounds.Top, childWidth, ContentBounds.Height), this);
+                        child.SetBounds(new RectF(ContentBounds.Left + xOffset, ContentBounds.Top, childWidth, ContentBounds.Height), this);
 
                         xOffset += childWidth;
                     }

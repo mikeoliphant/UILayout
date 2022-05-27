@@ -8,6 +8,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <skia:SKElement x:Name="SkiaCanvas" PaintSurface="OnPaintSurface" />
+        <local:LayoutControl x:Name="SkiaCanvas" MouseDown="SkiaCanvas_MouseDown" MouseUp="SkiaCanvas_MouseUp"  />
     </Grid>
 </Window>

@@ -11,6 +11,9 @@ namespace SkiaTest
     public partial class MainWindow : System.Windows.Window
     {
         Dock dock;
+        SkiaLayout ui = new SkiaLayout();
+        TextBlock text;
+        HorizontalStack stack;
 
         public MainWindow()
         {
@@ -24,7 +27,9 @@ namespace SkiaTest
                 Padding = new LayoutPadding(10)
             };
 
-            HorizontalStack stack = new HorizontalStack
+            ui.RootUIElement = dock;
+
+            stack = new HorizontalStack
             {
                 BackgroundColor = SKColors.Blue,
                 BackgroundRoundRadius = new SKSize(10, 10),
@@ -48,7 +53,7 @@ namespace SkiaTest
                 });
             }
 
-            dock.Children.Add(new TextBlock
+            dock.Children.Add(text = new TextBlock
             {
                 Text = "Hello World",
                 TextPaint = new SKPaint
@@ -61,24 +66,25 @@ namespace SkiaTest
                 BackgroundColor = SKColors.Green,
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Bottom,
-                Padding = new LayoutPadding(10)
+                //Padding = new LayoutPadding(10)
             });
+
+            SkiaCanvas.SetLayout(ui);
         }
 
-        private void OnPaintSurface(object sender, SKPaintSurfaceEventArgs e)
+        bool toggle;
+
+        private void SkiaCanvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            SKCanvas canvas = e.Surface.Canvas;
+            stack.BackgroundColor = toggle ? SKColors.Blue : SKColors.Green;
+            stack.UpdateContentLayout();
 
-            float scale = (float)System.Windows.PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice.M11;
-            SKSize scaledSize = new SKSize(e.Info.Width / scale, e.Info.Height / scale);
+            toggle = !toggle;
+        }
 
-            canvas.Scale(scale);
+        private void SkiaCanvas_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
 
-            UIElement.Canvas = canvas;
-
-            dock.SetBounds(new RectangleF(0, 0, scaledSize.Width, scaledSize.Height), null);
-
-            dock.Draw();
         }
     }
 }

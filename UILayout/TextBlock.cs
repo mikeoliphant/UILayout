@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace UILayout
+﻿namespace UILayout
 {
     public partial class TextBlock : UIElement
     {

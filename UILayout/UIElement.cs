@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Text;
 
 namespace UILayout
@@ -49,14 +47,14 @@ namespace UILayout
             Bottom = bottom;
         }
 
-        public RectangleF ShrinkRectangle(RectangleF toShrink)
+        public RectF ShrinkRectangle(RectF toShrink)
         {
-            return new RectangleF(toShrink.Left + Left, toShrink.Top + Top, toShrink.Width - (Left + Right), toShrink.Height - (Top + Bottom));
+            return new RectF(toShrink.Left + Left, toShrink.Top + Top, toShrink.Width - (Left + Right), toShrink.Height - (Top + Bottom));
         }
 
-        public RectangleF PadRectangle(RectangleF toShrink)
+        public RectF PadRectangle(RectF toShrink)
         {
-            return new RectangleF(toShrink.Left - Left, toShrink.Top - Top, toShrink.Width + (Left + Right), toShrink.Height + (Top + Bottom));
+            return new RectF(toShrink.Left - Left, toShrink.Top - Top, toShrink.Width + (Left + Right), toShrink.Height + (Top + Bottom));
         }
     }
 
@@ -69,8 +67,8 @@ namespace UILayout
         public EVerticalAlignment VerticalAlignment { get; set; }
         public bool MatchParentHorizontalAlignment { get; set; }
         public bool MatchParentVerticalAlignment { get; set; }
-        public RectangleF ContentBounds { get; protected set; }
-        public RectangleF LayoutBounds { get; protected set; }
+        public RectF ContentBounds { get; protected set; }
+        public RectF LayoutBounds { get; protected set; }
         public float DesiredWidth { get; set; }
         public float DesiredHeight { get; set; }
 
@@ -106,7 +104,7 @@ namespace UILayout
             height = 0;
         }
 
-        public virtual void SetBounds(RectangleF bounds, UIElement parent)
+        public virtual void SetBounds(RectF bounds, UIElement parent)
         {
             if (parent != null)
             {
@@ -179,15 +177,28 @@ namespace UILayout
                     layoutTop = bounds.Top + Margin.Top;
                     break;
             }
+            
+            RectF newLayoutBounds = new RectF(layoutLeft, layoutTop, layoutWidth, layoutHeight);
+            RectF newContentBounds = Padding.ShrinkRectangle(newLayoutBounds);
 
-            LayoutBounds = new RectangleF(layoutLeft, layoutTop, layoutWidth, layoutHeight);
-            ContentBounds = Padding.ShrinkRectangle(LayoutBounds);
+            // Only call UpdateContentLayout if the layout changed
+            if (!newLayoutBounds.Equals(LayoutBounds) || !newContentBounds.Equals(ContentBounds))
+            {
+                LayoutBounds = newLayoutBounds;
+                ContentBounds = newContentBounds;
 
-            UpdateContentLayout();
+                UpdateContentLayout();
+            }
         }
 
         public virtual void UpdateContentLayout()
         {
+            Layout.Current.AddDirtyRect(LayoutBounds);
+        }
+
+        public virtual bool HandleTouch(Touch touch)
+        {
+            return false;
         }
     }
 }

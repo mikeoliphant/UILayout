@@ -9,6 +9,8 @@ namespace UILayout
     {
         public SKPaint TextPaint { get; set; }
 
+        SKRect textBounds = SKRect.Empty;
+
         protected override void GetContentSize(out float width, out float height)
         {
             if (string.IsNullOrEmpty(Text))
@@ -18,18 +20,18 @@ namespace UILayout
             }
             else
             {
-                SKRect textBounds = SKRect.Empty;
+                textBounds = SKRect.Empty;
 
                 TextPaint.MeasureText(Text, ref textBounds);
 
                 width = textBounds.Width;
-                height = textBounds.Height;
+                height = -textBounds.Top;
             }
         }
 
         protected override void DrawContents()
         {
-            Canvas.DrawText(Text, ContentBounds.Left, ContentBounds.Bottom, TextPaint);
+            SkiaLayout.Current.Canvas.DrawText(Text, ContentBounds.Left, ContentBounds.Bottom, TextPaint);
         }
     }
 }
