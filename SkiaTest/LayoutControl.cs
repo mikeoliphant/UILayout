@@ -27,11 +27,6 @@ namespace SkiaTest
 
         public SkiaLayout Layout { get; private set; }
 
-        public LayoutControl()
-        {
-            designMode = DesignerProperties.GetIsInDesignMode(this);
-        }
-
         public SKSize CanvasSize { get; private set; }
 
         public bool IgnorePixelScaling
@@ -45,6 +40,11 @@ namespace SkiaTest
             }
         }
 
+        public LayoutControl()
+        {
+            designMode = DesignerProperties.GetIsInDesignMode(this);
+        }
+
         public void SetLayout(SkiaLayout layout)
         {
             this.Layout = layout;
@@ -55,6 +55,35 @@ namespace SkiaTest
             base.OnInitialized(e);
 
             CompositionTarget.Rendering += CompositionTarget_Rendering;
+
+            MouseDown += LayoutControl_MouseDown;
+            MouseUp += LayoutControl_MouseUp;
+        }
+
+        private void LayoutControl_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Point p = e.GetPosition(this);
+
+            Touch touch = new Touch()
+            {
+                Position = new PointF((float)p.X, (float)p.Y),
+                TouchState = ETouchState.Pressed
+            };
+
+            Layout.HandleTouch(ref touch);
+        }
+
+        private void LayoutControl_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Point p = e.GetPosition(this);
+
+            Touch touch = new Touch()
+            {
+                Position = new PointF((float)p.X, (float)p.Y),
+                TouchState = ETouchState.Released
+            };
+
+            Layout.HandleTouch(ref touch);
         }
 
         private void CompositionTarget_Rendering(object sender, EventArgs e)

@@ -5,13 +5,16 @@ namespace UILayout
 {
     public struct PointF
     {
-        public float X { get; set; }
-        public float Y { get; set; }
+        private float x;
+        private float y;
+
+        public float X { get => x; set => x = value; }
+        public float Y { get => y; set => y = value; }
 
         public PointF(float x, float y)
         {
-            this.X = x;
-            this.Y = y;
+            this.x = x;
+            this.y = y;
         }
 
         public override bool Equals(object obj)
@@ -19,7 +22,7 @@ namespace UILayout
             if (!(obj is PointF))
                 return false;
 
-            return (this.X == ((PointF)obj).X) && (this.Y == ((PointF)obj).Y);
+            return (this.x == ((PointF)obj).x) && (this.y == ((PointF)obj).y);
         }
     }
 }

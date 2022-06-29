@@ -5,15 +5,13 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout", "UILayout\UILayout.shproj", "{7DA2B397-A39F-4E5B-96ED-F206329982C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UILayout.Skia", "UILayout.Skia\UILayout.Skia.csproj", "{8C8CD599-CF81-4789-8AA3-E3882EB3655F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.Skia", "UILayout.Skia\UILayout.Skia.csproj", "{8C8CD599-CF81-4789-8AA3-E3882EB3655F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkiaTest", "SkiaTest\SkiaTest.csproj", "{91DEC317-23AC-42A0-8A09-6B719B3F8444}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkiaTest", "SkiaTest\SkiaTest.csproj", "{91DEC317-23AC-42A0-8A09-6B719B3F8444}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.Test", "UILayout.Test\UILayout.Test.shproj", "{66D9F9C2-FAED-4C0C-B0A1-EA402D54ACB1}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		UILayout\UILayout.projitems*{7da2b397-a39f-4e5b-96ed-f206329982c9}*SharedItemsImports = 13
-		UILayout\UILayout.projitems*{8c8cd599-cf81-4789-8aa3-e3882eb3655f}*SharedItemsImports = 5
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -33,5 +31,11 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3DE844C-79C2-4FC9-9C96-5457339160C3}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		UILayout.Test\UILayout.Test.projitems*{66d9f9c2-faed-4c0c-b0a1-ea402d54acb1}*SharedItemsImports = 13
+		UILayout\UILayout.projitems*{7da2b397-a39f-4e5b-96ed-f206329982c9}*SharedItemsImports = 13
+		UILayout\UILayout.projitems*{8c8cd599-cf81-4789-8aa3-e3882eb3655f}*SharedItemsImports = 5
+		UILayout.Test\UILayout.Test.projitems*{91dec317-23ac-42a0-8a09-6b719b3f8444}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

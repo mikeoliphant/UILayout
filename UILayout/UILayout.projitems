@@ -9,6 +9,8 @@
     <Import_RootNamespace>UILayout</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Button.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Color.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LayoutElement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PointF.cs" />

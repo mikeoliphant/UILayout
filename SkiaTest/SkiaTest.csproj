@@ -15,4 +15,6 @@
     <ProjectReference Include="..\UILayout.Skia\UILayout.Skia.csproj" />
   </ItemGroup>
 
+  <Import Project="..\UILayout.Test\UILayout.Test.projitems" Label="Shared" />
+
 </Project>

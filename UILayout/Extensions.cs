@@ -10,10 +10,5 @@ namespace UILayout
         {
             return (float)Math.Sqrt(((p1.X - p2.X) + (p1.Y - p2.Y)) * ((p1.X - p2.X) + (p1.Y - p2.Y)));
         }
-
-        public static PointF GetCenter(this RectF rect)
-        {
-            return new PointF(rect.Left + (rect.Width / 2), rect.Top + (rect.Height / 2));
-        }
     }
 }

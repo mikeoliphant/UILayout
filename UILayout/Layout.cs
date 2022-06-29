@@ -6,11 +6,13 @@ namespace UILayout
     {
         public static Layout Current { get; private set; }
 
+        protected bool haveDirty = false;
+        protected RectF dirtyRect = RectF.Empty;
+
         public RectF Bounds { get; private set; }
         public UIElement RootUIElement { get; set; }
+        public bool HaveDirty { get => haveDirty; }
         public RectF DirtyRect { get { return dirtyRect; } set { dirtyRect = value; } }
-
-        RectF dirtyRect = RectF.Empty;
 
         public Layout()
         {
@@ -24,18 +26,20 @@ namespace UILayout
 
         public void ClearDirtyRect()
         {
-            DirtyRect = RectF.Empty;
+            haveDirty = false;
         }
 
-        public void AddDirtyRect(RectF dirty)
+        public void AddDirtyRect(ref RectF dirty)
         {
-            if (dirtyRect.IsEmpty)
+            if (!haveDirty)
             {
-                dirtyRect = dirty;
+                dirtyRect.Copy(ref dirty);
+
+                haveDirty = true;
             }
             else
             {
-                dirtyRect.UnionWith(dirty);
+                dirtyRect.UnionWith(ref dirty);
             }
         }
 
@@ -47,19 +51,24 @@ namespace UILayout
 
         public virtual void Draw()
         {
-            if (DirtyRect.IsEmpty)
+            Draw(RootUIElement);
+        }
+
+        public virtual void Draw(UIElement startElement)
+        {
+            if (!haveDirty)
                 return;
 
-            if (RootUIElement != null)
-                RootUIElement.Draw();
+            if (startElement != null)
+                startElement.Draw();
 
             ClearDirtyRect();
         }
 
-        public bool HandleTouch(Touch touch)
+        public bool HandleTouch(ref Touch touch)
         {
             if (RootUIElement != null)
-                return RootUIElement.HandleTouch(touch);
+                return RootUIElement.HandleTouch(ref touch);
 
             return false;
         }

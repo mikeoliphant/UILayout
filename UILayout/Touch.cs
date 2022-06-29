@@ -1,6 +1,5 @@
 ﻿using System;
 
-
 namespace UILayout
 {
     public enum ETouchState

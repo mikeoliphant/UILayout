@@ -7,7 +7,20 @@ namespace UILayout
 {
     public partial class TextBlock
     {
-        public SKPaint TextPaint { get; set; }
+        public Color TextColor
+        {
+            get { return new Color(textPaint.Color); }
+            set { textPaint.Color = value.NativeColor; }
+        }
+
+        SKPaint textPaint = new SKPaint
+        {
+            Color = SKColors.Black,
+            IsAntialias = true,
+            Style = SKPaintStyle.StrokeAndFill,
+            TextSize = 24,
+            Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright)
+        };
 
         SKRect textBounds = SKRect.Empty;
 
@@ -22,7 +35,7 @@ namespace UILayout
             {
                 textBounds = SKRect.Empty;
 
-                TextPaint.MeasureText(Text, ref textBounds);
+                textPaint.MeasureText(Text, ref textBounds);
 
                 width = textBounds.Width;
                 height = -textBounds.Top;
@@ -31,7 +44,7 @@ namespace UILayout
 
         protected override void DrawContents()
         {
-            SkiaLayout.Current.Canvas.DrawText(Text, ContentBounds.Left, ContentBounds.Bottom, TextPaint);
+            SkiaLayout.Current.Canvas.DrawText(Text, ContentBounds.Left, ContentBounds.Bottom, textPaint);
         }
     }
 }

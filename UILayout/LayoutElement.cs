@@ -10,6 +10,38 @@ namespace UILayout
     {
     }
 
+    public class UIElementWrapper : LayoutElement
+    {
+        public virtual UIElement Child { get; set; }
+
+        protected override void GetContentSize(out float width, out float height)
+        {
+            if (Child != null)
+                Child.GetSize(out width, out height);
+            else
+            {
+                width = 0;
+                height = 0;
+            }
+        }
+
+        public override void UpdateContentLayout()
+        {
+            base.UpdateContentLayout();
+
+            if (Child != null)
+                Child.SetBounds(ContentBounds, this);
+        }
+
+        protected override void DrawContents()
+        {
+            base.DrawContents();
+
+            if (Child != null)
+                Child.Draw();
+        }
+    }
+
     public class ListUIElement : LayoutElement
     {
 #if SUPPORTS_GENERIC
@@ -68,7 +100,7 @@ namespace UILayout
             return null;
         }
 
-        public UIElement FindClosestChild(PointF point)
+        public UIElement FindClosestChild(ref PointF point)
         {
             float minDist = float.MaxValue;
             UIElement minChild = null;
@@ -93,20 +125,20 @@ namespace UILayout
             return minChild;
         }
 
-        public override bool HandleTouch(Touch touch)
+        public override bool HandleTouch(ref Touch touch)
         {
             for (int i = Children.Count - 1; i >= 0; i--)
             {
                 UIElement child = Children[i] as UIElement;
 
-                if (child.Visible && child.LayoutBounds.Contains(touch.Position))
+                if (child.Visible && child.LayoutBounds.Contains(ref touch.Position))
                 {
-                    if (child.HandleTouch(touch))
+                    if (child.HandleTouch(ref touch))
                         return true;
                 }
             }
 
-            return base.HandleTouch(touch);
+            return base.HandleTouch(ref touch);
         }
     }
 
@@ -200,7 +232,7 @@ namespace UILayout
 
                     if (child.VerticalAlignment == EVerticalAlignment.Stretch)
                     {
-                        child.SetBounds(new RectF(ContentBounds.Left, ContentBounds.Height + yOffset, ContentBounds.Width, childHeight + extraHeight), this);
+                        child.SetBounds(new RectF(ContentBounds.Left, ContentBounds.Top + yOffset, ContentBounds.Width, childHeight + extraHeight), this);
 
                         yOffset += childHeight + extraHeight;
                     }

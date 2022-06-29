@@ -7,15 +7,13 @@ namespace UILayout
 {
     public partial class UIElement
     {
-        public SKColor BackgroundColor
+        public Color BackgroundColor
         {
-            get { return BackgroundPaint.Color; }
-            set { BackgroundPaint.Color = value; }
+            get { return new Color(backgroundPaint.Color); }
+            set { backgroundPaint.Color = value.NativeColor; }
         }
 
         public SKSize BackgroundRoundRadius { get; set; }
-        public SKPaint BackgroundPaint { get => backgroundPaint; set => backgroundPaint = value; }
-
         SKPaint backgroundPaint = new SKPaint
         {
             Color = SKColors.Transparent,
@@ -25,12 +23,16 @@ namespace UILayout
 
         public void Draw()
         {
-            if (BackgroundPaint.Color.Alpha > 0)
+            // Don't draw if we aren't in the diry rectangle
+            if (!Layout.Current.DirtyRect.IsEmpty && !Layout.Current.DirtyRect.Intersects(ref layoutBounds))
+                return;
+
+            if (backgroundPaint.Color.Alpha > 0)
             {
                 if ((BackgroundRoundRadius.Width > 0) || (BackgroundRoundRadius.Height > 0))
-                    SkiaLayout.Current.Canvas.DrawRoundRect(LayoutBounds.ToSKRect(), BackgroundRoundRadius, BackgroundPaint);
+                    SkiaLayout.Current.Canvas.DrawRoundRect(LayoutBounds.ToSKRect(), BackgroundRoundRadius, backgroundPaint);
                 else
-                    SkiaLayout.Current.Canvas.DrawRect(LayoutBounds.ToSKRect(), BackgroundPaint);
+                    SkiaLayout.Current.Canvas.DrawRect(LayoutBounds.ToSKRect(), backgroundPaint);
             }
 
             DrawContents();

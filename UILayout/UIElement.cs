@@ -60,6 +60,9 @@ namespace UILayout
 
     public partial class UIElement
     {
+        protected RectF layoutBounds;
+        protected RectF contentBounds;
+
         public bool Visible { get; set; }
         public LayoutPadding Margin { get; set; }
         public LayoutPadding Padding { get; set; }
@@ -67,8 +70,8 @@ namespace UILayout
         public EVerticalAlignment VerticalAlignment { get; set; }
         public bool MatchParentHorizontalAlignment { get; set; }
         public bool MatchParentVerticalAlignment { get; set; }
-        public RectF ContentBounds { get; protected set; }
-        public RectF LayoutBounds { get; protected set; }
+        public RectF ContentBounds { get => contentBounds; }
+        public RectF LayoutBounds { get => layoutBounds; }
         public float DesiredWidth { get; set; }
         public float DesiredHeight { get; set; }
 
@@ -76,7 +79,7 @@ namespace UILayout
         {
             Visible = true;
         }
-        
+
         public void GetSize(out float width, out float height)
         {
             GetContentSize(out width, out height);
@@ -177,15 +180,15 @@ namespace UILayout
                     layoutTop = bounds.Top + Margin.Top;
                     break;
             }
-            
+
             RectF newLayoutBounds = new RectF(layoutLeft, layoutTop, layoutWidth, layoutHeight);
             RectF newContentBounds = Padding.ShrinkRectangle(newLayoutBounds);
 
             // Only call UpdateContentLayout if the layout changed
             if (!newLayoutBounds.Equals(LayoutBounds) || !newContentBounds.Equals(ContentBounds))
             {
-                LayoutBounds = newLayoutBounds;
-                ContentBounds = newContentBounds;
+                layoutBounds = newLayoutBounds;
+                contentBounds = newContentBounds;
 
                 UpdateContentLayout();
             }
@@ -193,10 +196,10 @@ namespace UILayout
 
         public virtual void UpdateContentLayout()
         {
-            Layout.Current.AddDirtyRect(LayoutBounds);
+            Layout.Current.AddDirtyRect(ref layoutBounds);
         }
 
-        public virtual bool HandleTouch(Touch touch)
+        public virtual bool HandleTouch(ref Touch touch)
         {
             return false;
         }
