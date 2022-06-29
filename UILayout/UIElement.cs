@@ -78,6 +78,7 @@ namespace UILayout
         public UIElement()
         {
             Visible = true;
+            BackgroundColor = new Color(0, 0, 0, 0);
         }
 
         public void GetSize(out float width, out float height)

@@ -14,7 +14,7 @@ namespace UILayout.Test
 
             HorizontalStack stack = new HorizontalStack
             {
-                BackgroundColor = Color.Blue,
+                BackgroundColor = new Color(0, 0, 255),   
                 HorizontalAlignment = EHorizontalAlignment.Right,
                 VerticalAlignment = EVerticalAlignment.Top,
                 Padding = new LayoutPadding(10),
@@ -24,11 +24,11 @@ namespace UILayout.Test
             };
             Children.Add(stack);
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 4; i++)
             {
                 stack.Children.Add(new UIElement
                 {
-                    BackgroundColor = Color.Red,
+                    BackgroundColor = new Color(0, 0, 0, 0.2f + (i * .2f)),
                     HorizontalAlignment = EHorizontalAlignment.Stretch,
                     VerticalAlignment = EVerticalAlignment.Stretch,
                 });
@@ -37,6 +37,7 @@ namespace UILayout.Test
             Children.Add(new TextBlock
             {
                 Text = "Hello World",
+                TextColor = Color.Black,
                 BackgroundColor = Color.Green,
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Bottom,

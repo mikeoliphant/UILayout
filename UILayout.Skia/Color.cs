@@ -10,8 +10,14 @@ namespace UILayout
         public SKColor NativeColor;
 
         public Color(byte r, byte g, byte b)
+            : this(r, g, b, 1)
         {
-            NativeColor = new SKColor(r, g, b);
+
+        }
+
+        public Color(byte r, byte g, byte b, float opacity)
+        {
+            NativeColor = new SKColor(r, g, b, (byte)(opacity * 255));
         }
 
         public Color(SKColor nativeColor)

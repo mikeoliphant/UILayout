@@ -124,7 +124,12 @@ namespace SkiaTest
 
                 surface = SKSurface.Create(info, bitmap.BackBuffer, bitmap.BackBufferStride);
 
-                //paintEnumerator = null;
+                if (Layout != null)
+                {
+                    Layout.SetBounds(new RectF(0, 0, info.Width, info.Height));
+
+                    Layout.UpdateLayout();
+                }
             }
 
             if (needRePaint)
@@ -167,22 +172,6 @@ namespace SkiaTest
                 if (!Layout.Bounds.IsEmpty)
                     Layout.Draw();
             }
-        }
-
-        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
-        {
-            base.OnRenderSizeChanged(sizeInfo);
-
-            if (Layout != null)
-            {
-                Layout.SetBounds(new RectF(0, 0, (float)sizeInfo.NewSize.Width, (float)sizeInfo.NewSize.Height));
-
-                Layout.UpdateLayout();
-            }
-
-            InvalidateVisual();
-
-            needRePaint = true;
         }
 
         public void UpdatePaint()

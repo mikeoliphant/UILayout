@@ -6,11 +6,21 @@ using SkiaSharp;
 namespace UILayout
 {
     public partial class TextBlock
-    {
+    {       
         public Color TextColor
         {
             get { return new Color(textPaint.Color); }
             set { textPaint.Color = value.NativeColor; }
+        }
+
+        public Font TextFont
+        {
+            get { return new Font { Typeface = textPaint.Typeface, TextSize = textPaint.TextSize }; }
+            set
+            {
+                textPaint.Typeface = value.Typeface;
+                textPaint.TextSize = value.TextSize;
+            }
         }
 
         SKPaint textPaint = new SKPaint
@@ -18,11 +28,14 @@ namespace UILayout
             Color = SKColors.Black,
             IsAntialias = true,
             Style = SKPaintStyle.StrokeAndFill,
-            TextSize = 24,
-            Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright)
         };
 
         SKRect textBounds = SKRect.Empty;
+
+        static TextBlock()
+        {
+            DefaultFont = new Font { Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright), TextSize = 24 };
+        }
 
         protected override void GetContentSize(out float width, out float height)
         {

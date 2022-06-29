@@ -3,22 +3,16 @@
   <PropertyGroup>
     <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <SharedGUID>7da2b397-a39f-4e5b-96ed-f206329982c9</SharedGUID>
+    <SharedGUID>7cb7aeba-6408-4b9f-bcf7-bd2a1fc0694e</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>UILayout</Import_RootNamespace>
+    <Import_RootNamespace>UILayout.nanoFramework</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Color.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Font.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)LayoutElement.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PointF.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)RectF.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)TextBlock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Touch.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UIElement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Layout.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TextBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UIElement.cs" />
   </ItemGroup>
 </Project>
