@@ -8,6 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\NinePatch.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\NinePatch.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0-preview.187" />
   </ItemGroup>
 

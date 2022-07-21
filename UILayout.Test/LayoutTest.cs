@@ -12,9 +12,18 @@ namespace UILayout.Test
             Margin = new LayoutPadding(5);
             Padding = new LayoutPadding(10);
 
+            Image ninePatch = new Image("NinePatch");
+            NinePatchWrapper ninePatchWrapper = new NinePatchWrapper
+            {
+                HorizontalAlignment = EHorizontalAlignment.Stretch,
+                VerticalAlignment = EVerticalAlignment.Stretch,
+                Image = ninePatch
+            };
+            Children.Add(ninePatchWrapper);
+
             HorizontalStack stack = new HorizontalStack
             {
-                BackgroundColor = new Color(0, 0, 255),   
+                BackgroundColor = new Color(0, 0, 255),
                 HorizontalAlignment = EHorizontalAlignment.Right,
                 VerticalAlignment = EVerticalAlignment.Top,
                 Padding = new LayoutPadding(10),
@@ -22,7 +31,7 @@ namespace UILayout.Test
                 DesiredWidth = 100,
                 ChildSpacing = 10
             };
-            Children.Add(stack);
+            //Children.Add(stack);
 
             for (int i = 0; i < 4; i++)
             {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-#if SUPPORTS_GENERIC
+#if !GENERICS_UNSUPPORTED
 using System.Collections.Generic;
 #endif
 
@@ -44,7 +44,7 @@ namespace UILayout
 
     public class ListUIElement : LayoutElement
     {
-#if SUPPORTS_GENERIC
+#if !GENERICS_UNSUPPORTED
         protected List<UIElement> children = new List<UIElement>();
 #else
         protected ArrayList children = new ArrayList();
@@ -54,7 +54,7 @@ namespace UILayout
         public float ChildSpacing { get; set; }
         public bool ChildrenEqualSize { get; set; }
 
-#if SUPPORTS_GENERIC
+#if !GENERICS_UNSUPPORTED
         public virtual List<UIElement> Children
 #else
         public virtual ArrayList Children
