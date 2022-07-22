@@ -24,7 +24,7 @@ namespace UILayout
         public void Draw()
         {
             // Don't draw if we aren't in the diry rectangle
-            if (!Layout.Current.DirtyRect.IsEmpty && !Layout.Current.DirtyRect.Intersects(ref layoutBounds))
+            if (!Layout.Current.HaveDirty && !Layout.Current.DirtyRect.Intersects(ref layoutBounds))
                 return;
 
             if (backgroundPaint.Color.Alpha > 0)

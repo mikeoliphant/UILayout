@@ -91,7 +91,7 @@ namespace SkiaTest
             if (designMode)
                 return;
 
-            if (!Layout.DirtyRect.IsEmpty)
+            if (Layout.HaveDirty)
                 UpdatePaint();
         }
 
@@ -136,8 +136,8 @@ namespace SkiaTest
             {
                 needRePaint = false;
 
-                // draw on the bitmap
                 bitmap.Lock();
+
                 if (IgnorePixelScaling)
                 {
                     var canvas = surface.Canvas;
@@ -149,8 +149,8 @@ namespace SkiaTest
 
                 PaintSurface(surface, info.WithSize(userVisibleSize));
 
-                // draw the bitmap to the screen
                 bitmap.AddDirtyRect(new Int32Rect((int)dirtyRect.X, (int)dirtyRect.Y, (int)dirtyRect.Width, (int)dirtyRect.Height));
+
                 bitmap.Unlock();
             }
 
