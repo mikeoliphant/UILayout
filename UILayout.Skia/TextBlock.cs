@@ -35,6 +35,8 @@ namespace UILayout
         static TextBlock()
         {
             DefaultFont = new Font { Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright), TextSize = 24 };
+            DefaultColor = Color.Black;
+            DefaultTextPadding = new LayoutPadding(5);
         }
 
         protected override void GetContentSize(out float width, out float height)

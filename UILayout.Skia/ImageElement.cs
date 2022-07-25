@@ -20,12 +20,12 @@ namespace UILayout
                 SKBitmap bitmap = Image.Bitmap;
 
                 int srcOffsetY = 0;
-                float destOffsetY = contentBounds.Y;
+                float destOffsetY = layoutBounds.Y;
 
                 for (int y = 0; y < 3; y++)
                 {
                     int srcOffsetX = 0;
-                    float destOffsetX = contentBounds.X;
+                    float destOffsetX = layoutBounds.X;
 
                     for (int x = 0; x < 3; x++)
                     {

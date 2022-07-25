@@ -40,6 +40,14 @@ namespace UILayout
             if (Child != null)
                 Child.Draw();
         }
+
+        public override bool HandleTouch(ref Touch touch)
+        {
+            if (Child != null)
+                return Child.HandleTouch(ref touch);
+
+            return false;
+        }
     }
 
     public class ListUIElement : LayoutElement

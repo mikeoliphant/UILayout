@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Font.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImageElement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InputDialog.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LayoutElement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PointF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RectF.cs" />

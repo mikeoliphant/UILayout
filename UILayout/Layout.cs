@@ -5,6 +5,8 @@ namespace UILayout
     public class Layout
     {
         public static Layout Current { get; private set; }
+        public static Image DefaultPressedNinePatch { get; set; }
+        public static Image DefaultUnpressedNinePatch { get; set; }
 
         protected bool haveDirty = false;
         protected RectF dirtyRect = RectF.Empty;

@@ -17,7 +17,7 @@ namespace UILayout
         SKPaint backgroundPaint = new SKPaint
         {
             Color = SKColors.Transparent,
-            IsAntialias = true,
+            IsAntialias = false,
             Style = SKPaintStyle.StrokeAndFill
         };
 

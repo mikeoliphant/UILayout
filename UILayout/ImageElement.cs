@@ -66,6 +66,8 @@ namespace UILayout
         {
             if (Image != null)
             {
+                Padding = new LayoutPadding(image.Width / 2, image.Height / 2);
+
                 imageWidths[0] = imageWidths[2] = (image.Width / 2) - 1;
                 imageWidths[1] = 2;
 
@@ -73,10 +75,10 @@ namespace UILayout
                 imageHeights[1] = 2;
 
                 destWidths[0] = destWidths[2] = imageWidths[0];
-                destWidths[1] = contentBounds.Width - (destWidths[0] + destWidths[2]);
+                destWidths[1] = layoutBounds.Width - (destWidths[0] + destWidths[2]);
 
                 destHeights[0] = destHeights[2] = imageHeights[0];
-                destHeights[1] = contentBounds.Height - (destHeights[0] + destHeights[2]);
+                destHeights[1] = layoutBounds.Height - (destHeights[0] + destHeights[2]);
             }
         }
     }

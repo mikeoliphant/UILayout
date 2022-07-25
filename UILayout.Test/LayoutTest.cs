@@ -13,13 +13,6 @@ namespace UILayout.Test
             Padding = new LayoutPadding(10);
 
             Image ninePatch = new Image("NinePatch");
-            NinePatchWrapper ninePatchWrapper = new NinePatchWrapper
-            {
-                HorizontalAlignment = EHorizontalAlignment.Stretch,
-                VerticalAlignment = EVerticalAlignment.Stretch,
-                Image = ninePatch
-            };
-            Children.Add(ninePatchWrapper);
 
             HorizontalStack stack = new HorizontalStack
             {
@@ -45,21 +38,27 @@ namespace UILayout.Test
 
             Children.Add(new TextBlock
             {
-                Text = "Hello World",
+                Text = "Descendry Text",
                 TextColor = Color.Black,
                 BackgroundColor = Color.Green,
                 HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Bottom,
+                VerticalAlignment = EVerticalAlignment.Bottom
             });
 
-            Children.Add(new Button()
-            {
-                BackgroundColor = Color.Red,
-                DesiredHeight = 50,
-                DesiredWidth = 50,
-                HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Center
-            });
+            //Children.Add(new TextButton()
+            //{
+            //    Text = "Click!",
+            //    HorizontalAlignment = EHorizontalAlignment.Center,
+            //    VerticalAlignment = EVerticalAlignment.Center
+            //});
+
+
+            InputDialog dialog = new InputDialog(ninePatch, new TextBlock { Text = "Do you want to?", TextColor = Color.Black });
+
+            dialog.AddInput(new DialogInput { Text = "Ok" } );
+            dialog.AddInput(new DialogInput { Text = "Cancel" });
+
+            Children.Add(dialog);
         }
     }
 }

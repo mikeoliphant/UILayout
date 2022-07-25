@@ -16,8 +16,8 @@ namespace UILayout
 
             int dirtyX = (int)dirtyRect.X;
             int dirtyY = (int)dirtyRect.Y;
-            int dirtyWidth = (int)dirtyRect.Width;
-            int dirtyHeight = (int)dirtyRect.Height;
+            int dirtyWidth = (int)Math.Cieling(dirtyRect.Width);
+            int dirtyHeight = (int)Math.Cieling(dirtyRect.Height);
 
             FullScreenBitmap.SetClippingRectangle(dirtyX, dirtyY, dirtyWidth, dirtyHeight);
 
