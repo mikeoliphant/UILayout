@@ -60,8 +60,8 @@ namespace UILayout
 
     public partial class UIElement
     {
-        protected RectF layoutBounds;
-        protected RectF contentBounds;
+        internal RectF layoutBounds;
+        internal RectF contentBounds;
 
         public bool Visible { get; set; }
         public LayoutPadding Margin { get; set; }

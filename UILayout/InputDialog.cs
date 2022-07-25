@@ -78,7 +78,7 @@ namespace UILayout
 
             wrapper.Child = contents;
 
-            inputStack = new DialogInputStack(new HorizontalStack { HorizontalAlignment = EHorizontalAlignment.Center, ChildSpacing = DefaultButtonSpacing }, inputs) { HorizontalAlignment = EHorizontalAlignment.Center, VerticalAlignment = EVerticalAlignment.Bottom };
+            inputStack = new DialogInputStack(this, new HorizontalStack { HorizontalAlignment = EHorizontalAlignment.Center, ChildSpacing = DefaultButtonSpacing }, inputs) { HorizontalAlignment = EHorizontalAlignment.Center, VerticalAlignment = EVerticalAlignment.Bottom };
             stack.Children.Add(inputStack);
         }
 
@@ -96,69 +96,7 @@ namespace UILayout
             inputStack.AddInput(input);
         }
 
-        public virtual void Exit()
-        {
-            inputStack.Exit();
-        }
-    }
-
-    public class DialogInputStack : UIElementWrapper
-    {
-        public Action CloseAction { get; set; }
-
-        public ListUIElement InputContainer { get; private set; }
-
-        Image pressedNinePatch;
-        Image unpressedNinePatch;
-
-        List<DialogInput> inputs = new List<DialogInput>();
-        int selectedInput = 0;
-
-        public DialogInputStack(ListUIElement inputContainer, params DialogInput[] inputs)
-        {
-            this.InputContainer = inputContainer;
-
-            pressedNinePatch = Layout.DefaultPressedNinePatch;
-            unpressedNinePatch = Layout.DefaultUnpressedNinePatch;
-
-            Child = inputContainer;
-
-            if (inputs != null)
-            {
-                foreach (DialogInput input in inputs)
-                {
-                    AddInput(input);
-                }
-            }
-        }
-
-        public void AddInput(DialogInput input)
-        {
-            inputs.Add(input);
-
-            TextButton button = new TextButton(input.Text);
-
-            if (input.Action != null)
-            {
-                Action action = delegate { DoAction(input); };
-
-                if (input.WaitForRelease)
-                    button.ReleaseAction = action;
-                else
-                    button.PressAction = action;
-            }
-
-            InputContainer.Children.Add(button);
-
-            SelectInput(0);
-        }
-
-        public void SelectInput(int pos)
-        {
-            selectedInput = pos;
-        }
-
-        bool DoAction(DialogInput input)
+        internal bool DoAction(DialogInput input)
         {
             bool handled = false;
 
@@ -185,6 +123,56 @@ namespace UILayout
             {
                 CloseAction();
             }
+        }
+    }
+
+    public class DialogInputStack : UIElementWrapper
+    {
+        public Action CloseAction { get; set; }
+
+        public ListUIElement InputContainer { get; private set; }
+
+        InputDialog dialog;
+        List<DialogInput> inputs = new List<DialogInput>();
+        int selectedInput = 0;
+
+        public DialogInputStack(InputDialog dialog, ListUIElement inputContainer, params DialogInput[] inputs)
+        {
+            this.dialog = dialog;
+            this.InputContainer = inputContainer;
+
+            Child = inputContainer;
+
+            if (inputs != null)
+            {
+                foreach (DialogInput input in inputs)
+                {
+                    AddInput(input);
+                }
+            }
+        }
+
+        public void AddInput(DialogInput input)
+        {
+            inputs.Add(input);
+
+            TextButton button = new TextButton(input.Text);
+
+            Action action = delegate { dialog.DoAction(input); };
+
+            if (input.WaitForRelease)
+                button.ReleaseAction = action;
+            else
+                button.PressAction = action;
+
+            InputContainer.Children.Add(button);
+
+            SelectInput(0);
+        }
+
+        public void SelectInput(int pos)
+        {
+            selectedInput = pos;
         }
     }
 }

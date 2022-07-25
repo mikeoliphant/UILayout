@@ -45,20 +45,19 @@ namespace UILayout.Test
                 VerticalAlignment = EVerticalAlignment.Bottom
             });
 
-            //Children.Add(new TextButton()
-            //{
-            //    Text = "Click!",
-            //    HorizontalAlignment = EHorizontalAlignment.Center,
-            //    VerticalAlignment = EVerticalAlignment.Center
-            //});
-
 
             InputDialog dialog = new InputDialog(ninePatch, new TextBlock { Text = "Do you want to?", TextColor = Color.Black });
 
-            dialog.AddInput(new DialogInput { Text = "Ok" } );
-            dialog.AddInput(new DialogInput { Text = "Cancel" });
+            dialog.AddInput(new DialogInput { Text = "Ok", CloseOnInput = true } );
+            dialog.AddInput(new DialogInput { Text = "Cancel", CloseOnInput = true });
 
-            Children.Add(dialog);
+            Children.Add(new TextButton()
+            {
+                Text = "Click!",
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+                ReleaseAction = delegate { Layout.Current.ShowPopup(dialog); }
+            });
         }
     }
 }
