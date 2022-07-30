@@ -149,7 +149,22 @@ namespace SkiaTest
 
                 PaintSurface(surface, info.WithSize(userVisibleSize));
 
-                bitmap.AddDirtyRect(new Int32Rect((int)dirtyRect.X, (int)dirtyRect.Y, (int)Math.Ceiling(dirtyRect.Width), (int)Math.Ceiling(dirtyRect.Height)));
+                Int32Rect bitmapDirty = new Int32Rect((int)dirtyRect.X, (int)dirtyRect.Y, (int)Math.Ceiling(dirtyRect.Width), (int)Math.Ceiling(dirtyRect.Height));
+
+                if ((bitmapDirty.X < bitmap.Width) && (bitmapDirty.Y < bitmap.Height))
+                {
+                    if ((bitmapDirty.X + Width) > bitmap.Width)
+                    {
+                        bitmapDirty.Width = (int)(bitmap.Width - bitmapDirty.X);
+                    }
+
+                    if ((bitmapDirty.Y + Height) > bitmap.Height)
+                    {
+                        bitmapDirty.Height = (int)(bitmap.Height - bitmapDirty.Y);
+                    }
+
+                    bitmap.AddDirtyRect(bitmapDirty);
+                }
 
                 bitmap.Unlock();
             }

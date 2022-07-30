@@ -6,6 +6,12 @@ using System.Collections.Generic;
 
 namespace UILayout
 {
+    public interface IPopup
+    {
+        Action CloseAction { get; set; }
+        void Opened();
+    }
+
     public class Layout
     {
         public static Layout Current { get; private set; }
@@ -87,7 +93,7 @@ namespace UILayout
         {
             if (popupStack.Count > 0)
             {
-                popupStack[popupStack.Count - 1].HandleTouch(ref touch);
+                return popupStack[popupStack.Count - 1].HandleTouch(ref touch);               
             }
 
             if (RootUIElement != null)
@@ -102,9 +108,9 @@ namespace UILayout
 
             popup.SetBounds(Bounds, null);
 
-            if (popup is InputDialog)
+            if (popup is IPopup)
             {
-                (popup as InputDialog).CloseAction = delegate { ClosePopup(popup); };
+                (popup as IPopup).CloseAction = delegate { ClosePopup(popup); };
             }
 
             AddDirtyRect(ref popup.layoutBounds);

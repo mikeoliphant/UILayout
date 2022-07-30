@@ -2,6 +2,9 @@
 using System.Collections;
 #if !GENERICS_UNSUPPORTED
 using System.Collections.Generic;
+using UIElementCollection = System.Collections.Generic.List<UILayout.UIElement>;
+#else
+using UIElementCollection = ArrayList;
 #endif
 
 namespace UILayout
@@ -52,21 +55,13 @@ namespace UILayout
 
     public class ListUIElement : LayoutElement
     {
-#if !GENERICS_UNSUPPORTED
-        protected List<UIElement> children = new List<UIElement>();
-#else
-        protected ArrayList children = new ArrayList();
-#endif
+        protected UIElementCollection children = new UIElementCollection();
 
         public bool DrawInReverse { get; set; }
         public float ChildSpacing { get; set; }
         public bool ChildrenEqualSize { get; set; }
 
-#if !GENERICS_UNSUPPORTED
-        public virtual List<UIElement> Children
-#else
-        public virtual ArrayList Children
-#endif
+        public virtual UIElementCollection Children
         {
             get { return children; }
             set { children = value; }

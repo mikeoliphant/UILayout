@@ -87,5 +87,30 @@ namespace UILayout
             width = maxX - x;
             height = maxY - y;
         }
+
+        public void IntersectWith(ref RectF other)
+        {
+            if (Intersects(ref other))
+            {
+                float right = Math.Min(x + width, other.x + other.width);
+                float left = Math.Max(x, other.x);
+                float top = Math.Max(y, other.y);
+                float bottom = Math.Min(y + height, other.y + other.height);
+
+                x = left;
+                y = top;
+                width = right - left;
+                height = bottom - top;
+            }
+            else
+            {
+                MakeEmpty();
+            }
+        }
+
+        public override string ToString()
+        {
+            return x + "," + y + " (" + width + "x" + height + ")";
+        }
     }
 }

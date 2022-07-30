@@ -1,6 +1,10 @@
 ﻿using System;
+#if !GENERICS_UNSUPPORTED
 using System.Collections.Generic;
-using System.Text;
+using MenuItemCollection = System.Collections.Generic.List<UILayout.MenuItem>;
+#else
+using MenuItemCollection = ArrayList;
+#endif
 
 namespace UILayout.Test
 {
@@ -9,10 +13,12 @@ namespace UILayout.Test
         public LayoutTest()
         {
             BackgroundColor = Color.Yellow;
-            Margin = new LayoutPadding(5);
             Padding = new LayoutPadding(10);
 
-            Image ninePatch = new Image("NinePatch");
+            Image ninePatch = new Image("OutlineNinePatch");
+
+            Layout.DefaultPressedNinePatch = new Image("ButtonPressed");
+            Layout.DefaultUnpressedNinePatch = new Image("ButtonUnpressed");
 
             HorizontalStack stack = new HorizontalStack
             {
@@ -51,12 +57,21 @@ namespace UILayout.Test
             dialog.AddInput(new DialogInput { Text = "Ok", CloseOnInput = true } );
             dialog.AddInput(new DialogInput { Text = "Cancel", CloseOnInput = true });
 
+            MenuItemCollection menuItems = new MenuItemCollection()
+            {
+                new ContextMenuItem { Text = "Item 1" },
+                new ContextMenuItem { Text = "Item 2"},
+                new ContextMenuItem { Text = "Item 3"}
+            };
+
+            Menu menu = new Menu(menuItems);
+
             Children.Add(new TextButton()
             {
                 Text = "Click!",
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center,
-                ReleaseAction = delegate { Layout.Current.ShowPopup(dialog); }
+                ClickAction = delegate { Layout.Current.ShowPopup(menu); }
             });
         }
     }

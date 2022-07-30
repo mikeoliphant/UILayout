@@ -4,11 +4,6 @@ using System.Text;
 
 namespace UILayout
 {
-    public interface IPopupDialog
-    {
-        void Opened();
-    }
-
     public class DialogInput
     {
         public bool WaitForRelease { get; set; }
@@ -23,7 +18,7 @@ namespace UILayout
         }
     }
 
-    public class InputDialog : NinePatchWrapper, IPopupDialog
+    public class InputDialog : NinePatchWrapper, IPopup
     {
         public static float DefaultButtonSpacing = 2;
 
@@ -161,7 +156,7 @@ namespace UILayout
             Action action = delegate { dialog.DoAction(input); };
 
             if (input.WaitForRelease)
-                button.ReleaseAction = action;
+                button.ClickAction = action;
             else
                 button.PressAction = action;
 

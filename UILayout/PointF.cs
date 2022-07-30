@@ -24,5 +24,10 @@ namespace UILayout
 
             return (this.x == ((PointF)obj).x) && (this.y == ((PointF)obj).y);
         }
+
+        public override string ToString()
+        {
+            return x + "," + y;
+        }
     }
 }

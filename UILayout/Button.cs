@@ -5,7 +5,7 @@ namespace UILayout
     public class Button : UIElementWrapper
     {
         public Action PressAction { get; set; }
-        public Action ReleaseAction { get; set; }
+        public Action ClickAction { get; set; }
 
         UIElement pressedElement;
         UIElement unpressedElement;
@@ -55,25 +55,26 @@ namespace UILayout
 
         public override bool HandleTouch(ref Touch touch)
         {
-            if (touch.TouchState == ETouchState.Released)
+            switch (touch.TouchState)
             {
-                if (down)
-                {
-                    Toggle();
+                case ETouchState.Pressed:
+                    if (!down)
+                    {
+                        Toggle();
 
-                    if (ReleaseAction != null)
-                        ReleaseAction();
-                }
-            }
-            else
-            {
-                if (!down)
-                {
-                    Toggle();
+                        if (PressAction != null)
+                            PressAction();
+                    }
+                    break;
+                case ETouchState.Released:
+                    if (down)
+                    {
+                        Toggle();
 
-                    if (PressAction != null)
-                        PressAction();
-                }
+                        if (ClickAction != null)
+                            ClickAction();
+                    }
+                    break;
             }
 
             return true;
@@ -98,21 +99,42 @@ namespace UILayout
                 VerticalAlignment = EVerticalAlignment.Center,
             };
 
-            PressedElement = new UIElementWrapper
+            if (Layout.DefaultPressedNinePatch != null)
             {
-                Child = textBlock,
-                HorizontalAlignment = EHorizontalAlignment.Stretch,
-                VerticalAlignment = EVerticalAlignment.Stretch,
-                BackgroundColor = Color.Green
-            };
+                PressedElement = new NinePatchWrapper(Layout.DefaultPressedNinePatch)
+                {
+                    Child = textBlock,
+                    HorizontalAlignment = EHorizontalAlignment.Stretch,
+                    VerticalAlignment = EVerticalAlignment.Stretch
+                };
 
-            UnpressedElement = new UIElementWrapper()
+                UnpressedElement = new NinePatchWrapper(Layout.DefaultUnpressedNinePatch)
+                {
+                    Child = textBlock,
+                    HorizontalAlignment = EHorizontalAlignment.Stretch,
+                    VerticalAlignment = EVerticalAlignment.Stretch
+                };
+            }
+            else
             {
-                Child = textBlock,
-                HorizontalAlignment = EHorizontalAlignment.Stretch,
-                VerticalAlignment = EVerticalAlignment.Stretch,
-                BackgroundColor = Color.Red
-            };
+                PressedElement = new UIElementWrapper
+                {
+                    Child = textBlock,
+                    HorizontalAlignment = EHorizontalAlignment.Stretch,
+                    VerticalAlignment = EVerticalAlignment.Stretch,
+                    Padding = new LayoutPadding(2, 5),
+                    BackgroundColor = Color.Green
+                };
+
+                UnpressedElement = new UIElementWrapper()
+                {
+                    Child = textBlock,
+                    HorizontalAlignment = EHorizontalAlignment.Stretch,
+                    VerticalAlignment = EVerticalAlignment.Stretch,
+                    Padding = new LayoutPadding(2, 5),
+                    BackgroundColor = Color.Red
+                };
+            }
         }
 
         public TextButton(string text)

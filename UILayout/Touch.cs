@@ -7,8 +7,7 @@ namespace UILayout
         Pressed,
         Moved,
         Held,
-        Released,
-        Invalid
+        Released
     }
 
     public struct Touch

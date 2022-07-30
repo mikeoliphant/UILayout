@@ -4,7 +4,6 @@
     {
         public static Font DefaultFont { get; set; }
         public static Color DefaultColor { get; set; }
-        public static LayoutPadding DefaultTextPadding { get; set; }
 
         public string Text { get; set; }
 
@@ -12,7 +11,6 @@
         {
             TextFont = DefaultFont;
             TextColor = DefaultColor;
-            Padding = DefaultTextPadding;
         }
     }
 }

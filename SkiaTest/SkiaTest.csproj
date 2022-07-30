@@ -8,15 +8,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\ButtonPressed.png" />
+    <None Remove="Resources\ButtonUnpressed.png" />
     <None Remove="Resources\NinePatch.png" />
+    <None Remove="Resources\OutlineNinePatch.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\NinePatch.png" />
+    <EmbeddedResource Include="Resources\ButtonPressed.png" />
+    <EmbeddedResource Include="Resources\ButtonUnpressed.png" />
+    <EmbeddedResource Include="Resources\OutlineNinePatch.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0-preview.187" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -8,7 +8,7 @@
   <Import Project="..\UILayout\UILayout.projitems" Label="Shared" />
 
   <ItemGroup>
-    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.187" />
+    <PackageReference Include="SkiaSharp" Version="2.88.1-preview.91" />
   </ItemGroup>
 
 </Project>
