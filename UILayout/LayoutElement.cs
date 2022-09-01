@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UIElementCollection = System.Collections.Generic.List<UILayout.UIElement>;
 #else
-using UIElementCollection = ArrayList;
+using UIElementCollection = System.Collections.ArrayList;
 #endif
 
 namespace UILayout
@@ -290,7 +290,7 @@ namespace UILayout
         public override void UpdateContentLayout()
         {
             base.UpdateContentLayout();
-
+           
             float neededWidth = 0;
 
             int greedyChildCount = 0;

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
+#if !GENERICS_UNSUPPORTED
 using System.Collections.Generic;
-using System.Text;
+#endif
 
 namespace UILayout
 {
@@ -128,7 +130,11 @@ namespace UILayout
         public ListUIElement InputContainer { get; private set; }
 
         InputDialog dialog;
+#if !GENERICS_UNSUPPORTED
         List<DialogInput> inputs = new List<DialogInput>();
+#else
+        ArrayList inputs = new ArrayList();
+#endif
         int selectedInput = 0;
 
         public DialogInputStack(InputDialog dialog, ListUIElement inputContainer, params DialogInput[] inputs)

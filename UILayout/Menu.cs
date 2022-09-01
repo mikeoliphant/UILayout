@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MenuItemCollection = System.Collections.Generic.List<UILayout.MenuItem>;
 #else
-using MenuItemCollection = ArrayList;
+using MenuItemCollection = System.Collections.ArrayList;
 #endif
 
 namespace UILayout

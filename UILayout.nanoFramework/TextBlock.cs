@@ -20,6 +20,11 @@
             }
         }
 
+        static TextBlock()
+        {
+            DefaultColor = Color.Black;
+        }
+
         protected override void GetContentSize(out float width, out float height)
         {
             if (string.IsNullOrEmpty(Text))

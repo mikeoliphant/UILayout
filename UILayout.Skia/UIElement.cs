@@ -14,6 +14,7 @@ namespace UILayout
         }
 
         public SKSize BackgroundRoundRadius { get; set; }
+
         SKPaint backgroundPaint = new SKPaint
         {
             Color = SKColors.Transparent,

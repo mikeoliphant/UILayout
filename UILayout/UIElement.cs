@@ -63,7 +63,7 @@ namespace UILayout
         internal RectF layoutBounds;
         internal RectF contentBounds;
 
-        public bool Visible { get; set; }
+        public bool Visible { get; set; } = true;
         public LayoutPadding Margin { get; set; }
         public LayoutPadding Padding { get; set; }
         public EHorizontalAlignment HorizontalAlignment { get; set; }
@@ -77,7 +77,6 @@ namespace UILayout
 
         public UIElement()
         {
-            Visible = true;
             BackgroundColor = new Color(0, 0, 0, 0);
         }
 

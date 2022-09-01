@@ -93,7 +93,7 @@ namespace UILayout
         {
             if (popupStack.Count > 0)
             {
-                return popupStack[popupStack.Count - 1].HandleTouch(ref touch);               
+                return (popupStack[popupStack.Count - 1] as UIElement).HandleTouch(ref touch);               
             }
 
             if (RootUIElement != null)
