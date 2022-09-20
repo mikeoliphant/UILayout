@@ -48,7 +48,8 @@ namespace UILayout.Test
                 TextColor = Color.Black,
                 BackgroundColor = Color.Green,
                 HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Bottom
+                VerticalAlignment = EVerticalAlignment.Bottom,
+                Padding = new LayoutPadding(20)
             });
 
 

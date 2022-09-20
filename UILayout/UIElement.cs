@@ -136,11 +136,11 @@ namespace UILayout
             switch (HorizontalAlignment)
             {
                 case EHorizontalAlignment.Left:
-                    layoutLeft = bounds.Left + Margin.Left;
+                    layoutLeft = bounds.Left;
                     break;
 
                 case EHorizontalAlignment.Right:
-                    layoutLeft = bounds.Right - layoutWidth - Margin.Right;
+                    layoutLeft = bounds.Right - layoutWidth;
                     break;
 
                 case EHorizontalAlignment.Center:
@@ -148,23 +148,23 @@ namespace UILayout
                     break;
 
                 case EHorizontalAlignment.Stretch:
-                    layoutLeft = bounds.Left + Margin.Left;
-                    layoutWidth = bounds.Width - (Margin.Left + Margin.Right);
+                    layoutLeft = bounds.Left;
+                    layoutWidth = bounds.Width;
                     break;
 
                 case EHorizontalAlignment.Absolute:
-                    layoutLeft = bounds.Left + Margin.Left;
+                    layoutLeft = bounds.Left;
                     break;
             }
 
             switch (VerticalAlignment)
             {
                 case EVerticalAlignment.Top:
-                    layoutTop = bounds.Top + Margin.Top;
+                    layoutTop = bounds.Top;
                     break;
 
                 case EVerticalAlignment.Bottom:
-                    layoutTop = bounds.Bottom - layoutHeight - Margin.Bottom;
+                    layoutTop = bounds.Bottom - layoutHeight;
                     break;
 
                 case EVerticalAlignment.Center:
@@ -172,16 +172,16 @@ namespace UILayout
                     break;
 
                 case EVerticalAlignment.Stretch:
-                    layoutTop = bounds.Top + Margin.Top;
-                    layoutHeight = bounds.Height - (Margin.Top + Margin.Bottom);
+                    layoutTop = bounds.Top;
+                    layoutHeight = bounds.Height;
                     break;
 
                 case EVerticalAlignment.Absolute:
-                    layoutTop = bounds.Top + Margin.Top;
+                    layoutTop = bounds.Top;
                     break;
             }
 
-            RectF newLayoutBounds = new RectF(layoutLeft, layoutTop, layoutWidth, layoutHeight);
+            RectF newLayoutBounds = Margin.ShrinkRectangle(new RectF(layoutLeft, layoutTop, layoutWidth, layoutHeight));
             RectF newContentBounds = Padding.ShrinkRectangle(newLayoutBounds);
 
             // Only call UpdateContentLayout if the layout changed
