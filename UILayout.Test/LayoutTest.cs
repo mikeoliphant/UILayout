@@ -42,14 +42,31 @@ namespace UILayout.Test
                 });
             }
 
-            Children.Add(new TextBlock
+            VerticalStack textStack = new VerticalStack()
+            {
+                HorizontalAlignment = EHorizontalAlignment.Stretch,
+                VerticalAlignment = EVerticalAlignment.Bottom
+            };
+            Children.Add(textStack);
+
+            textStack.Children.Add(new TextBlock
+            {
+                Text = "Some Text",
+                TextColor = Color.Black,
+                BackgroundColor = Color.Green,
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+                Padding = new LayoutPadding(0, 20, 0, 20)
+            });
+
+            textStack.Children.Add(new TextBlock
             {
                 Text = "Descendry Text",
                 TextColor = Color.Black,
                 BackgroundColor = Color.Green,
                 HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Bottom,
-                Padding = new LayoutPadding(20)
+                VerticalAlignment = EVerticalAlignment.Center,
+                Margin = new LayoutPadding(20)
             });
 
 

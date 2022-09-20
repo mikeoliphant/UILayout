@@ -89,7 +89,7 @@ namespace UILayout
                 if (DesiredWidth != 0)
                     width = DesiredWidth;
 
-                width += Margin.Left + Margin.Right + Padding.Left + Padding.Top;
+                width += Margin.Left + Margin.Right + Padding.Left + Padding.Right;
             }
 
             if (VerticalAlignment != EVerticalAlignment.Absolute)
@@ -97,7 +97,7 @@ namespace UILayout
                 if (DesiredHeight != 0)
                     height = DesiredHeight;
 
-                height += Margin.Top + Margin.Bottom + Padding.Left + Padding.Top;
+                height += Margin.Top + Margin.Bottom + Padding.Top + Padding.Bottom;
             }
         }
 
