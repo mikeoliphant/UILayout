@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 #if !GENERICS_UNSUPPORTED
-using System.Collections.Generic;
 using MenuItemCollection = System.Collections.Generic.List<UILayout.MenuItem>;
 #else
 using MenuItemCollection = System.Collections.ArrayList;

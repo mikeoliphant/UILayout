@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace UILayout
+﻿namespace UILayout
 {
     public partial class ImageElement : UIElement
     {

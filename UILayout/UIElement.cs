@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text;
-
-namespace UILayout
+﻿namespace UILayout
 {
     public enum EHorizontalAlignment
     {

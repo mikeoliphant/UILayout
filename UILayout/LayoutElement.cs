@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-#if !GENERICS_UNSUPPORTED
-using System.Collections.Generic;
+﻿#if !GENERICS_UNSUPPORTED
 using UIElementCollection = System.Collections.Generic.List<UILayout.UIElement>;
 #else
 using UIElementCollection = System.Collections.ArrayList;

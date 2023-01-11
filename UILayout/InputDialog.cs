@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 #if !GENERICS_UNSUPPORTED
 using System.Collections.Generic;
 #endif
