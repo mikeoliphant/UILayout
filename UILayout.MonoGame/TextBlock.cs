@@ -4,16 +4,6 @@ namespace UILayout
 {
     public partial class TextBlock : UIElement
     {
-        public Font TextFont
-        {
-            get; set;
-        }
-
-        public UIColor TextColor
-        {
-            get; set;
-        }
-
         static TextBlock()
         {
             DefaultColor = UIColor.Black;
@@ -36,11 +26,6 @@ namespace UILayout
                 width = textWidth;
                 height = textHeight;
             }
-        }
-
-        protected override void DrawContents()
-        {
-            MonoGameLayout.Current.GraphicsContext.DrawText(Text, TextFont.SpriteFont, (int)ContentBounds.X, (int)ContentBounds.Y, 0.5f, TextColor.NativeColor, 1);
         }
     }
 }

@@ -165,12 +165,12 @@ namespace UILayout
         }
 
         // *** Note don't forget that this should be the same as the StringBuilder version ***
-        public void DrawString(String str, GraphicsContext2D graphicsContext, float x, float y, float depth, Color color, float scale)
+        public void DrawString(String str, GraphicsContext2D graphicsContext, float x, float y, UIColor color, float scale)
         {
             float xOffset = x;
             float yOffset = y;
 
-            Rectangle drawRect = Rectangle.Empty;
+            System.Drawing.Rectangle drawRect = System.Drawing.Rectangle.Empty;
 
             for (int i = 0; i < str.Length; i++)
             {
@@ -190,7 +190,7 @@ namespace UILayout
                     drawRect.Width = glyph.Width;
                     drawRect.Height = glyph.Height;
 
-                    graphicsContext.DrawImage(fontImage, (int)xOffset, (int)yOffset, depth, drawRect, color, scale);
+                    graphicsContext.DrawImage(fontImage, (int)xOffset, (int)yOffset, drawRect, color, scale);
 
                     xOffset += (glyph.Width + Spacing) * scale;
                 }
@@ -237,12 +237,12 @@ namespace UILayout
         }
 
         // *** Note don't forget that this should be the same as the String version ***
-        public void DrawString(StringBuilder stringBuilder, GraphicsContext2D graphicsContext, float x, float y, float depth, Color color, float scale)
+        public void DrawString(StringBuilder stringBuilder, GraphicsContext2D graphicsContext, float x, float y, UIColor color, float scale)
         {
             float xOffset = x;
             float yOffset = y;
 
-            Rectangle drawRect = Rectangle.Empty;
+            System.Drawing.Rectangle drawRect = System.Drawing.Rectangle.Empty;
 
             for (int i = 0; i < stringBuilder.Length; i++)
             {
@@ -262,7 +262,7 @@ namespace UILayout
                     drawRect.Width = glyph.Width;
                     drawRect.Height = glyph.Height;
 
-                    graphicsContext.DrawImage(fontImage, (int)xOffset, (int)yOffset, depth, drawRect, color, scale);
+                    graphicsContext.DrawImage(fontImage, (int)xOffset, (int)yOffset, drawRect, color, scale);
 
                     xOffset += (glyph.Width + Spacing) * scale;
                 }

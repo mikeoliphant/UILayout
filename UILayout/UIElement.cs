@@ -61,6 +61,7 @@
         internal RectF contentBounds;
 
         public bool Visible { get; set; } = true;
+        public UIColor BackgroundColor { get; set; }
         public LayoutPadding Margin { get; set; }
         public LayoutPadding Padding { get; set; }
         public EHorizontalAlignment HorizontalAlignment { get; set; }
@@ -199,6 +200,28 @@
         public virtual bool HandleTouch(in Touch touch)
         {
             return false;
+        }
+
+        public void Draw()
+        {
+            if (!Visible)
+                return;
+
+            // Don't draw if we aren't in the diry rectangle
+            if (!Layout.Current.HaveDirty || !Layout.Current.DirtyRect.Intersects(layoutBounds))
+                return;
+
+            if (BackgroundColor.A > 0)
+            {
+                Layout.Current.GraphicsContext.DrawRectangle(LayoutBounds, BackgroundColor);
+            }
+
+            DrawContents();
+        }
+
+        protected virtual void DrawContents()
+        {
+
         }
     }
 }

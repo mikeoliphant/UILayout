@@ -14,9 +14,12 @@ namespace UILayout
     public class Layout
     {
         public static Layout Current { get; private set; }
+
         public static Image DefaultOutlineNinePatch { get; set; }
         public static Image DefaultPressedNinePatch { get; set; }
         public static Image DefaultUnpressedNinePatch { get; set; }
+
+        public GraphicsContext2D GraphicsContext { get; protected set; }
 
         protected bool haveDirty = false;
         protected RectF dirtyRect = RectF.Empty;

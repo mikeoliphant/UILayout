@@ -14,7 +14,6 @@ namespace UILayout
         public static new MonoGameLayout Current { get { return Layout.Current as MonoGameLayout; } }
 
         public Game Host { get; private set; }
-        public GraphicsContext2D GraphicsContext { get; private set; }
 
         MouseState lastMouseState;
 
@@ -22,7 +21,7 @@ namespace UILayout
         {
             this.Host = host;
 
-            GraphicsContext = new MonoGameGraphicsContext2D(new SpriteBatch(Host.GraphicsDevice));
+            GraphicsContext = new GraphicsContext2D(new SpriteBatch(Host.GraphicsDevice));
         }
 
         public override void Draw(UIElement startElement)

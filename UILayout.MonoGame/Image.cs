@@ -24,16 +24,5 @@ namespace UILayout
             Width = Texture.Width;
             Height = Texture.Height;
         }
-
-        public void Draw(float x, float y)
-        {
-            MonoGameLayout.Current.GraphicsContext.DrawImage(this, x, y, 0.5f);
-        }
-
-        public void Draw(in System.Drawing.Rectangle srcRectangle, in RectF destRectangle)
-        {
-            MonoGameLayout.Current.GraphicsContext.DrawImage(this, 0.5f, new Rectangle(srcRectangle.X, srcRectangle.Y, srcRectangle.Width, srcRectangle.Height),
-                new Rectangle((int)destRectangle.X, (int)destRectangle.Y, (int)destRectangle.Width, (int)destRectangle.Height));
-        }
     }
 }

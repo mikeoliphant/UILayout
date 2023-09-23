@@ -5,20 +5,8 @@
         nanoFramework.UI.Font font;
         nanoFramework.Presentation.Media.Color textColor;
 
-        public Font TextFont
-        {
-            get { return new Font { NativeFont = font }; }
-            set { font = value.NativeFont;  }
-        }
-
-        public Color TextColor
-        {
-            get { return new Color(textColor, 1);  }
-            set
-            {
-                textColor = value.NativeColor;
-            }
-        }
+        public Font TextFont { get; set; }
+        public UIColor TextColor { get; set; }
 
         static TextBlock()
         {

@@ -4,27 +4,11 @@ namespace UILayout
 {
     public partial class TextBlock
     {       
-        public UIColor TextColor
-        {
-            get { return new UIColor(textPaint.Color); }
-            set { textPaint.Color = value.NativeColor; }
-        }
-
-        public Font TextFont
-        {
-            get { return new Font { Typeface = textPaint.Typeface, TextSize = textPaint.TextSize }; }
-            set
-            {
-                textPaint.Typeface = value.Typeface;
-                textPaint.TextSize = value.TextSize;
-            }
-        }
-
         SKPaint textPaint = new SKPaint
         {
             Color = SKColors.Black,
             IsAntialias = true,
-            Style = SKPaintStyle.StrokeAndFill,
+            Style = SKPaintStyle.StrokeAndFill
         };
 
         SKRect textBounds = SKRect.Empty;
@@ -46,16 +30,13 @@ namespace UILayout
             {
                 textBounds = SKRect.Empty;
 
+                textPaint.Typeface = TextFont.Typeface; // Shouldn't be doing this here
+                textPaint.TextSize = TextFont.TextSize;
                 textPaint.MeasureText(Text, ref textBounds);
 
                 width = textBounds.Width;
                 height = -textBounds.Top;
             }
-        }
-
-        protected override void DrawContents()
-        {
-            SkiaLayout.Current.Canvas.DrawText(Text, ContentBounds.Left, ContentBounds.Bottom, textPaint);
         }
     }
 }

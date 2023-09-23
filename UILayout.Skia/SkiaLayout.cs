@@ -6,6 +6,9 @@ namespace UILayout
     {
         public static new SkiaLayout Current { get { return Layout.Current as SkiaLayout; } }
 
-        public SKCanvas Canvas { get; set; }
+        public SkiaLayout()
+        {
+            GraphicsContext = new GraphicsContext2D();
+        }
     }
 }

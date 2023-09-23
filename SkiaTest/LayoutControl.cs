@@ -70,7 +70,7 @@ namespace SkiaTest
                 TouchState = ETouchState.Pressed
             };
 
-            Layout.HandleTouch(ref touch);
+            Layout.HandleTouch(touch);
         }
 
         private void LayoutControl_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -83,7 +83,7 @@ namespace SkiaTest
                 TouchState = ETouchState.Released
             };
 
-            Layout.HandleTouch(ref touch);
+            Layout.HandleTouch(touch);
         }
 
         private void CompositionTarget_Rendering(object sender, EventArgs e)
@@ -182,7 +182,7 @@ namespace SkiaTest
             }
             else
             {
-                SkiaLayout.Current.Canvas = canvas;
+                SkiaLayout.Current.GraphicsContext.Canvas = canvas;
 
                 if (!Layout.Bounds.IsEmpty)
                     Layout.Draw();

@@ -36,7 +36,7 @@ namespace UILayout.Test
             {
                 stack.Children.Add(new UIElement
                 {
-                    BackgroundColor = new UIColor(0, 0, 0, 0.2f + (i * .2f)),
+                    BackgroundColor = new UIColor(0, 0, 0, (byte)(0.2f + (i * .2f))),
                     HorizontalAlignment = EHorizontalAlignment.Stretch,
                     VerticalAlignment = EVerticalAlignment.Stretch,
                 });

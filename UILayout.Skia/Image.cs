@@ -36,15 +36,5 @@ namespace UILayout
         {
             this.Bitmap = bitmap;
         }
-
-        public void Draw(float x, float y)
-        {
-            SkiaLayout.Current.Canvas.DrawBitmap(Bitmap, x, y);
-        }
-
-        public void Draw(in System.Drawing.Rectangle srcRectangle, in RectF destRectangle)
-        {
-            SkiaLayout.Current.Canvas.DrawBitmap(Bitmap, SKRectI.Create(srcRectangle.X, srcRectangle.Y, srcRectangle.Width, srcRectangle.Height), SKRect.Create(destRectangle.X, destRectangle.Y, destRectangle.Width, destRectangle.Height));
-        }
     }
 }

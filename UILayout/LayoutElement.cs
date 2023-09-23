@@ -100,7 +100,7 @@ namespace UILayout
             return null;
         }
 
-        public UIElement FindClosestChild(ref PointF point)
+        public UIElement FindClosestChild(in PointF point)
         {
             float minDist = float.MaxValue;
             UIElement minChild = null;

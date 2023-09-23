@@ -21,6 +21,13 @@ namespace UILayout
 
             }
         }
+
+        protected override void DrawContents()
+        {
+            base.DrawContents();
+
+            Layout.Current.GraphicsContext.DrawImage(Image, ContentBounds.X, ContentBounds.Y);
+        }
     }
 
     public partial class NinePatchWrapper : UIElementWrapper
@@ -96,7 +103,7 @@ namespace UILayout
 
                     for (int x = 0; x < 3; x++)
                     {
-                        Image.Draw(new Rectangle(srcOffsetX, srcOffsetY, imageWidths[x], imageHeights[y]), new RectF(destOffsetX, destOffsetY, destWidths[x], destHeights[y]));
+                        Layout.Current.GraphicsContext.DrawImage(Image, new System.Drawing.Rectangle(srcOffsetX, srcOffsetY, imageWidths[x], imageHeights[y]), new RectF(destOffsetX, destOffsetY, destWidths[x], destHeights[y]));
 
                         srcOffsetX += imageWidths[x];
                         destOffsetX += destWidths[x];
