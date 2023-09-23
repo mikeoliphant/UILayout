@@ -1,6 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.IO;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using System.Xml.Serialization;
 using UILayout;
 
 namespace MonoGameTest
@@ -30,17 +31,20 @@ namespace MonoGameTest
         {
             ui = new MonoGameLayout(this);
 
-            Dock dock = new Dock {  HorizontalAlignment = EHorizontalAlignment.Stretch, VerticalAlignment = EVerticalAlignment.Stretch, BackgroundColor = new UIColor(255, 0, 0) };
+            using (Stream fontStream = File.OpenRead(Path.Combine(Content.RootDirectory, "Textures\\Font.xml")))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(SpriteFontDefinition));
 
-            ui.RootUIElement = dock; // new UILayout.Test.LayoutTest();
+                TextBlock.DefaultFont = new Font { SpriteFont = UILayout.SpriteFont.CreateFromDefinition(serializer.Deserialize(fontStream) as SpriteFontDefinition) };
+            }
+
+            TextBlock.DefaultColor = UIColor.Black;
+
+            ui.RootUIElement = new UILayout.Test.LayoutTest();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-
             base.Update(gameTime);
         }
 

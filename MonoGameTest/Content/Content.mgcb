@@ -49,6 +49,21 @@
 /processorParam:TextureFormat=Color
 /build:../../TestResources/OutlineNinePatch.png;Textures/OutlineNinePatch.png
 
+#begin Textures/Font-1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Font-1.png
+
+#begin Textures/Font.xml
+/copy:Textures/Font.xml
+
 #begin Textures/SingleWhitePixel.png
 /importer:TextureImporter
 /processor:TextureProcessor

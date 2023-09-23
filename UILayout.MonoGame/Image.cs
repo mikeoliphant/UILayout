@@ -20,6 +20,9 @@ namespace UILayout
         public Image(string resourceName)
         {
             Texture = MonoGameLayout.Current.Host.Content.Load<Texture2D>(Path.Combine("Textures", resourceName));
+
+            Width = Texture.Width;
+            Height = Texture.Height;
         }
 
         public void Draw(float x, float y)

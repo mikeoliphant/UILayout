@@ -17,6 +17,18 @@ namespace UILayout
         public int Height;
     }
 
+    public class SpriteFontDefinition
+    {
+        public string Name { get; set; }
+        public int Scale { get; set; }
+        public bool IsFixedWidth { get; set; }
+        public int GlyphWidth { get; set; }
+        public int GlyphHeight { get; set; }
+        public int GlyphsPerRow { get; set; }
+        public string GlyphString { get; set; }
+        public SpriteFontGlyph[] Glyphs { get; set; }
+    }
+
     public class SpriteFont
     {
         public float Spacing { get; set; }
@@ -58,6 +70,47 @@ namespace UILayout
         }
 
         public bool IsFixedWidth { get; protected set; }
+
+        public static SpriteFont CreateFromDefinition(SpriteFontDefinition fontDefinition)
+        {
+            string name = fontDefinition.Name + "-" + fontDefinition.Scale;
+
+            if (fontDefinition.IsFixedWidth)
+            {
+                fontDefinition.Glyphs = new SpriteFontGlyph[fontDefinition.GlyphString.Length];
+
+                int row = 0;
+                int col = 0;
+
+                for (int pos = 0; pos < fontDefinition.GlyphString.Length; pos++)
+                {
+                    if (col == fontDefinition.GlyphsPerRow)
+                    {
+                        row++;
+                        col = 0;
+                    }
+
+                    fontDefinition.Glyphs[pos] = new SpriteFontGlyph
+                    {
+                        Character = fontDefinition.GlyphString[pos],
+                        X = col * fontDefinition.GlyphWidth,
+                        Y = row * fontDefinition.GlyphHeight,
+                        Width = fontDefinition.GlyphWidth,
+                        Height = fontDefinition.GlyphHeight
+                    };
+
+                    col++;
+                }
+            }
+
+            SpriteFont font = new SpriteFont(new Image(name), fontDefinition.Glyphs);
+
+            font.Spacing = -fontDefinition.Scale;
+            font.LineSpacing = -fontDefinition.Scale;
+            font.EmptyLinePercent = 0.5f;
+
+            return font;
+        }
 
         public SpriteFont(Image fontImage, SpriteFontGlyph[] glyphs)
         {
