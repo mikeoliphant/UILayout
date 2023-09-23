@@ -41,10 +41,10 @@ namespace UILayout
                 Child.Draw();
         }
 
-        public override bool HandleTouch(ref Touch touch)
+        public override bool HandleTouch(in Touch touch)
         {
             if (Child != null)
-                return Child.HandleTouch(ref touch);
+                return Child.HandleTouch(touch);
 
             return false;
         }
@@ -125,20 +125,20 @@ namespace UILayout
             return minChild;
         }
 
-        public override bool HandleTouch(ref Touch touch)
+        public override bool HandleTouch(in Touch touch)
         {
             for (int i = Children.Count - 1; i >= 0; i--)
             {
                 UIElement child = Children[i] as UIElement;
 
-                if (child.Visible && child.LayoutBounds.Contains(ref touch.Position))
+                if (child.Visible && child.LayoutBounds.Contains(touch.Position))
                 {
-                    if (child.HandleTouch(ref touch))
+                    if (child.HandleTouch(touch))
                         return true;
                 }
             }
 
-            return base.HandleTouch(ref touch);
+            return base.HandleTouch(touch);
         }
     }
 

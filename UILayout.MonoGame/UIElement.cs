@@ -1,22 +1,20 @@
-﻿
+﻿using Microsoft.Xna.Framework;
+
 namespace UILayout
 {
     public partial class UIElement
     {
-        public Color BackgroundColor { get; set; }
+        public UIColor BackgroundColor { get; set; }
 
         public void Draw()
         {
             // Don't draw if we aren't in the diry rectangle
-            if (!Layout.Current.HaveDirty && !Layout.Current.DirtyRect.Intersects(ref layoutBounds))
+            if (!Layout.Current.HaveDirty && !Layout.Current.DirtyRect.Intersects(layoutBounds))
                 return;
 
             if (BackgroundColor.NativeColor.A > 0)
             {
-                //if ((BackgroundRoundRadius.Width > 0) || (BackgroundRoundRadius.Height > 0))
-                //    SkiaLayout.Current.Canvas.DrawRoundRect(LayoutBounds.ToSKRect(), BackgroundRoundRadius, backgroundPaint);
-                //else
-                //    SkiaLayout.Current.Canvas.DrawRect(LayoutBounds.ToSKRect(), backgroundPaint);
+                MonoGameLayout.Current.GraphicsContext.DrawRectangle(new Rectangle((int)ContentBounds.X, (int)ContentBounds.Y, (int)ContentBounds.Width, (int)ContentBounds.Height), 0.5f, BackgroundColor.NativeColor);
             }
 
             DrawContents();

@@ -53,7 +53,7 @@ namespace UILayout
             UpdateContentLayout();
         }
 
-        public override bool HandleTouch(ref Touch touch)
+        public override bool HandleTouch(in Touch touch)
         {
             switch (touch.TouchState)
             {
@@ -123,7 +123,7 @@ namespace UILayout
                     HorizontalAlignment = EHorizontalAlignment.Stretch,
                     VerticalAlignment = EVerticalAlignment.Stretch,
                     Padding = new LayoutPadding(2, 5),
-                    BackgroundColor = Color.Green
+                    BackgroundColor = UIColor.Green
                 };
 
                 UnpressedElement = new UIElementWrapper()
@@ -132,7 +132,7 @@ namespace UILayout
                     HorizontalAlignment = EHorizontalAlignment.Stretch,
                     VerticalAlignment = EVerticalAlignment.Stretch,
                     Padding = new LayoutPadding(2, 5),
-                    BackgroundColor = Color.Red
+                    BackgroundColor = UIColor.Red
                 };
             }
         }

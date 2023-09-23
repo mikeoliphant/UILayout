@@ -137,7 +137,7 @@ namespace UILayout
                     drawRect.Width = glyph.Width;
                     drawRect.Height = glyph.Height;
 
-                    graphicsContext.DrawImage(fontImage, (int)xOffset, (int)yOffset, depth, ref drawRect, color, scale);
+                    graphicsContext.DrawImage(fontImage, (int)xOffset, (int)yOffset, depth, drawRect, color, scale);
 
                     xOffset += (glyph.Width + Spacing) * scale;
                 }
@@ -209,7 +209,7 @@ namespace UILayout
                     drawRect.Width = glyph.Width;
                     drawRect.Height = glyph.Height;
 
-                    graphicsContext.DrawImage(fontImage, (int)xOffset, (int)yOffset, depth, ref drawRect, color, scale);
+                    graphicsContext.DrawImage(fontImage, (int)xOffset, (int)yOffset, depth, drawRect, color, scale);
 
                     xOffset += (glyph.Width + Spacing) * scale;
                 }

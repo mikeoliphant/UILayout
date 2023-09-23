@@ -1,33 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWPF>true</UseWPF>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Resources\ButtonPressed.png" />
-    <None Remove="Resources\ButtonUnpressed.png" />
-    <None Remove="Resources\NinePatch.png" />
-    <None Remove="Resources\OutlineNinePatch.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="..\TestResources\ButtonPressed.png" Link="Resources\ButtonPressed.png" />
+		<EmbeddedResource Include="..\TestResources\ButtonUnpressed.png" Link="Resources\ButtonUnpressed.png" />
+		<EmbeddedResource Include="..\TestResources\OutlineNinePatch.png" Link="Resources\OutlineNinePatch.png" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\ButtonPressed.png" />
-    <EmbeddedResource Include="Resources\ButtonUnpressed.png" />
-    <EmbeddedResource Include="Resources\OutlineNinePatch.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\UILayout.Skia\UILayout.Skia.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\UILayout.Skia\UILayout.Skia.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Resources\" />
+	</ItemGroup>
 
-  <Import Project="..\UILayout.Test\UILayout.Test.projitems" Label="Shared" />
+	<Import Project="..\UILayout.Test\UILayout.Test.projitems" Label="Shared" />
 
 </Project>

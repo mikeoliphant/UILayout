@@ -12,7 +12,7 @@ namespace UILayout.Test
     {
         public LayoutTest()
         {
-            BackgroundColor = Color.Yellow;
+            BackgroundColor = UIColor.Yellow;
             Padding = new LayoutPadding(10);
 
             Image ninePatch = new Image("OutlineNinePatch");
@@ -22,7 +22,7 @@ namespace UILayout.Test
 
             HorizontalStack stack = new HorizontalStack
             {
-                BackgroundColor = new Color(0, 0, 255),
+                BackgroundColor = new UIColor(0, 0, 255),
                 HorizontalAlignment = EHorizontalAlignment.Right,
                 VerticalAlignment = EVerticalAlignment.Top,
                 Padding = new LayoutPadding(10),
@@ -36,7 +36,7 @@ namespace UILayout.Test
             {
                 stack.Children.Add(new UIElement
                 {
-                    BackgroundColor = new Color(0, 0, 0, 0.2f + (i * .2f)),
+                    BackgroundColor = new UIColor(0, 0, 0, 0.2f + (i * .2f)),
                     HorizontalAlignment = EHorizontalAlignment.Stretch,
                     VerticalAlignment = EVerticalAlignment.Stretch,
                 });
@@ -52,8 +52,8 @@ namespace UILayout.Test
             textStack.Children.Add(new TextBlock
             {
                 Text = "Some Text",
-                TextColor = Color.Black,
-                BackgroundColor = Color.Green,
+                TextColor = UIColor.Black,
+                BackgroundColor = UIColor.Green,
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center,
                 Padding = new LayoutPadding(0, 20, 0, 20)
@@ -62,15 +62,15 @@ namespace UILayout.Test
             textStack.Children.Add(new TextBlock
             {
                 Text = "Descendery Text",
-                TextColor = Color.Black,
-                BackgroundColor = Color.Green,
+                TextColor = UIColor.Black,
+                BackgroundColor = UIColor.Green,
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center,
                 Margin = new LayoutPadding(20)
             });
 
 
-            InputDialog dialog = new InputDialog(ninePatch, new TextBlock { Text = "Do you want to?", TextColor = Color.Black });
+            InputDialog dialog = new InputDialog(ninePatch, new TextBlock { Text = "Do you want to?", TextColor = UIColor.Black });
 
             dialog.AddInput(new DialogInput { Text = "Ok", CloseOnInput = true } );
             dialog.AddInput(new DialogInput { Text = "Cancel", CloseOnInput = true });

@@ -74,7 +74,7 @@
 
         public UIElement()
         {
-            BackgroundColor = new Color(0, 0, 0, 0);
+            BackgroundColor = new UIColor(0, 0, 0, 0);
         }
 
         public void GetSize(out float width, out float height)
@@ -193,10 +193,10 @@
 
         public virtual void UpdateContentLayout()
         {
-            Layout.Current.AddDirtyRect(ref layoutBounds);
+            Layout.Current.AddDirtyRect(layoutBounds);
         }
 
-        public virtual bool HandleTouch(ref Touch touch)
+        public virtual bool HandleTouch(in Touch touch)
         {
             return false;
         }

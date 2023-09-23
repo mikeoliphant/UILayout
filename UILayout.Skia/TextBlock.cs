@@ -4,9 +4,9 @@ namespace UILayout
 {
     public partial class TextBlock
     {       
-        public Color TextColor
+        public UIColor TextColor
         {
-            get { return new Color(textPaint.Color); }
+            get { return new UIColor(textPaint.Color); }
             set { textPaint.Color = value.NativeColor; }
         }
 
@@ -32,7 +32,7 @@ namespace UILayout
         static TextBlock()
         {
             DefaultFont = new Font { Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright), TextSize = 24 };
-            DefaultColor = Color.Black;
+            DefaultColor = UIColor.Black;
         }
 
         protected override void GetContentSize(out float width, out float height)

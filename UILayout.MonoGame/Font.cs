@@ -8,5 +8,6 @@ namespace UILayout
 {
     public partial class Font
     {
+        public SpriteFont SpriteFont { get; set; }
     }
 }

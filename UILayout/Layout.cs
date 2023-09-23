@@ -47,17 +47,17 @@ namespace UILayout
             haveDirty = false;
         }
 
-        public void AddDirtyRect(ref RectF dirty)
+        public void AddDirtyRect(in RectF dirty)
         {
             if (!haveDirty)
             {
-                dirtyRect.Copy(ref dirty);
+                dirtyRect.Copy(dirty);
 
                 haveDirty = true;
             }
             else
             {
-                dirtyRect.UnionWith(ref dirty);
+                dirtyRect.UnionWith(in dirty);
             }
         }
 
@@ -92,11 +92,11 @@ namespace UILayout
         {
             if (popupStack.Count > 0)
             {
-                return (popupStack[popupStack.Count - 1] as UIElement).HandleTouch(ref touch);               
+                return (popupStack[popupStack.Count - 1] as UIElement).HandleTouch(touch);               
             }
 
             if (RootUIElement != null)
-                return RootUIElement.HandleTouch(ref touch);
+                return RootUIElement.HandleTouch(touch);
 
             return false;
         }
@@ -112,14 +112,14 @@ namespace UILayout
                 (popup as IPopup).CloseAction = delegate { ClosePopup(popup); };
             }
 
-            AddDirtyRect(ref popup.layoutBounds);
+            AddDirtyRect(popup.layoutBounds);
         }
 
         public void ClosePopup(UIElement popup)
         {
             popupStack.Remove(popup);
 
-            AddDirtyRect(ref popup.layoutBounds);
+            AddDirtyRect(popup.layoutBounds);
         }
     }
 }

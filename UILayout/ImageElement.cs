@@ -1,4 +1,6 @@
-﻿namespace UILayout
+﻿using System.Drawing;
+
+namespace UILayout
 {
     public partial class ImageElement : UIElement
     {
@@ -78,6 +80,34 @@
                 destHeights[0] = destHeights[2] = imageHeights[0];
                 destHeights[1] = layoutBounds.Height - (destHeights[0] + destHeights[2]);
             }
+        }
+
+        protected override void DrawContents()
+        {
+            if (Image != null)
+            {
+                int srcOffsetY = 0;
+                float destOffsetY = layoutBounds.Y;
+
+                for (int y = 0; y < 3; y++)
+                {
+                    int srcOffsetX = 0;
+                    float destOffsetX = layoutBounds.X;
+
+                    for (int x = 0; x < 3; x++)
+                    {
+                        Image.Draw(new Rectangle(srcOffsetX, srcOffsetY, imageWidths[x], imageHeights[y]), new RectF(destOffsetX, destOffsetY, destWidths[x], destHeights[y]));
+
+                        srcOffsetX += imageWidths[x];
+                        destOffsetX += destWidths[x];
+                    }
+
+                    srcOffsetY += imageHeights[y];
+                    destOffsetY += destHeights[y];
+                }
+            }
+
+            base.DrawContents();
         }
     }
 }

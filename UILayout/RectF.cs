@@ -50,7 +50,7 @@ namespace UILayout
             height = 0;
         }
 
-        public void Copy(ref RectF other)
+        public void Copy(in RectF other)
         {
             x = other.x;
             y = other.y;
@@ -63,12 +63,12 @@ namespace UILayout
             return (x >= this.x) && (y >= this.y) && (x < Right) && (y < Bottom);
         }
 
-        public bool Contains(ref PointF point)
+        public bool Contains(in PointF point)
         {
             return (point.X >= x) && (point.Y >= y) && (point.X < Right) && (point.Y < Bottom);
         }
 
-        public bool Intersects(ref RectF other)
+        public bool Intersects(in RectF other)
         {
             return (other.x < Right) &&
                (x < other.Right) &&
@@ -76,7 +76,7 @@ namespace UILayout
                (y < other.Bottom);
         }
 
-        public void UnionWith(ref RectF other)
+        public void UnionWith(in RectF other)
         {
             float maxX = Math.Max(Right, other.Right);
             float maxY = Math.Max(Bottom, other.Bottom);
@@ -87,9 +87,9 @@ namespace UILayout
             height = maxY - y;
         }
 
-        public void IntersectWith(ref RectF other)
+        public void IntersectWith(in RectF other)
         {
-            if (Intersects(ref other))
+            if (Intersects(in other))
             {
                 float right = Math.Min(x + width, other.x + other.width);
                 float left = Math.Max(x, other.x);

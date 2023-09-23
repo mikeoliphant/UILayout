@@ -1,13 +1,16 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using UILayout;
 
 namespace MonoGameTest
 {
     public class TestGame : Game
     {
         private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+
+        MonoGameLayout ui;
+
 
         public TestGame()
         {
@@ -18,16 +21,18 @@ namespace MonoGameTest
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
+
+            Window.AllowUserResizing = true;
         }
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            ui = new MonoGameLayout(this);
 
-            // TODO: use this.Content to load your game content here
+            Dock dock = new Dock {  HorizontalAlignment = EHorizontalAlignment.Stretch, VerticalAlignment = EVerticalAlignment.Stretch, BackgroundColor = new UIColor(255, 0, 0) };
+
+            ui.RootUIElement = dock; // new UILayout.Test.LayoutTest();
         }
 
         protected override void Update(GameTime gameTime)
@@ -35,7 +40,6 @@ namespace MonoGameTest
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
 
             base.Update(gameTime);
         }
@@ -44,9 +48,17 @@ namespace MonoGameTest
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
-
             base.Draw(gameTime);
+
+            if ((GraphicsDevice.Viewport.Bounds.Width != ui.Bounds.Width) || (GraphicsDevice.Viewport.Bounds.Height != ui.Bounds.Height))
+            {
+                ui.SetBounds(new RectF(0, 0, GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height));
+
+                ui.UpdateLayout();
+            }
+            
+            ui.AddDirtyRect(ui.Bounds);
+            ui.Draw();
         }
     }
 }

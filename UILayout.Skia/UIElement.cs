@@ -4,9 +4,9 @@ namespace UILayout
 {
     public partial class UIElement
     {
-        public Color BackgroundColor
+        public UIColor BackgroundColor
         {
-            get { return new Color(backgroundPaint.Color); }
+            get { return new UIColor(backgroundPaint.Color); }
             set { backgroundPaint.Color = value.NativeColor; }
         }
 
@@ -22,7 +22,7 @@ namespace UILayout
         public void Draw()
         {
             // Don't draw if we aren't in the diry rectangle
-            if (!Layout.Current.HaveDirty && !Layout.Current.DirtyRect.Intersects(ref layoutBounds))
+            if (!Layout.Current.HaveDirty && !Layout.Current.DirtyRect.Intersects(layoutBounds))
                 return;
 
             if (backgroundPaint.Color.Alpha > 0)
