@@ -82,14 +82,20 @@ namespace UILayout.Test
                 new ContextMenuItem { Text = "Item 3"}
             };
 
-            Menu menu = new Menu(menuItems);
+            Menu menu = new Menu(menuItems)
+            {
+                BackgroundColor = UIColor.White
+            };
 
             Children.Add(new TextButton()
             {
                 Text = "Click!",
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center,
-                ClickAction = delegate { Layout.Current.ShowPopup(menu); }
+                ClickAction = delegate
+                {
+                    Layout.Current.ShowPopup(menu);
+                }
             });
         }
     }

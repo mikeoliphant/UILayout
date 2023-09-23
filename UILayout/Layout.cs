@@ -88,7 +88,7 @@ namespace UILayout
             ClearDirtyRect();
         }
 
-        public bool HandleTouch(ref Touch touch)
+        public bool HandleTouch(in Touch touch)
         {
             if (popupStack.Count > 0)
             {

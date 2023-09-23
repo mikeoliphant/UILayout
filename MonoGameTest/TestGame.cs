@@ -12,7 +12,6 @@ namespace MonoGameTest
 
         MonoGameLayout ui;
 
-
         public TestGame()
         {
             _graphics = new GraphicsDeviceManager(this);
