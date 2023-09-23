@@ -61,7 +61,7 @@ namespace UILayout.Test
 
             textStack.Children.Add(new TextBlock
             {
-                Text = "Descendry Text",
+                Text = "Descendery Text",
                 TextColor = Color.Black,
                 BackgroundColor = Color.Green,
                 HorizontalAlignment = EHorizontalAlignment.Center,

@@ -13,6 +13,10 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.Test", "UILayout.T
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.nanoFramework", "UILayout.nanoFramework\UILayout.nanoFramework.shproj", "{7CB7AEBA-6408-4B9F-BCF7-BD2A1FC0694E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameTest", "MonoGameTest\MonoGameTest.csproj", "{47F7B7A0-5F63-4900-BF71-C2834EA876BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UILayout.MonoGame", "UILayout.MonoGame\UILayout.MonoGame.csproj", "{AC389588-EED4-426B-B204-BDAAA1D9496E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{91DEC317-23AC-42A0-8A09-6B719B3F8444}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91DEC317-23AC-42A0-8A09-6B719B3F8444}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91DEC317-23AC-42A0-8A09-6B719B3F8444}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47F7B7A0-5F63-4900-BF71-C2834EA876BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47F7B7A0-5F63-4900-BF71-C2834EA876BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47F7B7A0-5F63-4900-BF71-C2834EA876BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47F7B7A0-5F63-4900-BF71-C2834EA876BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC389588-EED4-426B-B204-BDAAA1D9496E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC389588-EED4-426B-B204-BDAAA1D9496E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC389588-EED4-426B-B204-BDAAA1D9496E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC389588-EED4-426B-B204-BDAAA1D9496E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -40,5 +52,6 @@ Global
 		UILayout\UILayout.projitems*{7da2b397-a39f-4e5b-96ed-f206329982c9}*SharedItemsImports = 13
 		UILayout\UILayout.projitems*{8c8cd599-cf81-4789-8aa3-e3882eb3655f}*SharedItemsImports = 5
 		UILayout.Test\UILayout.Test.projitems*{91dec317-23ac-42a0-8a09-6b719b3f8444}*SharedItemsImports = 5
+		UILayout\UILayout.projitems*{ac389588-eed4-426b-b204-bdaaa1d9496e}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

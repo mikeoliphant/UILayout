@@ -20,6 +20,7 @@ namespace UILayout
                 this.Height = bitmap.Height;
             }
         }
+
         public Image(string resourceName)
         {
             Assembly assembly = Assembly.GetCallingAssembly();
