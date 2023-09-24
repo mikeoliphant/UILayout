@@ -36,5 +36,10 @@ namespace UILayout
         {
             this.Bitmap = bitmap;
         }
+
+        public UIImage(UIImage baseImage)
+        {
+            Bitmap = baseImage.Bitmap;
+        }
     }
 }

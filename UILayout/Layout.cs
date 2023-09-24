@@ -19,6 +19,9 @@ namespace UILayout
         public static UIImage DefaultPressedNinePatch { get; set; }
         public static UIImage DefaultUnpressedNinePatch { get; set; }
 
+        Dictionary<string, UIImage> images = new Dictionary<string, UIImage>();
+        Dictionary<string, UIFont> fonts = new Dictionary<string, UIFont>();
+
         public GraphicsContext2D GraphicsContext { get; protected set; }
         public InputManager InputManager { get; protected set; }
 
@@ -54,6 +57,27 @@ namespace UILayout
             Layout.Current = this;
 
             InputManager = new InputManager();
+        }
+
+        public UIImage AddImage(string name)
+        {
+            images[name] = new UIImage(name);
+
+            return images[name];
+        }
+
+        public UIImage AddImage(string name,UIImage image)
+        {
+            images[name] = image;
+
+            return images[name];
+        }
+
+        public UIFont AddFont(string name, UIFont font)
+        {
+            fonts[name] = font;
+
+            return fonts[name];
         }
 
         public void SetBounds(RectF bounds)

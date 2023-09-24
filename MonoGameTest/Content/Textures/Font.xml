@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <SpriteFontDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<Name>Font</Name>
-	<Scale>1</Scale>
 	<IsFixedWidth>false</IsFixedWidth>
 	<GlyphWidth>0</GlyphWidth>
 	<GlyphHeight>0</GlyphHeight>

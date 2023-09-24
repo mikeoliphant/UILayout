@@ -14,15 +14,17 @@ namespace UILayout
     {
         public Texture2D Texture { get; private set; }
 
-        public int XOffset { get; set; }
-        public int YOffset { get; set; }
-
         public UIImage(string resourceName)
         {
             Texture = MonoGameLayout.Current.Host.Content.Load<Texture2D>(Path.Combine("Textures", resourceName));
 
             Width = Texture.Width;
             Height = Texture.Height;
+        }
+
+        public UIImage(UIImage baseImage)
+        {
+            Texture = baseImage.Texture;
         }
     }
 }

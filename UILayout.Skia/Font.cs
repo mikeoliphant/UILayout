@@ -2,7 +2,7 @@
 
 namespace UILayout
 {
-    public partial class Font
+    public partial class UIFont
     {
         public SKTypeface Typeface { get; set; }
         public float TextSize { get; set; }

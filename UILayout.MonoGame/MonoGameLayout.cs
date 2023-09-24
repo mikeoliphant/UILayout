@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace UILayout
 {
@@ -20,6 +17,14 @@ namespace UILayout
             this.Host = host;
 
             GraphicsContext = new GraphicsContext2D(new SpriteBatch(Host.GraphicsDevice));
+        }
+
+        public void LoadImageManifest(string manifestName)
+        {
+            using (Stream manifestStream = File.OpenRead(Path.Combine(Host.Content.RootDirectory, "Textures\\Font.xml")))
+            {
+                ImageManifest.Load(manifestStream, this);
+            }
         }
 
         public override void Draw(UIElement startElement)

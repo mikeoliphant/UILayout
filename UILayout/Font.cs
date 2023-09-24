@@ -1,6 +1,6 @@
 ﻿namespace UILayout
 {
-    public partial class Font
+    public partial class UIFont
     {
     }
 }

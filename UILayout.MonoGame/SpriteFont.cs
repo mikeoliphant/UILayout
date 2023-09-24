@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using Microsoft.Xna.Framework;
 
 namespace UILayout
 {
@@ -20,7 +17,6 @@ namespace UILayout
     public class SpriteFontDefinition
     {
         public string Name { get; set; }
-        public int Scale { get; set; }
         public bool IsFixedWidth { get; set; }
         public int GlyphWidth { get; set; }
         public int GlyphHeight { get; set; }
@@ -73,7 +69,7 @@ namespace UILayout
 
         public static SpriteFont CreateFromDefinition(SpriteFontDefinition fontDefinition)
         {
-            string name = fontDefinition.Name + "-" + fontDefinition.Scale;
+            string name = fontDefinition.Name;
 
             if (fontDefinition.IsFixedWidth)
             {
@@ -105,8 +101,8 @@ namespace UILayout
 
             SpriteFont font = new SpriteFont(new UIImage(name), fontDefinition.Glyphs);
 
-            font.Spacing = -fontDefinition.Scale;
-            font.LineSpacing = -fontDefinition.Scale;
+            font.Spacing = -1;
+            font.LineSpacing = -1;
             font.EmptyLinePercent = 0.5f;
 
             return font;

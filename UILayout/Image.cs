@@ -2,7 +2,9 @@
 {
     public partial class UIImage
     {
-        public int Width { get; private set; }
-        public int Height { get; private set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public int XOffset { get; set; }
+        public int YOffset { get; set; }
     }
 }

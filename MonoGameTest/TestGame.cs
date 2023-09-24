@@ -8,13 +8,13 @@ namespace MonoGameTest
 {
     public class TestGame : Game
     {
-        private GraphicsDeviceManager _graphics;
+        private GraphicsDeviceManager graphicsDevice;
 
         MonoGameLayout ui;
 
         public TestGame()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            graphicsDevice = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -34,7 +34,7 @@ namespace MonoGameTest
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(SpriteFontDefinition));
 
-                TextBlock.DefaultFont = new Font { SpriteFont = UILayout.SpriteFont.CreateFromDefinition(serializer.Deserialize(fontStream) as SpriteFontDefinition) };
+                TextBlock.DefaultFont = new UIFont { SpriteFont = UILayout.SpriteFont.CreateFromDefinition(serializer.Deserialize(fontStream) as SpriteFontDefinition) };
             }
 
             TextBlock.DefaultColor = UIColor.Black;

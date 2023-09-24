@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UILayout
 {
-    public partial class Font
+    public partial class UIFont
     {
         public SpriteFont SpriteFont { get; set; }
 
