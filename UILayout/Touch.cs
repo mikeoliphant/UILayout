@@ -1,16 +1,19 @@
-﻿namespace UILayout
+﻿using System.Numerics;
+
+namespace UILayout
 {
     public enum ETouchState
     {
         Pressed,
         Moved,
         Held,
-        Released
+        Released,
+        Invalid
     }
 
     public struct Touch
     {
-        public PointF Position;
+        public Vector2 Position;
         public ETouchState TouchState;
         public int TouchID;
     }

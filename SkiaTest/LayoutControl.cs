@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading.Tasks;
+using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using SkiaSharp;
-using SkiaSharp.Views.Desktop;
 using UILayout;
 
 namespace SkiaTest
@@ -66,7 +65,7 @@ namespace SkiaTest
 
             Touch touch = new Touch()
             {
-                Position = new PointF((float)p.X, (float)p.Y),
+                Position = new Vector2((float)p.X, (float)p.Y),
                 TouchState = ETouchState.Pressed
             };
 
@@ -79,7 +78,7 @@ namespace SkiaTest
 
             Touch touch = new Touch()
             {
-                Position = new PointF((float)p.X, (float)p.Y),
+                Position = new Vector2((float)p.X, (float)p.Y),
                 TouchState = ETouchState.Released
             };
 

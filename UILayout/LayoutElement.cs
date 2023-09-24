@@ -1,4 +1,5 @@
 ﻿#if !GENERICS_UNSUPPORTED
+using System.Numerics;
 using UIElementCollection = System.Collections.Generic.List<UILayout.UIElement>;
 #else
 using UIElementCollection = System.Collections.ArrayList;
@@ -106,7 +107,7 @@ namespace UILayout
             return null;
         }
 
-        public UIElement FindClosestChild(in PointF point)
+        public UIElement FindClosestChild(in Vector2 point)
         {
             float minDist = float.MaxValue;
             UIElement minChild = null;
@@ -117,7 +118,7 @@ namespace UILayout
 
                 if (child.Visible)
                 {
-                    float dist = point.Distance(child.ContentBounds.GetCenter());
+                    float dist = Vector2.Distance(point, child.ContentBounds.GetCenter());
 
                     if (dist < minDist)
                     {

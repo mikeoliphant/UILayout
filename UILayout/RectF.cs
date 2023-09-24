@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 
 namespace UILayout
 {
@@ -37,9 +38,9 @@ namespace UILayout
             return (this.x == ((RectF)obj).x) && (this.y == ((RectF)obj).y) && (this.width == ((RectF)obj).width) && (this.height == ((RectF)obj).height);
         }
 
-        public PointF GetCenter()
+        public Vector2 GetCenter()
         {
-            return new PointF(x + (width / 2), y + (height / 2));
+            return new Vector2(x + (width / 2), y + (height / 2));
         }
 
         public void MakeEmpty()
@@ -63,7 +64,7 @@ namespace UILayout
             return (x >= this.x) && (y >= this.y) && (x < Right) && (y < Bottom);
         }
 
-        public bool Contains(in PointF point)
+        public bool Contains(in Vector2 point)
         {
             return (point.X >= x) && (point.Y >= y) && (point.X < Right) && (point.Y < Bottom);
         }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace UILayout
@@ -199,6 +201,14 @@ namespace UILayout
             }
 
             return false;
+        }
+
+        public void UpdateUserInterface(Layout userInterface)
+        {
+            foreach (Touch touch in GetTouches())
+            {
+                userInterface.HandleTouch(touch);
+            }
         }
 
         public void Update(float secondsElapsed)

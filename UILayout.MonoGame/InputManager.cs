@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Numerics;
 using Microsoft.Xna.Framework.Input;
 
 namespace UILayout
@@ -45,7 +43,7 @@ namespace UILayout
                 {
                     yield return new Touch()
                     {
-                        Position = new PointF(mouseState.X, mouseState.Y),
+                        Position = new Vector2(mouseState.X, mouseState.Y),
                         TouchState = ETouchState.Pressed
                     };
                 }
@@ -53,7 +51,7 @@ namespace UILayout
                 {
                     yield return new Touch()
                     {
-                        Position = new PointF(mouseState.X, mouseState.Y),
+                        Position = new Vector2(mouseState.X, mouseState.Y),
                         TouchState = ETouchState.Held
                     };
                 }
@@ -64,7 +62,7 @@ namespace UILayout
                 {
                     yield return new Touch()
                     {
-                        Position = new PointF(mouseState.X, mouseState.Y),
+                        Position = new Vector2(mouseState.X, mouseState.Y),
                         TouchState = ETouchState.Released
                     };
                 }
