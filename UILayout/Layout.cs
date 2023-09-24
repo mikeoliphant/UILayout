@@ -66,10 +66,15 @@ namespace UILayout
             return images[name];
         }
 
-        public UIImage AddImage(string name,UIImage image)
+        public UIImage AddImage(string name, UIImage image)
         {
             images[name] = image;
 
+            return images[name];
+        }
+
+        public UIImage GetImage(string name)
+        {
             return images[name];
         }
 
@@ -77,6 +82,11 @@ namespace UILayout
         {
             fonts[name] = font;
 
+            return fonts[name];
+        }
+
+        public UIFont GetFont(string name)
+        {
             return fonts[name];
         }
 

@@ -148,49 +148,55 @@ namespace UILayout
         //#endif
         //        }
 
+        float dragStartY = 0;
+        float lastDragY = 0;
+        float dragStartOffset = 0;
+        bool inDrag = false;
+        float totDrag = 0;
+
         public override bool HandleTouch(in Touch touch)
         {
+            int itemPos = (int)Math.Floor(((touch.Position.Y - ContentBounds.Y) + offset) / ItemHeight);
+
             if ((touch.TouchState == ETouchState.Pressed) || (touch.TouchState == ETouchState.Moved) || (touch.TouchState == ETouchState.Held))
             {
                 haveTouch = true;
 
-                touchItem = (int)Math.Floor(((touch.Position.Y - ContentBounds.Y) + offset) / ItemHeight);
+                touchItem = itemPos;
             }
 
-            return base.HandleTouch(touch);
+            if ((touch.TouchState == ETouchState.Pressed))
+            {
+                inDrag = true;
+                dragStartY = lastDragY = touch.Position.Y;
+                dragStartOffset = offset;
+                totDrag = 0;
+            }
+
+            if ((touch.TouchState == ETouchState.Moved))
+            {
+                float diff = touch.Position.Y - dragStartY;
+
+                offset = dragStartOffset - diff;
+
+                totDrag += Math.Abs(touch.Position.Y - lastDragY);
+
+                lastDragY = touch.Position.Y;
+            }
+
+            if ((touch.TouchState == ETouchState.Released))
+            {
+                if (totDrag < 5)
+                {
+                    if (itemPos < items.Count)
+                        SelectAction(itemPos);
+                }
+
+                inDrag = false;
+            }
+
+            return true;
         }
-
-        //public override bool HandleGesture(PixGesture gesture)
-        //{
-        //    int itemPos = (int)Math.Floor(((gesture.Position.Y - contentLayout.Offset.Y) + offset) / ItemHeight);
-
-        //    switch (gesture.GestureType)
-        //    {
-        //        case EPixGestureType.Tap:
-        //            if ((SelectAction != null) && (items != null))
-        //            {
-        //                if (itemPos < items.Count)
-        //                    SelectAction(itemPos);
-        //            }
-        //            break;
-        //        case EPixGestureType.Hold:
-        //            if ((HoldAction != null) && (itemPos < items.Count))
-        //            {
-        //                HoldAction(itemPos);
-        //            }
-
-        //            break;
-        //        case EPixGestureType.Drag:
-        //            offset -= gesture.Delta.Y;
-        //            break;
-
-        //        case EPixGestureType.Flick:
-        //            velocity = -gesture.Delta.Y;
-        //            break;
-        //    }
-
-        //    return true;
-        //}
 
         public void NextItem()
         {

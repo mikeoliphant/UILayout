@@ -16,7 +16,7 @@ namespace UILayout.Test
         {
             BackgroundColor = UIColor.Yellow;
             Padding = new LayoutPadding(10);
-
+           
             UIImage ninePatch = new UIImage("OutlineNinePatch");
 
             Layout.DefaultPressedNinePatch = new UIImage("ButtonPressed");

@@ -21,7 +21,7 @@ namespace UILayout
 
         public void LoadImageManifest(string manifestName)
         {
-            using (Stream manifestStream = File.OpenRead(Path.Combine(Host.Content.RootDirectory, "Textures\\Font.xml")))
+            using (Stream manifestStream = File.OpenRead(Path.Combine(Host.Content.RootDirectory, manifestName)))
             {
                 ImageManifest.Load(manifestStream, this);
             }

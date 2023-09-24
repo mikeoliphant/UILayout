@@ -11,6 +11,7 @@ namespace UILayout
         KeyboardState currentState;
 
         MouseState lastMouseState;
+        Vector2 lastMousePosition;
 
         internal bool IsKeyDown(InputKey key)
         {
@@ -37,23 +38,36 @@ namespace UILayout
         {
             MouseState mouseState = Mouse.GetState();
 
+            Vector2 position = new Vector2(mouseState.X, mouseState.Y);
+
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
                 if (lastMouseState.LeftButton == ButtonState.Released)
                 {
                     yield return new Touch()
                     {
-                        Position = new Vector2(mouseState.X, mouseState.Y),
+                        Position = position,
                         TouchState = ETouchState.Pressed
                     };
                 }
                 else
                 {
-                    yield return new Touch()
+                    if (Vector2.Distance(position, lastMousePosition) == 0)
                     {
-                        Position = new Vector2(mouseState.X, mouseState.Y),
-                        TouchState = ETouchState.Held
-                    };
+                        yield return new Touch()
+                        {
+                            Position = new Vector2(mouseState.X, mouseState.Y),
+                            TouchState = ETouchState.Held
+                        };
+                    }
+                    else
+                    {
+                        yield return new Touch()
+                        {
+                            Position = new Vector2(mouseState.X, mouseState.Y),
+                            TouchState = ETouchState.Moved
+                        };
+                    }
                 }
             }
             else
@@ -69,6 +83,7 @@ namespace UILayout
             }
 
             lastMouseState = mouseState;
+            lastMousePosition = position;
         }
     }
 }
