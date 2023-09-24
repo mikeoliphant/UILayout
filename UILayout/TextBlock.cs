@@ -2,8 +2,8 @@
 {
     public partial class TextBlock : UIElement
     {
-        public static UIFont DefaultFont { get; set; }
-        public static UIColor DefaultColor { get; set; }
+        public static UIFont DefaultFont { get; set; } = UIFont.DefaultFont;
+        public static UIColor DefaultColor { get; set; } = UIColor.Black;
 
         public string Text { get; set; }
 
@@ -14,6 +14,11 @@
         {
             TextFont = DefaultFont;
             TextColor = DefaultColor;
+        }
+
+        public TextBlock(string text)
+        {
+            Text = text;
         }
 
         protected override void DrawContents()

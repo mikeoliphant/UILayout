@@ -13,12 +13,6 @@ namespace UILayout
 
         SKRect textBounds = SKRect.Empty;
 
-        static TextBlock()
-        {
-            DefaultFont = new UIFont { Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright), TextSize = 24 };
-            DefaultColor = UIColor.Black;
-        }
-
         protected override void GetContentSize(out float width, out float height)
         {
             if (string.IsNullOrEmpty(Text))

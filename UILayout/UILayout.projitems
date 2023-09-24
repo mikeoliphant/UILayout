@@ -17,6 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)InputDialog.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InputManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LayoutElement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MathUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Menu.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RectF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SwipeList.cs" />

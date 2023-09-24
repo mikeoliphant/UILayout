@@ -13,6 +13,8 @@ namespace UILayout
     public partial class UIImage
     {
         public Texture2D Texture { get; private set; }
+        public int ActualWidth { get { return Texture.Width; } }
+        public int ActualHeight { get { return Texture.Height; } }
 
         public UIImage(string resourceName)
         {

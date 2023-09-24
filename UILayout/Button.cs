@@ -143,4 +143,82 @@ namespace UILayout
             Text = text;
         }
     }
+
+    public class TextToggleButton : Button
+    {
+        public string PressedText
+        {
+            get => pressedTextBlock.Text;
+            set => pressedTextBlock.Text = value;
+        }
+
+        TextBlock pressedTextBlock;
+
+        public string UnpressedText
+        {
+            get => unpressedTextBlock.Text;
+            set => unpressedTextBlock.Text = value;
+        }
+
+        TextBlock unpressedTextBlock;
+
+        public TextToggleButton()
+        {
+            pressedTextBlock = new TextBlock
+            {
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+            };
+
+            unpressedTextBlock = new TextBlock
+            {
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+            };
+
+            if (Layout.DefaultPressedNinePatch != null)
+            {
+                PressedElement = new NinePatchWrapper(Layout.DefaultPressedNinePatch)
+                {
+                    Child = pressedTextBlock,
+                    HorizontalAlignment = EHorizontalAlignment.Stretch,
+                    VerticalAlignment = EVerticalAlignment.Stretch
+                };
+
+                UnpressedElement = new NinePatchWrapper(Layout.DefaultUnpressedNinePatch)
+                {
+                    Child = unpressedTextBlock,
+                    HorizontalAlignment = EHorizontalAlignment.Stretch,
+                    VerticalAlignment = EVerticalAlignment.Stretch
+                };
+            }
+            else
+            {
+                PressedElement = new UIElementWrapper
+                {
+                    Child = pressedTextBlock,
+                    HorizontalAlignment = EHorizontalAlignment.Stretch,
+                    VerticalAlignment = EVerticalAlignment.Stretch,
+                    Padding = new LayoutPadding(2, 5),
+                    BackgroundColor = UIColor.Green
+                };
+
+                UnpressedElement = new UIElementWrapper()
+                {
+                    Child = unpressedTextBlock,
+                    HorizontalAlignment = EHorizontalAlignment.Stretch,
+                    VerticalAlignment = EVerticalAlignment.Stretch,
+                    Padding = new LayoutPadding(2, 5),
+                    BackgroundColor = UIColor.Red
+                };
+            }
+        }
+
+        public TextToggleButton(string pressedText, string unpressedText)
+            : this()
+        {
+            PressedText = pressedText;
+            UnpressedText = unpressedText;
+        }
+    }
 }

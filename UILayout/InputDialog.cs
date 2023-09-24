@@ -92,27 +92,6 @@ namespace UILayout
             inputStack.AddInput(input);
         }
 
-        internal bool DoAction(DialogInput input)
-        {
-            bool handled = false;
-
-            if (input.CloseOnInput)
-            {
-                Exit();
-
-                handled = true;
-            }
-
-            if (input.Action != null)
-            {
-                input.Action();
-
-                handled = true;
-            }
-
-            return handled;
-        }
-
         public virtual void Exit()
         {
             if (CloseAction != null)
@@ -128,7 +107,7 @@ namespace UILayout
 
         public ListUIElement InputContainer { get; private set; }
 
-        InputDialog dialog;
+        IPopup hostElement;
 #if !GENERICS_UNSUPPORTED
         List<DialogInput> inputs = new List<DialogInput>();
 #else
@@ -136,9 +115,9 @@ namespace UILayout
 #endif
         int selectedInput = 0;
 
-        public DialogInputStack(InputDialog dialog, ListUIElement inputContainer, params DialogInput[] inputs)
+        public DialogInputStack(IPopup hostElement, ListUIElement inputContainer, params DialogInput[] inputs)
         {
-            this.dialog = dialog;
+            this.hostElement = hostElement;
             this.InputContainer = inputContainer;
 
             Child = inputContainer;
@@ -158,7 +137,7 @@ namespace UILayout
 
             TextButton button = new TextButton(input.Text);
 
-            Action action = delegate { dialog.DoAction(input); };
+            Action action = delegate { DoAction(input); };
 
             if (input.WaitForRelease)
                 button.ClickAction = action;
@@ -173,6 +152,28 @@ namespace UILayout
         public void SelectInput(int pos)
         {
             selectedInput = pos;
+        }
+
+        bool DoAction(DialogInput input)
+        {
+            bool handled = false;
+
+            if (input.CloseOnInput)
+            {
+                if ((hostElement != null) && (hostElement.CloseAction != null))
+                    hostElement.CloseAction();
+
+                handled = true;
+            }
+
+            if (input.Action != null)
+            {
+                input.Action();
+
+                handled = true;
+            }
+
+            return handled;
         }
     }
 }

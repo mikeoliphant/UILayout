@@ -94,6 +94,8 @@ namespace UILayout
         Dictionary<string, List<IInputMapping>> inputMappings = new Dictionary<string, List<IInputMapping>>();
         float secondsElapsed;
 
+        public int MouseWheelDelta { get; private set; }
+
         public void AddMapping(string name, IInputMapping mapping)
         {
             if (!inputMappings.ContainsKey(name))

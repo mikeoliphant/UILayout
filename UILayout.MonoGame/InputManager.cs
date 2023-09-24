@@ -82,6 +82,8 @@ namespace UILayout
                 }
             }
 
+            MouseWheelDelta = mouseState.ScrollWheelValue - lastMouseState.ScrollWheelValue;
+
             lastMouseState = mouseState;
             lastMousePosition = position;
         }

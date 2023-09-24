@@ -130,28 +130,9 @@ namespace UILayout
             Layout.Current.GraphicsContext.DrawText(sb, Font, (int)x, (int)y, TextColor, FontScale);
         }
 
-        //        public override void HandleInput(PixInputManager inputManager)
-        //        {
-        //            base.HandleInput(inputManager);
-
-        //#if SHARPDX
-        //            int delta = inputManager.GetMouseWheelDelta();
-
-        //            if (delta > 0)
-        //            {
-        //                PreviousItem();
-        //            }
-        //            else if (delta < 0)
-        //            {
-        //                NextItem();
-        //            }
-        //#endif
-        //        }
-
         float dragStartY = 0;
         float lastDragY = 0;
         float dragStartOffset = 0;
-        bool inDrag = false;
         float totDrag = 0;
 
         public override bool HandleTouch(in Touch touch)
@@ -167,7 +148,6 @@ namespace UILayout
 
             if ((touch.TouchState == ETouchState.Pressed))
             {
-                inDrag = true;
                 dragStartY = lastDragY = touch.Position.Y;
                 dragStartOffset = offset;
                 totDrag = 0;
@@ -191,11 +171,25 @@ namespace UILayout
                     if (itemPos < items.Count)
                         SelectAction(itemPos);
                 }
-
-                inDrag = false;
             }
 
             return true;
+        }
+
+        public override void HandleInput(InputManager inputManager)
+        {
+            base.HandleInput(inputManager);
+
+            int delta = inputManager.MouseWheelDelta;
+
+            if (delta > 0)
+            {
+                PreviousItem();
+            }
+            else if (delta < 0)
+            {
+                NextItem();
+            }
         }
 
         public void NextItem()

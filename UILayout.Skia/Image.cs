@@ -7,6 +7,9 @@ namespace UILayout
 {
     public partial class UIImage
     {
+        public int ActualWidth { get { return Bitmap.Width; } }
+        public int ActualHeight { get { return Bitmap.Height; } }
+
         SKBitmap bitmap;
 
         public SKBitmap Bitmap

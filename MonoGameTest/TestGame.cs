@@ -34,7 +34,7 @@ namespace MonoGameTest
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(SpriteFontDefinition));
 
-                TextBlock.DefaultFont = new UIFont { SpriteFont = UILayout.SpriteFont.CreateFromDefinition(serializer.Deserialize(fontStream) as SpriteFontDefinition) };
+                UIFont.DefaultFont = new UIFont { SpriteFont = UILayout.SpriteFont.CreateFromDefinition(serializer.Deserialize(fontStream) as SpriteFontDefinition) };
             }
 
             TextBlock.DefaultColor = UIColor.Black;
