@@ -10,14 +10,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace UILayout
 {
-    public partial class Image
+    public partial class UIImage
     {
         public Texture2D Texture { get; private set; }
 
         public int XOffset { get; set; }
         public int YOffset { get; set; }
 
-        public Image(string resourceName)
+        public UIImage(string resourceName)
         {
             Texture = MonoGameLayout.Current.Host.Content.Load<Texture2D>(Path.Combine("Textures", resourceName));
 

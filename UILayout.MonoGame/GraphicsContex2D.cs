@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -8,7 +9,7 @@ namespace UILayout
     {
         SpriteBatch spriteBatch;
 
-        Image singleWhitePixelImage = new Image("SingleWhitePixel");
+        UIImage singleWhitePixelImage = new UIImage("SingleWhitePixel");
 
         public GraphicsContext2D(SpriteBatch spriteBatch)
         {
@@ -25,32 +26,37 @@ namespace UILayout
             spriteBatch.End();
         }
 
-        public void DrawImage(Image image, float x, float y)
+        public void DrawImage(UIImage image, float x, float y)
         {
             spriteBatch.Draw(image.Texture, new Vector2(x, y), Color.White);
         }
 
-        public void DrawImage(Image image, float x, float y, UIColor color)
+        public void DrawImage(UIImage image, float x, float y, UIColor color)
         {
             spriteBatch.Draw(image.Texture, new Vector2(x, y), color.NativeColor);
         }
 
-        public void DrawImage(Image image, float x, float y, UIColor color, float scale)
+        public void DrawImage(UIImage image, float x, float y, UIColor color, float scale)
         {
             spriteBatch.Draw(image.Texture, new Vector2(x, y), null, color.NativeColor, 0, Vector2.One, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawImage(Image image, float x, float y, in System.Drawing.Rectangle srcRectangle)
+        public void DrawImage(UIImage image, float x, float y, in System.Drawing.Rectangle srcRectangle)
         {
             spriteBatch.Draw(image.Texture, new Vector2(x, y), new Rectangle(srcRectangle.X, srcRectangle.Y, srcRectangle.Width, srcRectangle.Height), Color.White);
         }
 
-        public void DrawImage(Image image, float x, float y, in System.Drawing.Rectangle srcRectangle, UIColor color, float scale)
+        public void DrawImage(UIImage image, float x, float y, in System.Drawing.Rectangle srcRectangle, UIColor color)
+        {
+            spriteBatch.Draw(image.Texture, new Vector2(x, y), new Rectangle(srcRectangle.X, srcRectangle.Y, srcRectangle.Width, srcRectangle.Height), color.NativeColor);
+        }
+
+        public void DrawImage(UIImage image, float x, float y, in System.Drawing.Rectangle srcRectangle, UIColor color, float scale)
         {
             spriteBatch.Draw(image.Texture, new Vector2(x, y), new Rectangle(srcRectangle.X, srcRectangle.Y, srcRectangle.Width, srcRectangle.Height), color.NativeColor, 0, Vector2.One, scale, SpriteEffects.None, 0);
         }
 
-        public void DrawImage(Image image, in System.Drawing.Rectangle srcRectangle, in RectF destRectangle)
+        public void DrawImage(UIImage image, in System.Drawing.Rectangle srcRectangle, in RectF destRectangle)
         {
             spriteBatch.Draw(image.Texture, new Rectangle((int)destRectangle.X, (int)destRectangle.Y, (int)destRectangle.Width, (int)destRectangle.Height), new Rectangle(srcRectangle.X, srcRectangle.Y, srcRectangle.Width, srcRectangle.Height), Color.White);
         }
@@ -66,6 +72,16 @@ namespace UILayout
         }
 
         public void DrawText(String text, Font font, float x, float y, UIColor color, float scale)
+        {
+            font.SpriteFont.DrawString(text, this, x, y, color, scale);
+        }
+
+        public void DrawText(StringBuilder text, Font font, float x, float y, UIColor color)
+        {
+            font.SpriteFont.DrawString(text, this, x, y, color, 1.0f);
+        }
+
+        public void DrawText(StringBuilder text, Font font, float x, float y, UIColor color, float scale)
         {
             font.SpriteFont.DrawString(text, this, x, y, color, scale);
         }

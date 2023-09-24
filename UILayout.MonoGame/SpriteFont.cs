@@ -37,7 +37,7 @@ namespace UILayout
 
         int numGlyphs = (127 - 32);
 
-        protected Image fontImage;
+        protected UIImage fontImage;
         protected Dictionary<int, SpriteFontGlyph> glyphs = new Dictionary<int, SpriteFontGlyph>();
         protected int rowHeight;
         protected int width;
@@ -45,7 +45,7 @@ namespace UILayout
         protected float emptyRowHeight;
 
         [XmlIgnore]
-        public Image FontImage
+        public UIImage FontImage
         {
             get { return fontImage; }
         }
@@ -103,7 +103,7 @@ namespace UILayout
                 }
             }
 
-            SpriteFont font = new SpriteFont(new Image(name), fontDefinition.Glyphs);
+            SpriteFont font = new SpriteFont(new UIImage(name), fontDefinition.Glyphs);
 
             font.Spacing = -fontDefinition.Scale;
             font.LineSpacing = -fontDefinition.Scale;
@@ -112,7 +112,7 @@ namespace UILayout
             return font;
         }
 
-        public SpriteFont(Image fontImage, SpriteFontGlyph[] glyphs)
+        public SpriteFont(UIImage fontImage, SpriteFontGlyph[] glyphs)
         {
             this.fontImage = fontImage;
 
@@ -311,7 +311,7 @@ namespace UILayout
 
     public class SpriteFontFixedWidth : SpriteFont
     {
-        public SpriteFontFixedWidth(Image fontImage)
+        public SpriteFontFixedWidth(UIImage fontImage)
             : base(fontImage, new SpriteFontGlyph[0])   // fix this
         {
             this.fontImage = fontImage;

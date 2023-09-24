@@ -49,5 +49,13 @@ namespace UILayout.nanoFramework
         public void DrawText(String text, Font font, float x, float y, UIColor color, float scale)
         {
         }
+
+        public void DrawText(StringBuilder text, Font font, float x, float y, UIColor color)
+        {
+        }
+
+        public void DrawText(StringBuilder text, Font font, float x, float y, UIColor color, float scale)
+        {
+        }
     }
 }

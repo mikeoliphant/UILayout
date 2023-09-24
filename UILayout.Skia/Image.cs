@@ -5,7 +5,7 @@ using SkiaSharp;
 
 namespace UILayout
 {
-    public partial class Image
+    public partial class UIImage
     {
         SKBitmap bitmap;
 
@@ -22,7 +22,7 @@ namespace UILayout
             }
         }
 
-        public Image(string resourceName)
+        public UIImage(string resourceName)
         {
             Assembly assembly = Assembly.GetCallingAssembly();
 
@@ -32,7 +32,7 @@ namespace UILayout
             }
         }
 
-        public Image(SKBitmap bitmap)
+        public UIImage(SKBitmap bitmap)
         {
             this.Bitmap = bitmap;
         }

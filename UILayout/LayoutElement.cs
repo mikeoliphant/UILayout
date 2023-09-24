@@ -48,6 +48,12 @@ namespace UILayout
 
             return false;
         }
+
+        public override void HandleInput(InputManager inputManager)
+        {
+            if (Child != null)
+                Child.HandleInput(inputManager);
+        }
     }
 
     public class ListUIElement : LayoutElement
@@ -111,7 +117,7 @@ namespace UILayout
 
                 if (child.Visible)
                 {
-                    float dist =  point.Distance(child.ContentBounds.GetCenter());
+                    float dist = point.Distance(child.ContentBounds.GetCenter());
 
                     if (dist < minDist)
                     {
@@ -139,6 +145,16 @@ namespace UILayout
             }
 
             return base.HandleTouch(touch);
+        }
+
+        public override void HandleInput(InputManager inputManager)
+        {
+            base.HandleInput(inputManager);
+
+            for (int i = Children.Count - 1; i >= 0; i--)
+            {
+                (Children[i] as UIElement).HandleInput(inputManager);
+            }
         }
     }
 

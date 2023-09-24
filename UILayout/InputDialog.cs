@@ -42,17 +42,17 @@ namespace UILayout
         UIElementWrapper wrapper;
         DialogInputStack inputStack;
 
-        public InputDialog(Image ninePatchImage)
+        public InputDialog(UIImage ninePatchImage)
             : this(ninePatchImage, null, null)
         {
         }
 
-        public InputDialog(Image ninePatchImage, UIElement contents)
+        public InputDialog(UIImage ninePatchImage, UIElement contents)
             : this(ninePatchImage, contents, null)
         {
         }
 
-        public InputDialog(Image ninePatchImage, UIElement contents, params DialogInput[] inputs)
+        public InputDialog(UIImage ninePatchImage, UIElement contents, params DialogInput[] inputs)
             : base(ninePatchImage)
         {
             this.contents = contents;

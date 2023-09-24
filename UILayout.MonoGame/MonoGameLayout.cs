@@ -38,6 +38,14 @@ namespace UILayout
                         TouchState = ETouchState.Pressed
                     });
                 }
+                else
+                {
+                    HandleTouch(new Touch()
+                    {
+                        Position = new PointF(mouseState.X, mouseState.Y),
+                        TouchState = ETouchState.Held
+                    });
+                }
             }
             else
             {

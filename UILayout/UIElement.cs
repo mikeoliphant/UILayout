@@ -202,6 +202,11 @@
             return false;
         }
 
+        public virtual void HandleInput(InputManager inputManager)
+        {
+
+        }
+
         public void Draw()
         {
             if (!Visible)

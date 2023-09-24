@@ -15,11 +15,12 @@ namespace UILayout
     {
         public static Layout Current { get; private set; }
 
-        public static Image DefaultOutlineNinePatch { get; set; }
-        public static Image DefaultPressedNinePatch { get; set; }
-        public static Image DefaultUnpressedNinePatch { get; set; }
+        public static UIImage DefaultOutlineNinePatch { get; set; }
+        public static UIImage DefaultPressedNinePatch { get; set; }
+        public static UIImage DefaultUnpressedNinePatch { get; set; }
 
         public GraphicsContext2D GraphicsContext { get; protected set; }
+        public InputManager InputManager { get; protected set; }
 
         protected bool haveDirty = false;
         protected RectF dirtyRect = RectF.Empty;
@@ -28,6 +29,19 @@ namespace UILayout
         public UIElement RootUIElement { get; set; }
         public bool HaveDirty { get => haveDirty; }
         public RectF DirtyRect { get { return dirtyRect; } set { dirtyRect = value; } }
+
+        public UIElement ActiveUIElement
+        {
+            get
+            {
+                if (popupStack.Count > 0)
+                {
+                    return (popupStack[popupStack.Count - 1] as UIElement);
+                }
+
+                return RootUIElement;
+            }
+        }
 
 #if !GENERICS_UNSUPPORTED
         List<UIElement> popupStack = new List<UIElement>();
@@ -38,6 +52,8 @@ namespace UILayout
         public Layout()
         {
             Layout.Current = this;
+
+            InputManager = new InputManager();
         }
 
         public void SetBounds(RectF bounds)
@@ -68,11 +84,26 @@ namespace UILayout
         {
             if (RootUIElement != null)
                 RootUIElement.SetBounds(Bounds, null);
+
+            foreach (UIElement popup in popupStack)
+            {
+                popup.SetBounds(Bounds, null);
+            }
         }
 
         public virtual void Draw()
         {
             Draw(RootUIElement);
+        }
+
+        public void Update(float secondsElapsed)
+        {
+            InputManager.Update(secondsElapsed);
+
+            UIElement active = ActiveUIElement;
+
+            if (active != null)
+                active.HandleInput(InputManager);
         }
 
         public virtual void Draw(UIElement startElement)
@@ -93,13 +124,10 @@ namespace UILayout
 
         public bool HandleTouch(in Touch touch)
         {
-            if (popupStack.Count > 0)
-            {
-                return (popupStack[popupStack.Count - 1] as UIElement).HandleTouch(touch);               
-            }
+            UIElement active = ActiveUIElement;
 
-            if (RootUIElement != null)
-                return RootUIElement.HandleTouch(touch);
+            if (active != null)
+                return active.HandleTouch(touch);
 
             return false;
         }

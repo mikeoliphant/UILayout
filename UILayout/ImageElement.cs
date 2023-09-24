@@ -4,7 +4,7 @@ namespace UILayout
 {
     public partial class ImageElement : UIElement
     {
-        public Image Image
+        public UIImage Image
         {
             get; set;
         }
@@ -32,9 +32,9 @@ namespace UILayout
 
     public partial class NinePatchWrapper : UIElementWrapper
     {
-        Image image;
+        UIImage image;
 
-        public Image Image
+        public UIImage Image
         {
             get => image;
 
@@ -56,7 +56,7 @@ namespace UILayout
 
         }
 
-        public NinePatchWrapper(Image ninePatchImage)
+        public NinePatchWrapper(UIImage ninePatchImage)
             : this()
         {
             this.Image = ninePatchImage;

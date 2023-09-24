@@ -10,15 +10,17 @@ namespace UILayout.Test
 {
     public class LayoutTest : Dock
     {
+        TextBlock spaceText;
+
         public LayoutTest()
         {
             BackgroundColor = UIColor.Yellow;
             Padding = new LayoutPadding(10);
 
-            Image ninePatch = new Image("OutlineNinePatch");
+            UIImage ninePatch = new UIImage("OutlineNinePatch");
 
-            Layout.DefaultPressedNinePatch = new Image("ButtonPressed");
-            Layout.DefaultUnpressedNinePatch = new Image("ButtonUnpressed");
+            Layout.DefaultPressedNinePatch = new UIImage("ButtonPressed");
+            Layout.DefaultUnpressedNinePatch = new UIImage("ButtonUnpressed");
 
             HorizontalStack stack = new HorizontalStack
             {
@@ -30,13 +32,13 @@ namespace UILayout.Test
                 DesiredWidth = 100,
                 ChildSpacing = 10
             };
-            //Children.Add(stack);
+            Children.Add(stack);
 
             for (int i = 0; i < 4; i++)
             {
                 stack.Children.Add(new UIElement
                 {
-                    BackgroundColor = new UIColor(0, 0, 0, (byte)(0.2f + (i * .2f))),
+                    BackgroundColor = new UIColor(0, 0, 0, (byte)(32 * (i + 1))),
                     HorizontalAlignment = EHorizontalAlignment.Stretch,
                     VerticalAlignment = EVerticalAlignment.Stretch,
                 });
@@ -49,14 +51,16 @@ namespace UILayout.Test
             };
             Children.Add(textStack);
 
-            textStack.Children.Add(new TextBlock
+            Layout.Current.InputManager.AddMapping("SpacePressed", new KeyMapping(InputKey.Space));
+
+            textStack.Children.Add(spaceText = new TextBlock
             {
-                Text = "Some Text",
+                Text = "Press Space",
                 TextColor = UIColor.Black,
                 BackgroundColor = UIColor.Green,
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center,
-                Padding = new LayoutPadding(0, 20, 0, 20)
+                Padding = new LayoutPadding(20, 10)
             });
 
             textStack.Children.Add(new TextBlock
@@ -69,11 +73,29 @@ namespace UILayout.Test
                 Margin = new LayoutPadding(20)
             });
 
+            HorizontalStack buttonStack = new HorizontalStack()
+            {
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center
+            };
+            Children.Add(buttonStack);
+
 
             InputDialog dialog = new InputDialog(ninePatch, new TextBlock { Text = "Do you want to?", TextColor = UIColor.Black });
 
             dialog.AddInput(new DialogInput { Text = "Ok", CloseOnInput = true } );
             dialog.AddInput(new DialogInput { Text = "Cancel", CloseOnInput = true });
+
+            buttonStack.Children.Add(new TextButton()
+            {
+                Text = "Input Dialog",
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+                ClickAction = delegate
+                {
+                    Layout.Current.ShowPopup(dialog);
+                }
+            });
 
             MenuItemCollection menuItems = new MenuItemCollection()
             {
@@ -82,14 +104,11 @@ namespace UILayout.Test
                 new ContextMenuItem { Text = "Item 3"}
             };
 
-            Menu menu = new Menu(menuItems)
-            {
-                BackgroundColor = UIColor.White
-            };
+            Menu menu = new Menu(menuItems);
 
-            Children.Add(new TextButton()
+            buttonStack.Children.Add(new TextButton()
             {
-                Text = "Click!",
+                Text = "Popup Menu",
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center,
                 ClickAction = delegate
@@ -97,6 +116,55 @@ namespace UILayout.Test
                     Layout.Current.ShowPopup(menu);
                 }
             });
+
+            SwipeList swipeList = new SwipeList()
+            {
+                Font = TextBlock.DefaultFont,
+                TextColor = UIColor.Black,
+                VerticalAlignment = EVerticalAlignment.Stretch,
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                DesiredWidth = 100,
+                BackgroundColor = UIColor.White
+            };
+
+            List<string> items = new List<string>();
+
+            for (int i = 0; i < 30; i++)
+            {
+                items.Add("Item " + i);
+            }
+
+            swipeList.Items = items;
+            swipeList.SelectAction = delegate (int item)
+            {
+                Layout.Current.ClosePopup(swipeList);
+            };
+
+            buttonStack.Children.Add(new TextButton()
+            {
+                Text = "Swipe List",
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+                ClickAction = delegate
+                {
+                    Layout.Current.ShowPopup(swipeList);
+                }
+            });
+        }
+
+        public override void HandleInput(InputManager inputManager)
+        {
+            base.HandleInput(inputManager);
+
+            if (inputManager.WasPressed("SpacePressed"))
+            {
+                spaceText.BackgroundColor = UIColor.Red;
+            }
+
+            if (inputManager.WasReleased("SpacePressed"))
+            {
+                spaceText.BackgroundColor = UIColor.Green;
+            }
         }
     }
 }
