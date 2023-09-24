@@ -15,8 +15,6 @@ namespace UILayout
 
         public Game Host { get; private set; }
 
-        MouseState lastMouseState;
-
         public MonoGameLayout(Game host)
         {
             this.Host = host;
@@ -26,41 +24,6 @@ namespace UILayout
 
         public override void Draw(UIElement startElement)
         {
-            MouseState mouseState = Mouse.GetState();
-
-            if (mouseState.LeftButton == ButtonState.Pressed)
-            {
-                if (lastMouseState.LeftButton == ButtonState.Released)
-                {
-                    HandleTouch(new Touch()
-                    {
-                        Position = new PointF(mouseState.X, mouseState.Y),
-                        TouchState = ETouchState.Pressed
-                    });
-                }
-                else
-                {
-                    HandleTouch(new Touch()
-                    {
-                        Position = new PointF(mouseState.X, mouseState.Y),
-                        TouchState = ETouchState.Held
-                    });
-                }
-            }
-            else
-            {
-                if (lastMouseState.LeftButton == ButtonState.Pressed)
-                {
-                    HandleTouch(new Touch()
-                    {
-                        Position = new PointF(mouseState.X, mouseState.Y),
-                        TouchState = ETouchState.Released
-                    });
-                }
-            }
-
-            lastMouseState = mouseState;
-
             GraphicsContext.BeginDraw();
 
             base.Draw(startElement);

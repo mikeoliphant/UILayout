@@ -103,7 +103,14 @@ namespace UILayout
             UIElement active = ActiveUIElement;
 
             if (active != null)
+            {
+                foreach (Touch touch in InputManager.GetTouches())
+                {
+                    active.HandleTouch(touch);
+                }
+
                 active.HandleInput(InputManager);
+            }
         }
 
         public virtual void Draw(UIElement startElement)

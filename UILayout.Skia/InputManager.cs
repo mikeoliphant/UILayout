@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace UILayout
 {
@@ -23,6 +23,11 @@ namespace UILayout
 
         protected void PlatformUpdate(float secondsElapsed)
         {
+        }
+
+        public IEnumerable<Touch> GetTouches()
+        {
+            return Enumerable.Empty<Touch>();
         }
     }
 }

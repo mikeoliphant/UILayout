@@ -12,6 +12,8 @@ namespace UILayout
         KeyboardState lastState;
         KeyboardState currentState;
 
+        MouseState lastMouseState;
+
         internal bool IsKeyDown(InputKey key)
         {
             return currentState.IsKeyDown((Keys)key);
@@ -31,6 +33,44 @@ namespace UILayout
         {
             lastState = currentState;
             currentState = Keyboard.GetState();
+        }
+
+        public IEnumerable<Touch> GetTouches()
+        {
+            MouseState mouseState = Mouse.GetState();
+
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+                if (lastMouseState.LeftButton == ButtonState.Released)
+                {
+                    yield return new Touch()
+                    {
+                        Position = new PointF(mouseState.X, mouseState.Y),
+                        TouchState = ETouchState.Pressed
+                    };
+                }
+                else
+                {
+                    yield return new Touch()
+                    {
+                        Position = new PointF(mouseState.X, mouseState.Y),
+                        TouchState = ETouchState.Held
+                    };
+                }
+            }
+            else
+            {
+                if (lastMouseState.LeftButton == ButtonState.Pressed)
+                {
+                    yield return new Touch()
+                    {
+                        Position = new PointF(mouseState.X, mouseState.Y),
+                        TouchState = ETouchState.Released
+                    };
+                }
+            }
+
+            lastMouseState = mouseState;
         }
     }
 }
