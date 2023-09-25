@@ -12,11 +12,11 @@ namespace UILayout
 
         public Game Host { get; private set; }
 
-        public MonoGameLayout(Game host)
+        public MonoGameLayout()
         {
         }
 
-        public void SetHost(Game host)
+        public virtual void SetHost(Game host)
         {
             this.Host = host;
 
@@ -25,7 +25,7 @@ namespace UILayout
 
         public void LoadImageManifest(string manifestName)
         {
-            using (Stream manifestStream = File.OpenRead(Path.Combine(Host.Content.RootDirectory, manifestName)))
+            using (Stream manifestStream = File.OpenRead(Path.Combine(Path.Combine(Host.Content.RootDirectory, "Textures"), manifestName)))
             {
                 ImageManifest.Load(manifestStream, this);
             }

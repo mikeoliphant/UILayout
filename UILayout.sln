@@ -13,9 +13,11 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.Test", "UILayout.T
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.nanoFramework", "UILayout.nanoFramework\UILayout.nanoFramework.shproj", "{7CB7AEBA-6408-4B9F-BCF7-BD2A1FC0694E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameTest", "MonoGameTest\MonoGameTest.csproj", "{47F7B7A0-5F63-4900-BF71-C2834EA876BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGameTest", "MonoGameTest\MonoGameTest.csproj", "{47F7B7A0-5F63-4900-BF71-C2834EA876BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UILayout.MonoGame", "UILayout.MonoGame\UILayout.MonoGame.csproj", "{AC389588-EED4-426B-B204-BDAAA1D9496E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.MonoGame", "UILayout.MonoGame\UILayout.MonoGame.csproj", "{AC389588-EED4-426B-B204-BDAAA1D9496E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageSheetProcessor", "ImageSheetProcessor\ImageSheetProcessor.csproj", "{867A9020-0073-427A-A29F-275863F6FD94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{AC389588-EED4-426B-B204-BDAAA1D9496E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC389588-EED4-426B-B204-BDAAA1D9496E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC389588-EED4-426B-B204-BDAAA1D9496E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{867A9020-0073-427A-A29F-275863F6FD94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{867A9020-0073-427A-A29F-275863F6FD94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{867A9020-0073-427A-A29F-275863F6FD94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{867A9020-0073-427A-A29F-275863F6FD94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

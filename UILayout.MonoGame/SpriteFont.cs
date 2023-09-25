@@ -99,7 +99,7 @@ namespace UILayout
                 }
             }
 
-            SpriteFont font = new SpriteFont(new UIImage(name), fontDefinition.Glyphs);
+            SpriteFont font = new SpriteFont(Layout.Current.GetImage(name), fontDefinition.Glyphs);
 
             font.Spacing = -1;
             font.LineSpacing = -1;

@@ -10,6 +10,8 @@ namespace UILayout
     public class ImageManifestSheet
     {
         public string SheetName { get; set; }
+        public int SheetWidth { get; set; }
+        public int SheetHeight { get; set; }
         public List<ImageManifestSheetImage> Images { get; set; } = new List<ImageManifestSheetImage>();
         public List<SpriteFontDefinition> Fonts { get; set; } = new List<SpriteFontDefinition>();
     }
@@ -21,18 +23,6 @@ namespace UILayout
         public int YOffset { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-    }
-
-    public class ImageManifestFont
-    {
-        public string Name { get; set; }
-        public int Scale { get; set; }
-        public bool IsFixedWidth { get; set; }
-        public int GlyphWidth { get; set; }
-        public int GlyphHeight { get; set; }
-        public int GlyphsPerRow { get; set; }
-        public string GlyphString { get; set; }
-        public SpriteFontGlyph[] Glyphs { get; set; }
     }
 
     public class ImageManifest

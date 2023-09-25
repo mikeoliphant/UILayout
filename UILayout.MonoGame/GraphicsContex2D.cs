@@ -10,7 +10,7 @@ namespace UILayout
     {
         SpriteBatch spriteBatch;
 
-        UIImage singleWhitePixelImage = new UIImage("SingleWhitePixel");
+        public UIImage SingleWhitePixelImage { get; set; }
 
         public GraphicsContext2D(SpriteBatch spriteBatch)
         {
@@ -65,8 +65,8 @@ namespace UILayout
 
         public void DrawRectangle(in RectF rectangle, UIColor color)
         {
-            spriteBatch.Draw(singleWhitePixelImage.Texture, new Rectangle((int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height),
-                new Rectangle(singleWhitePixelImage.XOffset, singleWhitePixelImage.YOffset, singleWhitePixelImage.Width, singleWhitePixelImage.Height), color.NativeColor);
+            spriteBatch.Draw(SingleWhitePixelImage.Texture, new Rectangle((int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height),
+                new Rectangle(SingleWhitePixelImage.XOffset, SingleWhitePixelImage.YOffset, SingleWhitePixelImage.Width, SingleWhitePixelImage.Height), color.NativeColor);
         }
         public void DrawText(String text, UIFont font, float x, float y, UIColor color)
         {
