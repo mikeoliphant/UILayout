@@ -187,6 +187,51 @@ namespace UILayout
             AddDirtyRect(popup.layoutBounds);
         }
 
+
+        public void ShowContinuePopup(string text)
+        {
+            ShowContinuePopup(text, null);
+        }
+
+        public void ShowContinuePopup(UIElement contents)
+        {
+            ShowContinuePopup(contents, null);
+        }
+
+        public void ShowContinuePopup(string text, Action continueAction)
+        {
+            ShowPopup(new InputDialog(Layout.DefaultOutlineNinePatch, new TextBlock(text), new DialogInput { Text = "Continue", WaitForRelease = true, Action = continueAction, CloseOnInput = true }));
+        }
+
+        public void ShowContinuePopup(UIElement contents, Action continueAction)
+        {
+            ShowPopup(new InputDialog(Layout.DefaultOutlineNinePatch, contents, new DialogInput { Text = "Continue", WaitForRelease = true, Action = continueAction, CloseOnInput = true }));
+        }
+
+        public void ShowConfirmationPopup(string text, Action confirmAction)
+        {
+            ShowPopup(new InputDialog(Layout.DefaultOutlineNinePatch, new TextBlock(text),
+                new DialogInput { Text = "Yes", Action = confirmAction, WaitForRelease = true, CloseOnInput = true },
+                new DialogInput { Text = "No", WaitForRelease = true, CloseOnInput = true }));
+        }
+
+        public void ShowConfirmationPopup(UIElement contents, Action confirmAction)
+        {
+            ShowPopup(new InputDialog(Layout.DefaultOutlineNinePatch, contents,
+                new DialogInput { Text = "Yes", Action = confirmAction, WaitForRelease = true, CloseOnInput = true },
+                new DialogInput { Text = "No", WaitForRelease = true, CloseOnInput = true }));
+        }
+
+        public void ShowBackPopup(string text)
+        {
+            ShowPopup(new InputDialog(Layout.DefaultOutlineNinePatch, new TextBlock(text), new DialogInput { Text = "Back", WaitForRelease = true, CloseOnInput = true }));
+        }
+
+        public void ShowBackPopup(UIElement contents)
+        {
+            ShowPopup(new InputDialog(Layout.DefaultOutlineNinePatch, contents, new DialogInput { Text = "Back", WaitForRelease = true, CloseOnInput = true }));
+        }
+
         public void ClosePopup(UIElement popup)
         {
             popupStack.Remove(popup);

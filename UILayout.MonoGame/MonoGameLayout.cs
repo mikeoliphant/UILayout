@@ -14,6 +14,10 @@ namespace UILayout
 
         public MonoGameLayout(Game host)
         {
+        }
+
+        public void SetHost(Game host)
+        {
             this.Host = host;
 
             GraphicsContext = new GraphicsContext2D(new SpriteBatch(Host.GraphicsDevice));
