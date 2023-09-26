@@ -17,6 +17,7 @@
         }
 
         public TextBlock(string text)
+            : this()
         {
             Text = text;
         }

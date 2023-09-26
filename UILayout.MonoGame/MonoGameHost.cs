@@ -64,8 +64,29 @@ namespace UILayout
             Run();
         }
 
+        bool requestResize = false;
+        int requestResizeWidth;
+        int requestResizeHeight;
+
+        public void RequestResize(int newWidth, int newHeight)
+        {
+            requestResize = true;
+
+            requestResizeWidth = newWidth;
+            requestResizeHeight = newHeight;
+        }
+
         protected override void Update(GameTime gameTime)
         {
+            if (requestResize)
+            {
+                graphics.PreferredBackBufferWidth = requestResizeWidth;
+                graphics.PreferredBackBufferHeight = requestResizeHeight;
+                graphics.ApplyChanges();
+
+                requestResize = false;
+            }
+
             base.Update(gameTime);
 
             Layout.Update((float)gameTime.ElapsedGameTime.TotalSeconds);

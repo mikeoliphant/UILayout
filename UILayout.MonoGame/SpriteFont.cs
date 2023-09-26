@@ -163,6 +163,9 @@ namespace UILayout
         // *** Note don't forget that this should be the same as the StringBuilder version ***
         public void DrawString(String str, GraphicsContext2D graphicsContext, float x, float y, UIColor color, float scale)
         {
+            if (String.IsNullOrEmpty(str))
+                return;
+
             float xOffset = x;
             float yOffset = y;
 

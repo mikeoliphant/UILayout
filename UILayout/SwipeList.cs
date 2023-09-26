@@ -7,7 +7,7 @@ namespace UILayout
 {
     public class SwipeList : UIElement
     {
-        public UIFont Font { get; set; }
+        public UIFont Font { get; set; } = UIFont.DefaultFont;
         public float FontScale { get; set; } = 1.0f;
         public UIColor TextColor { get; set; } = UIColor.White;
         public UIColor HighlightColor { get; set; } = new UIColor(200, 200, 200, 255);
