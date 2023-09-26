@@ -4,6 +4,14 @@ namespace UILayout
 {
     public partial class UIColor
     {
-        public Color NativeColor { get { return new Color(R, G, B, A); } }
+        public Color NativeColor
+        {
+            get
+            {
+                float value = (float)A / 255.0f;
+
+                return new Microsoft.Xna.Framework.Color((byte)(((float)R * value)), (byte)(((float)G * value)), (byte)(((float)B * value)), A);
+            }
+        }
     }
 }

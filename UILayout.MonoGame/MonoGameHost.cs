@@ -94,9 +94,9 @@ namespace UILayout
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
             base.Draw(gameTime);
+
+            GraphicsDevice.Clear(Color.Black);
 
             if ((GraphicsDevice.Viewport.Bounds.Width != Layout.Bounds.Width) || (GraphicsDevice.Viewport.Bounds.Height != Layout.Bounds.Height))
             {

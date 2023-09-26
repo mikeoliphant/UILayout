@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.IO;
 using System.Xml.Serialization;
 using UILayout;
@@ -571,24 +573,6 @@ namespace ImageSheetProcessor
 
             AddShadow(original, newBitmap, new Rectangle(0, 0, imageWidth, imageHeight), new Point(0, VerticalPadding));
 
-            //Graphics newImageRenderer = Graphics.FromImage(newBitmap);
-
-            //Bitmap blurredSprite = new Bitmap(imageWidth, imageHeight);
-            //GaussianBlur blur = new GaussianBlur(3, 1.0f / 1.5f);
-
-            //newImageRenderer.DrawImage(original, 0, 0, imageWidth, imageHeight);
-
-            //ToBlack(newBitmap);
-
-            //blur.Apply(newBitmap, blurredSprite);
-
-            //newImageRenderer.DrawImage(blurredSprite, 0, VerticalPadding, imageWidth, imageHeight);
-            //newImageRenderer.DrawImage(original, new Rectangle(0, VerticalPadding, imageWidth, imageHeight),
-            //    new Rectangle(0, 0, imageWidth, imageHeight), GraphicsUnit.Pixel);
-
-            //if (VerticalPadding > 0)
-            //    FillVertical(newBitmap, VerticalPadding);
-
             SaveAndManifest(newBitmap, destFile);
         }
 
@@ -623,6 +607,197 @@ namespace ImageSheetProcessor
                     bitmap.SetPixel(x, bitmap.Height - (offset + 1), bitmap.GetPixel(x, bitmap.Height - (padding + 1)));
                 }
             }
+        }
+
+        Graphics measureGraphics = Graphics.FromImage(new Bitmap(1, 1, PixelFormat.Format32bppArgb));
+
+        void MeasureString(string str, Font font, out int width, out int height)
+        {
+            SizeF sizeWidth = measureGraphics.MeasureString(str, font);
+            SizeF size = measureGraphics.MeasureString(str, font, PointF.Empty, StringFormat.GenericTypographic);
+
+            size.Width = sizeWidth.Width;
+
+            width = (int)Math.Ceiling(size.Width);
+            height = (int)Math.Ceiling(size.Height);
+        }
+
+        public void AddFont(string name, string fontFamily, float emSize)
+        {
+            AddFont(name, fontFamily, FontStyle.Regular, emSize);
+        }
+
+        public void AddFont(string name, string fontFamily, FontStyle fontStyle, float emSize)
+        {
+            Font font = new Font(fontFamily, emSize, fontStyle);
+
+            AddFont(name, font, 0x20, 0x7f, 16, antialias: true);
+        }
+
+        public void AddFont(string name, Font font, int minChar, int maxChar, int glphsPerLine, bool antialias)
+        {
+            string destFile = Path.Combine(DestPath, name) + ".png";
+
+            List<Bitmap> bitmaps = new List<Bitmap>();
+            List<Rectangle> cropRects = new List<Rectangle>();
+            List<int> xPositions = new List<int>();
+            List<int> yPositions = new List<int>();
+
+            const int padding = 8;
+
+            int width = padding;
+            int height = padding;
+            int lineWidth = padding;
+            int lineHeight = padding;
+            int count = 0;
+
+            for (char ch = (char)minChar; ch < maxChar; ch++)
+            {
+                Bitmap charBitmap = RasterizeCharacter(ch, font, antialias);
+
+                Rectangle cropRect = CropCharacter(charBitmap);
+
+                bitmaps.Add(charBitmap);
+
+                xPositions.Add(lineWidth);
+                yPositions.Add(height);
+                cropRects.Add(cropRect);
+
+                lineWidth += cropRect.Width + padding;
+                lineHeight = Math.Max(lineHeight, cropRect.Height + padding);
+
+                count++;
+
+                if ((count == glphsPerLine) || (ch == maxChar - 1))
+                {
+                    width = Math.Max(width, lineWidth);
+                    height += lineHeight;
+                    lineWidth = padding;
+                    lineHeight = padding;
+                    count = 0;
+                }
+            }
+
+            SpriteFontDefinition fontEntry = new SpriteFontDefinition();
+
+            fontEntry.Name = name;
+            fontEntry.Glyphs = new SpriteFontGlyph[cropRects.Count];
+
+            for (int i = 0; i < cropRects.Count; i++)
+            {
+                fontEntry.Glyphs[i].Character = (ushort)(minChar + i);
+                fontEntry.Glyphs[i].X = xPositions[i];
+                fontEntry.Glyphs[i].Y = yPositions[i];
+                fontEntry.Glyphs[i].Width = cropRects[i].Width;
+                fontEntry.Glyphs[i].Height = cropRects[i].Height;
+            }
+
+            imageSheet.Fonts.Add(fontEntry);
+
+            Bitmap shadowed = null;
+
+            using (Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb))
+            {
+                using (Graphics outputGraphics = Graphics.FromImage(bitmap))
+                {
+                    outputGraphics.CompositingMode = CompositingMode.SourceCopy;
+
+                    for (int i = 0; i < bitmaps.Count; i++)
+                    {
+                        outputGraphics.DrawImage(bitmaps[i], new Rectangle(xPositions[i], yPositions[i], cropRects[i].Width, cropRects[i].Height), cropRects[i], GraphicsUnit.Pixel);
+                    }
+
+                    outputGraphics.Flush();
+                }
+
+                shadowed = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+
+                AddShadow(bitmap, shadowed, new Rectangle(0, 0, width, height), new Point(0, 0));
+
+                SaveAndManifest(shadowed, destFile);
+            }
+
+            // Clean up temporary objects.
+            foreach (Bitmap bitmap in bitmaps)
+                bitmap.Dispose();
+        }
+
+        private Bitmap RasterizeCharacter(char ch, Font font, bool antialias)
+        {
+            int width;
+            int height;
+
+            string text = ch.ToString();
+
+            MeasureString(text, font, out width, out height);
+
+            Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+
+            using (Graphics bitmapGraphics = Graphics.FromImage(bitmap))
+            {
+                if (antialias)
+                {
+                    bitmapGraphics.TextRenderingHint =
+                        TextRenderingHint.AntiAliasGridFit;
+                }
+                else
+                {
+                    bitmapGraphics.TextRenderingHint =
+                        TextRenderingHint.SingleBitPerPixelGridFit;
+                }
+
+                bitmapGraphics.Clear(Color.Transparent);
+
+                using (Brush brush = new SolidBrush(Color.White))
+                using (StringFormat format = new StringFormat())
+                {
+                    format.Alignment = StringAlignment.Near;
+                    format.LineAlignment = StringAlignment.Near;
+
+                    bitmapGraphics.DrawString(text, font, brush, 0, 0, format);
+                }
+
+                bitmapGraphics.Flush();
+            }
+
+            return bitmap;
+        }
+
+        private static Rectangle CropCharacter(Bitmap bitmap)
+        {
+            int cropLeft = 0;
+            int cropRight = bitmap.Width - 1;
+
+            // Remove unused space from the left.
+            while ((cropLeft < cropRight) && (BitmapIsEmpty(bitmap, cropLeft)))
+                cropLeft++;
+
+            // Remove unused space from the right.
+            while ((cropRight > cropLeft) && (BitmapIsEmpty(bitmap, cropRight)))
+                cropRight--;
+
+            // Don't crop if that would reduce the glyph down to nothing at all!
+            if (cropLeft == cropRight)
+                return new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+
+            // Add some padding back in.
+            cropLeft = Math.Max(cropLeft - 1, 0);
+            cropRight = Math.Min(cropRight + 1, bitmap.Width - 1);
+
+            int width = cropRight - cropLeft + 1;
+
+            return new Rectangle(cropLeft, 0, width, bitmap.Height);
+        }
+
+        private static bool BitmapIsEmpty(Bitmap bitmap, int x)
+        {
+            for (int y = 0; y < bitmap.Height; y++)
+            {
+                if (bitmap.GetPixel(x, y).A != 0)
+                    return false;
+            }
+
+            return true;
         }
 
         public void SaveAndManifest(Bitmap bitmap, string destFile)
