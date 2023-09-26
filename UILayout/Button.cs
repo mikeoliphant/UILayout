@@ -6,11 +6,12 @@ namespace UILayout
     {
         public Action PressAction { get; set; }
         public Action ClickAction { get; set; }
+        public bool IsToggleButton { get; set; }
 
         UIElement pressedElement;
         UIElement unpressedElement;
 
-        bool down = false;
+        bool pressed = false;
 
         public UIElement PressedElement
         {
@@ -23,7 +24,7 @@ namespace UILayout
                 if ((pressedElement != null) && !ContentBounds.IsEmpty)
                     pressedElement.SetBounds(ContentBounds, this);
 
-                if (down)
+                if (pressed)
                     Child = pressedElement;
             }
         }
@@ -39,18 +40,40 @@ namespace UILayout
                 if ((unpressedElement != null) && !ContentBounds.IsEmpty)
                     unpressedElement.SetBounds(ContentBounds, this);
 
-                if (!down)
+                if (!pressed)
                     Child = unpressedElement;
             }
         }
 
+        public void SetPressed(bool pressed)
+        {
+            if (this.pressed != pressed)
+                Toggle();
+        }
+
         public void Toggle()
         {
-            down = !down;
+            pressed = !pressed;
 
-            Child = down ? pressedElement : unpressedElement;
+            Child = pressed ? pressedElement : unpressedElement;
 
             UpdateContentLayout();
+        }
+
+        protected override void GetContentSize(out float width, out float height)
+        {
+            float pressedWidth;
+            float pressedHight;
+
+            pressedElement.GetSize(out pressedWidth, out pressedHight);
+
+            float unpressedWidth;
+            float unpressedHight;
+
+            unpressedElement.GetSize(out unpressedWidth, out unpressedHight);
+
+            width = Math.Max(pressedWidth, unpressedWidth);
+            height = Math.Max(pressedHight, unpressedHight);
         }
 
         public override bool HandleTouch(in Touch touch)
@@ -58,21 +81,34 @@ namespace UILayout
             switch (touch.TouchState)
             {
                 case ETouchState.Pressed:
-                    if (!down)
-                    {
-                        Toggle();
-
-                        if (PressAction != null)
-                            PressAction();
-                    }
-                    break;
-                case ETouchState.Released:
-                    if (down)
+                    if (IsToggleButton)
                     {
                         Toggle();
 
                         if (ClickAction != null)
                             ClickAction();
+                    }
+                    else
+                    {
+                        if (!pressed)
+                        {
+                            Toggle();
+
+                            if (PressAction != null)
+                                PressAction();
+                        }
+                    }
+                    break;
+                case ETouchState.Released:
+                    if (!IsToggleButton)
+                    {
+                        if (pressed)
+                        {
+                            Toggle();
+
+                            if (ClickAction != null)
+                                ClickAction();
+                        }
                     }
                     break;
             }
@@ -164,6 +200,8 @@ namespace UILayout
 
         public TextToggleButton()
         {
+            IsToggleButton = true;
+
             pressedTextBlock = new TextBlock
             {
                 HorizontalAlignment = EHorizontalAlignment.Center,
@@ -178,7 +216,7 @@ namespace UILayout
 
             if (Layout.DefaultPressedNinePatch != null)
             {
-                PressedElement = new NinePatchWrapper(Layout.DefaultPressedNinePatch)
+                PressedElement = new NinePatchWrapper(Layout.DefaultUnpressedNinePatch)
                 {
                     Child = pressedTextBlock,
                     HorizontalAlignment = EHorizontalAlignment.Stretch,
