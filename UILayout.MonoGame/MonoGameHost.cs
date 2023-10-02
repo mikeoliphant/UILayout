@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 
 namespace UILayout
 {
@@ -38,6 +39,8 @@ namespace UILayout
                 graphics.PreferredBackBufferWidth = ScreenWidth;
                 graphics.PreferredBackBufferHeight = ScreenHeight;
             }
+
+            Content = new AssemblyRelativeContentManager(Services);
 
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -76,6 +79,11 @@ namespace UILayout
             requestResizeHeight = newHeight;
         }
 
+        public Stream OpenContentStream(string contentPath)
+        {
+            return AssemblyRelativeContentManager.OpenAseemblyRelativeStream(Path.Combine(Content.RootDirectory, contentPath));
+        }
+
         protected override void Update(GameTime gameTime)
         {
             if (requestResize)
@@ -107,6 +115,26 @@ namespace UILayout
 
             Layout.AddDirtyRect(Layout.Bounds);
             Layout.Draw();
+        }
+    }
+
+    public class AssemblyRelativeContentManager : ContentManager
+    {
+        public static String AssemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+        public static Stream OpenAseemblyRelativeStream(string relativePath)
+        {
+            return File.OpenRead(Path.Combine(AssemblyPath, relativePath));
+        }
+
+        public AssemblyRelativeContentManager(IServiceProvider serviceProvider)
+            : base(serviceProvider)
+        {
+        }
+
+        protected override Stream OpenStream(string assetName)
+        {
+            return OpenAseemblyRelativeStream(Path.Combine(RootDirectory, assetName) + ".xnb");
         }
     }
 }

@@ -10,7 +10,7 @@ namespace UILayout
     {
         public static new MonoGameLayout Current { get { return Layout.Current as MonoGameLayout; } }
 
-        public Game Host { get; private set; }
+        public MonoGameHost Host { get; private set; }
 
         public MonoGameLayout()
         {
@@ -18,14 +18,14 @@ namespace UILayout
 
         public virtual void SetHost(Game host)
         {
-            this.Host = host;
+            this.Host = host as MonoGameHost;
 
             GraphicsContext = new GraphicsContext2D(new SpriteBatch(Host.GraphicsDevice));
         }
 
         public void LoadImageManifest(string manifestName)
         {
-            using (Stream manifestStream = File.OpenRead(Path.Combine(Path.Combine(Host.Content.RootDirectory, "Textures"), manifestName)))
+            using (Stream manifestStream = Host.OpenContentStream(Path.Combine("Textures", manifestName)))
             {
                 ImageManifest.Load(manifestStream, this);
             }
