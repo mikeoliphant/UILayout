@@ -14,7 +14,7 @@ namespace UILayout
 
         public DialogInput()
         {
-            CloseOnInput = true;
+            CloseOnInput = false;
             WaitForRelease = true;
         }
     }

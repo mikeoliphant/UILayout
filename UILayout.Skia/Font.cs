@@ -1,4 +1,5 @@
 ﻿using SkiaSharp;
+using System.Text;
 
 namespace UILayout
 {
@@ -6,6 +7,14 @@ namespace UILayout
     {
         public SKTypeface Typeface { get; set; }
         public float TextSize { get; set; }
+
+        SKPaint measurePaint = new SKPaint
+        {
+            IsAntialias = true,
+            Style = SKPaintStyle.StrokeAndFill
+        };
+
+        SKRect bounds = SKRect.Empty;
 
         public float TextHeight
         {
@@ -15,6 +24,28 @@ namespace UILayout
         static UIFont()
         {
             DefaultFont = new UIFont { Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright), TextSize = 24 };
+        }
+
+        public void MeasureString(string text, out float width, out float height)
+        {
+            measurePaint.Typeface = Typeface;
+            measurePaint.TextSize = TextSize;
+
+            measurePaint.MeasureText(text, ref bounds);
+
+            width = bounds.Width;
+            height = bounds.Height;
+        }
+
+        public void MeasureString(StringBuilder sb, out float width, out float height)
+        {
+            measurePaint.Typeface = Typeface;
+            measurePaint.TextSize = TextSize;
+
+            measurePaint.MeasureText(sb.ToString(), ref bounds);
+
+            width = bounds.Width;
+            height = bounds.Height;
         }
     }
 }
