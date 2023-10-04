@@ -38,7 +38,7 @@ namespace UILayout
         {
             MouseState mouseState = Mouse.GetState();
 
-            Vector2 position = new Vector2(mouseState.X, mouseState.Y);
+            Vector2 position = new Vector2(mouseState.X, mouseState.Y) / (Layout.Current as MonoGameLayout).Scale;
 
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
@@ -56,7 +56,7 @@ namespace UILayout
                     {
                         yield return new Touch()
                         {
-                            Position = new Vector2(mouseState.X, mouseState.Y),
+                            Position = position,
                             TouchState = ETouchState.Held
                         };
                     }
@@ -64,7 +64,7 @@ namespace UILayout
                     {
                         yield return new Touch()
                         {
-                            Position = new Vector2(mouseState.X, mouseState.Y),
+                            Position = position,
                             TouchState = ETouchState.Moved
                         };
                     }
@@ -76,7 +76,7 @@ namespace UILayout
                 {
                     yield return new Touch()
                     {
-                        Position = new Vector2(mouseState.X, mouseState.Y),
+                        Position = position,
                         TouchState = ETouchState.Released
                     };
                 }

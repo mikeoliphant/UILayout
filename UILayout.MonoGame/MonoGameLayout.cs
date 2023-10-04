@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
-using System.Xml.Serialization;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace UILayout
 {
@@ -12,6 +13,8 @@ namespace UILayout
 
         public MonoGameHost Host { get; private set; }
 
+        public float Scale { get; protected set; } = 1.0f;
+
         public MonoGameLayout()
         {
         }
@@ -20,7 +23,7 @@ namespace UILayout
         {
             this.Host = host as MonoGameHost;
 
-            GraphicsContext = new GraphicsContext2D(new SpriteBatch(Host.GraphicsDevice));
+            GraphicsContext = new GraphicsContext2D(new SpriteBatch(Host.GraphicsDevice)) { Scale = Scale };
         }
 
         public void LoadImageManifest(string manifestName)
@@ -29,6 +32,11 @@ namespace UILayout
             {
                 ImageManifest.Load(manifestStream, this);
             }
+        }
+
+        public override void SetBounds(RectF bounds)
+        {
+            base.SetBounds(new RectF(bounds.X, bounds.Y, bounds.Width / Scale, bounds.Height / Scale));
         }
 
         public override void Draw(UIElement startElement)

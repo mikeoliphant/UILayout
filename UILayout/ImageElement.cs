@@ -1,12 +1,20 @@
-﻿using System.Drawing;
+﻿using System.Numerics;
 
 namespace UILayout
 {
     public partial class ImageElement : UIElement
     {
-        public UIImage Image
+        public UIImage Image { get; set; }
+        public UIColor Color { get; set; } = UIColor.White;
+
+        public ImageElement(string imageName)
+            : this(Layout.Current.GetImage(imageName))
         {
-            get; set;
+        }
+
+        public ImageElement(UIImage image)
+        {
+            Image = image;
         }
 
         protected override void GetContentSize(out float width, out float height)
@@ -26,7 +34,43 @@ namespace UILayout
         {
             base.DrawContents();
 
-            Layout.Current.GraphicsContext.DrawImage(Image, ContentBounds.X, ContentBounds.Y);
+            Layout.Current.GraphicsContext.DrawImage(Image, ContentBounds.X, ContentBounds.Y, Color);
+        }
+    }
+
+    public partial class RotatingImageElement : UIElement
+    {
+        public UIImage Image { get; set; }
+        public UIColor Color { get; set; } = UIColor.White;
+        public float Rotation { get; set; } = 0;
+
+        public RotatingImageElement(string imageName)
+            : this(Layout.Current.GetImage(imageName))
+        {
+        }
+
+        public RotatingImageElement(UIImage image)
+        {
+            Image = image;
+        }
+
+        protected override void GetContentSize(out float width, out float height)
+        {
+            width = 0;
+            height = 0;
+
+            if (Image != null)
+            {
+                width = Image.Width;
+                height = Image.Height;
+            }
+        }
+
+        protected override void DrawContents()
+        {
+            base.DrawContents();
+
+            Layout.Current.GraphicsContext.DrawImage(Image, ContentBounds.CenterX, ContentBounds.CenterY, Color, Rotation, new Vector2(Image.Width / 2.0f, Image.Height / 2.0f), 1.0f);
         }
     }
 
@@ -45,6 +89,8 @@ namespace UILayout
                 UpdateNintePatch();
             }
         }
+
+        public UIColor Color { get; set; } = UIColor.White;
 
         int[] imageWidths = new int[3];
         int[] imageHeights = new int[3];
@@ -103,7 +149,7 @@ namespace UILayout
 
                     for (int x = 0; x < 3; x++)
                     {
-                        Layout.Current.GraphicsContext.DrawImage(Image, new System.Drawing.Rectangle(srcOffsetX, srcOffsetY, imageWidths[x], imageHeights[y]), new RectF(destOffsetX, destOffsetY, destWidths[x], destHeights[y]));
+                        Layout.Current.GraphicsContext.DrawImage(Image, new System.Drawing.Rectangle(srcOffsetX, srcOffsetY, imageWidths[x], imageHeights[y]), new RectF(destOffsetX, destOffsetY, destWidths[x], destHeights[y]), Color);
 
                         srcOffsetX += imageWidths[x];
                         destOffsetX += destWidths[x];

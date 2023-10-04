@@ -7,11 +7,10 @@ namespace UILayout
         public Action PressAction { get; set; }
         public Action ClickAction { get; set; }
         public bool IsToggleButton { get; set; }
+        public bool IsPressed { get; private set; }
 
         UIElement pressedElement;
         UIElement unpressedElement;
-
-        bool pressed = false;
 
         public UIElement PressedElement
         {
@@ -24,7 +23,7 @@ namespace UILayout
                 if ((pressedElement != null) && !ContentBounds.IsEmpty)
                     pressedElement.SetBounds(ContentBounds, this);
 
-                if (pressed)
+                if (IsPressed)
                     Child = pressedElement;
             }
         }
@@ -40,22 +39,22 @@ namespace UILayout
                 if ((unpressedElement != null) && !ContentBounds.IsEmpty)
                     unpressedElement.SetBounds(ContentBounds, this);
 
-                if (!pressed)
+                if (!IsPressed)
                     Child = unpressedElement;
             }
         }
 
         public void SetPressed(bool pressed)
         {
-            if (this.pressed != pressed)
+            if (this.IsPressed != pressed)
                 Toggle();
         }
 
         public void Toggle()
         {
-            pressed = !pressed;
+            IsPressed = !IsPressed;
 
-            Child = pressed ? pressedElement : unpressedElement;
+            Child = IsPressed ? pressedElement : unpressedElement;
 
             UpdateContentLayout();
         }
@@ -90,7 +89,7 @@ namespace UILayout
                     }
                     else
                     {
-                        if (!pressed)
+                        if (!IsPressed)
                         {
                             Toggle();
 
@@ -102,7 +101,7 @@ namespace UILayout
                 case ETouchState.Released:
                     if (!IsToggleButton)
                     {
-                        if (pressed)
+                        if (IsPressed)
                         {
                             Toggle();
 
@@ -117,7 +116,54 @@ namespace UILayout
         }
     }
 
-    public class TextButton : Button
+    public class NinePatchButton : Button
+    {
+        public NinePatchButton()
+        {
+        }
+
+        public void SetElements(UIElement pressedElement, UIElement unpressedElement)
+        {
+            if (Layout.DefaultPressedNinePatch != null)
+            {
+                PressedElement = new NinePatchWrapper(Layout.DefaultPressedNinePatch)
+                {
+                    Child = pressedElement,
+                    HorizontalAlignment = EHorizontalAlignment.Stretch,
+                    VerticalAlignment = EVerticalAlignment.Stretch
+                };
+
+                UnpressedElement = new NinePatchWrapper(Layout.DefaultUnpressedNinePatch)
+                {
+                    Child = unpressedElement,
+                    HorizontalAlignment = EHorizontalAlignment.Stretch,
+                    VerticalAlignment = EVerticalAlignment.Stretch
+                };
+            }
+            else
+            {
+                PressedElement = new UIElementWrapper
+                {
+                    Child = pressedElement,
+                    HorizontalAlignment = EHorizontalAlignment.Stretch,
+                    VerticalAlignment = EVerticalAlignment.Stretch,
+                    Padding = new LayoutPadding(2, 5),
+                    BackgroundColor = UIColor.Green
+                };
+
+                UnpressedElement = new UIElementWrapper()
+                {
+                    Child = unpressedElement,
+                    HorizontalAlignment = EHorizontalAlignment.Stretch,
+                    VerticalAlignment = EVerticalAlignment.Stretch,
+                    Padding = new LayoutPadding(2, 5),
+                    BackgroundColor = UIColor.Red
+                };
+            }
+        }
+    }
+
+    public class TextButton : NinePatchButton
     {
         public string Text
         {
@@ -125,7 +171,25 @@ namespace UILayout
             set => textBlock.Text = value;
         }
 
+        public UIColor TextColor
+        {
+            get { return textBlock.TextColor; }
+            set { textBlock.TextColor = value; }
+        }
+
+        public UIFont TextFont
+        {
+            get { return textBlock.TextFont; }
+            set { textBlock.TextFont = value; }
+        }
+
         TextBlock textBlock;
+
+        public TextButton(string text)
+            : this()
+        {
+            Text = text;
+        }
 
         public TextButton()
         {
@@ -135,52 +199,11 @@ namespace UILayout
                 VerticalAlignment = EVerticalAlignment.Center,
             };
 
-            if (Layout.DefaultPressedNinePatch != null)
-            {
-                PressedElement = new NinePatchWrapper(Layout.DefaultPressedNinePatch)
-                {
-                    Child = textBlock,
-                    HorizontalAlignment = EHorizontalAlignment.Stretch,
-                    VerticalAlignment = EVerticalAlignment.Stretch
-                };
-
-                UnpressedElement = new NinePatchWrapper(Layout.DefaultUnpressedNinePatch)
-                {
-                    Child = textBlock,
-                    HorizontalAlignment = EHorizontalAlignment.Stretch,
-                    VerticalAlignment = EVerticalAlignment.Stretch
-                };
-            }
-            else
-            {
-                PressedElement = new UIElementWrapper
-                {
-                    Child = textBlock,
-                    HorizontalAlignment = EHorizontalAlignment.Stretch,
-                    VerticalAlignment = EVerticalAlignment.Stretch,
-                    Padding = new LayoutPadding(2, 5),
-                    BackgroundColor = UIColor.Green
-                };
-
-                UnpressedElement = new UIElementWrapper()
-                {
-                    Child = textBlock,
-                    HorizontalAlignment = EHorizontalAlignment.Stretch,
-                    VerticalAlignment = EVerticalAlignment.Stretch,
-                    Padding = new LayoutPadding(2, 5),
-                    BackgroundColor = UIColor.Red
-                };
-            }
-        }
-
-        public TextButton(string text)
-            : this()
-        {
-            Text = text;
+            SetElements(textBlock, textBlock);
         }
     }
 
-    public class TextToggleButton : Button
+    public class TextToggleButton : NinePatchButton
     {
         public string PressedText
         {
@@ -198,6 +221,13 @@ namespace UILayout
 
         TextBlock unpressedTextBlock;
 
+        public TextToggleButton(string pressedText, string unpressedText)
+            : this()
+        {
+            PressedText = pressedText;
+            UnpressedText = unpressedText;
+        }
+
         public TextToggleButton()
         {
             IsToggleButton = true;
@@ -214,49 +244,43 @@ namespace UILayout
                 VerticalAlignment = EVerticalAlignment.Center,
             };
 
-            if (Layout.DefaultPressedNinePatch != null)
-            {
-                PressedElement = new NinePatchWrapper(Layout.DefaultUnpressedNinePatch)
-                {
-                    Child = pressedTextBlock,
-                    HorizontalAlignment = EHorizontalAlignment.Stretch,
-                    VerticalAlignment = EVerticalAlignment.Stretch
-                };
+            SetElements(pressedTextBlock, unpressedTextBlock);
+        }
+    }
 
-                UnpressedElement = new NinePatchWrapper(Layout.DefaultUnpressedNinePatch)
-                {
-                    Child = unpressedTextBlock,
-                    HorizontalAlignment = EHorizontalAlignment.Stretch,
-                    VerticalAlignment = EVerticalAlignment.Stretch
-                };
-            }
-            else
-            {
-                PressedElement = new UIElementWrapper
-                {
-                    Child = pressedTextBlock,
-                    HorizontalAlignment = EHorizontalAlignment.Stretch,
-                    VerticalAlignment = EVerticalAlignment.Stretch,
-                    Padding = new LayoutPadding(2, 5),
-                    BackgroundColor = UIColor.Green
-                };
+    public class ImageButton : NinePatchButton
+    {
+        ImageElement imageElement;
 
-                UnpressedElement = new UIElementWrapper()
-                {
-                    Child = unpressedTextBlock,
-                    HorizontalAlignment = EHorizontalAlignment.Stretch,
-                    VerticalAlignment = EVerticalAlignment.Stretch,
-                    Padding = new LayoutPadding(2, 5),
-                    BackgroundColor = UIColor.Red
-                };
-            }
+        public ImageButton(string imageName)
+            : this(Layout.Current.GetImage(imageName))
+        {
         }
 
-        public TextToggleButton(string pressedText, string unpressedText)
-            : this()
+        public ImageButton(UIImage image)
         {
-            PressedText = pressedText;
-            UnpressedText = unpressedText;
+            imageElement = new ImageElement(image);
+
+            SetElements(imageElement, imageElement);
+        }
+    }
+
+    public class ImageToggleButton : NinePatchButton
+    {
+        ImageElement pressedImageElement;
+        ImageElement unpressedImageElement;
+
+        public ImageToggleButton(string pressedImageName, string unpressedImageName)
+            : this(Layout.Current.GetImage(pressedImageName), Layout.Current.GetImage(unpressedImageName))
+        {
+        }
+
+        public ImageToggleButton(UIImage pressedImage, UIImage unpressedImage)
+        {
+            pressedImageElement = new ImageElement(pressedImage);
+            unpressedImageElement = new ImageElement(unpressedImage);
+
+            SetElements(pressedImageElement, unpressedImageElement);
         }
     }
 }

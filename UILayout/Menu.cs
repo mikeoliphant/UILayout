@@ -32,7 +32,7 @@ namespace UILayout
             SetMenuItems(menuItems);
         }
 
-        void SetMenuItems(MenuItemCollection menuItems)
+        public void SetMenuItems(MenuItemCollection menuItems)
         {
             Children.Clear();
 

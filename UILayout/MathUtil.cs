@@ -6,6 +6,8 @@ namespace UILayout
 {
     public static class MathUtil
     {
+        public const float PiOver2 = (float)(Math.PI / 2.0);
+
         public static float Clamp(float val, float min, float max)
         {
             if (val < min)

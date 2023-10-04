@@ -1,4 +1,6 @@
-﻿namespace UILayout
+﻿using System.Numerics;
+
+namespace UILayout
 {
     public enum EHorizontalAlignment
     {
@@ -72,6 +74,9 @@
         public RectF LayoutBounds { get => layoutBounds; }
         public float DesiredWidth { get; set; }
         public float DesiredHeight { get; set; }
+        public bool HaveTouchCapture { get; private set; }
+        public Vector2 TouchCaptureStartPosition { get; private set; }
+        public int CapturedTouchID { get; private set; }
 
         public UIElement()
         {
@@ -80,21 +85,26 @@
 
         public void GetSize(out float width, out float height)
         {
-            GetContentSize(out width, out height);
-
-            if (HorizontalAlignment != EHorizontalAlignment.Absolute)
+            if ((HorizontalAlignment == EHorizontalAlignment.Absolute) || (VerticalAlignment == EVerticalAlignment.Absolute))
             {
+                width = 0;
+                height = 0;
+            }
+            else
+            {
+                GetContentSize(out width, out height);
+
                 if (DesiredWidth != 0)
+                {
                     width = DesiredWidth;
+                }
+
+                if (DesiredHeight != 0)
+                {
+                    height = DesiredHeight;
+                }
 
                 width += Margin.Left + Margin.Right + Padding.Left + Padding.Right;
-            }
-
-            if (VerticalAlignment != EVerticalAlignment.Absolute)
-            {
-                if (DesiredHeight != 0)
-                    height = DesiredHeight;
-
                 height += Margin.Top + Margin.Bottom + Padding.Top + Padding.Bottom;
             }
         }
@@ -126,7 +136,14 @@
             float layoutWidth;
             float layoutHeight;
 
-            GetSize(out layoutWidth, out layoutHeight);
+            if ((HorizontalAlignment == EHorizontalAlignment.Absolute) || (VerticalAlignment == EVerticalAlignment.Absolute))
+            {
+                GetContentSize(out layoutWidth, out layoutHeight);
+            }
+            else
+            {
+                GetSize(out layoutWidth, out layoutHeight);
+            }
 
             float layoutLeft = 0;
             float layoutTop = 0;
@@ -179,11 +196,22 @@
                     break;
             }
 
-            RectF newLayoutBounds = Margin.ShrinkRectangle(new RectF(layoutLeft, layoutTop, layoutWidth, layoutHeight));
+            RectF newLayoutBounds = new RectF(layoutLeft, layoutTop, layoutWidth, layoutHeight);
+
+            if ((HorizontalAlignment == EHorizontalAlignment.Absolute) || (VerticalAlignment == EVerticalAlignment.Absolute))
+            {
+                newLayoutBounds.X += Margin.Left;
+                newLayoutBounds.Y += Margin.Top;
+            }
+            else
+            {
+                newLayoutBounds = Margin.ShrinkRectangle(newLayoutBounds);
+            }
+
             RectF newContentBounds = Padding.ShrinkRectangle(newLayoutBounds);
 
             // Only call UpdateContentLayout if the layout changed
-            if (!newLayoutBounds.Equals(LayoutBounds) || !newContentBounds.Equals(ContentBounds))
+            if (true) //!newLayoutBounds.Equals(LayoutBounds) || !newContentBounds.Equals(ContentBounds))
             {
                 layoutBounds = newLayoutBounds;
                 contentBounds = newContentBounds;
@@ -200,6 +228,27 @@
         public virtual bool HandleTouch(in Touch touch)
         {
             return false;
+        }
+
+        public void CaptureTouch(Touch touch)
+        {
+            HaveTouchCapture = true;
+            CapturedTouchID = touch.TouchID;
+
+            TouchCaptureStartPosition = touch.Position;
+
+            Layout.Current.CaptureTouch(CapturedTouchID, this);
+        }
+
+        public void ReleaseTouch()
+        {
+            ReleaseTouch(CapturedTouchID);
+        }
+
+        public void ReleaseTouch(int touchID)
+        {
+            HaveTouchCapture = false;
+            Layout.Current.ReleaseTouch(touchID, this);
         }
 
         public virtual void HandleInput(InputManager inputManager)

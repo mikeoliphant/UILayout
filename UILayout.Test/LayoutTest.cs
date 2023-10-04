@@ -17,10 +17,16 @@ namespace UILayout.Test
             BackgroundColor = UIColor.Yellow;
             Padding = new LayoutPadding(10);
            
-            UIImage ninePatch = new UIImage("OutlineNinePatch");
+            UIImage ninePatch = Layout.Current.AddImage("OutlineNinePatch");
 
-            Layout.DefaultPressedNinePatch = new UIImage("ButtonPressed");
-            Layout.DefaultUnpressedNinePatch = new UIImage("ButtonUnpressed");
+            Layout.DefaultPressedNinePatch = Layout.Current.AddImage("ButtonPressed");
+            Layout.DefaultUnpressedNinePatch = Layout.Current.AddImage("ButtonUnpressed");
+
+            VerticalSlider verticalSlider = new VerticalSlider("ButtonPressed")
+            {
+                DesiredHeight = 100
+            };
+            Children.Add(verticalSlider);
 
             HorizontalStack stack = new HorizontalStack
             {

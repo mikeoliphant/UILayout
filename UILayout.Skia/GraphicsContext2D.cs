@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using System.Numerics;
 using System.Text;
 using SkiaSharp;
 
@@ -58,6 +60,19 @@ namespace UILayout
         public void DrawImage(UIImage image, in System.Drawing.Rectangle srcRectangle, in RectF destRectangle)
         {
             Canvas.DrawBitmap(image.Bitmap, new SKRect(srcRectangle.X + image.XOffset, srcRectangle.Y + image.YOffset, srcRectangle.Right, srcRectangle.Bottom), new SKRect((int)destRectangle.X, (int)destRectangle.Y, (int)destRectangle.Right, (int)destRectangle.Bottom));
+        }
+
+        public void DrawImage(UIImage image, in System.Drawing.Rectangle srcRectangle, in RectF destRectangle, UIColor color)
+        {
+            colorPaint.Color = color.NativeColor;
+
+            Canvas.DrawBitmap(image.Bitmap, new SKRect(srcRectangle.X + image.XOffset, srcRectangle.Y + image.YOffset, srcRectangle.Right, srcRectangle.Bottom),
+                new SKRect((int)destRectangle.X, (int)destRectangle.Y, (int)destRectangle.Right, (int)destRectangle.Bottom), colorPaint);
+        }
+
+        public void DrawImage(UIImage image, float x, float y, UIColor color, float rotation, Vector2 origin, float scale)
+        {
+            throw new NotImplementedException();
         }
 
         public void DrawRectangle(in RectF rectangle, UIColor color)

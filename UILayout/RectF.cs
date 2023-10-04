@@ -19,6 +19,15 @@ namespace UILayout
         public float Left { get { return x; } }
         public float Right { get { return x + width; } }
         public bool IsEmpty { get { return (width == 0) || (height == 0); } }
+        public float CenterX { get { return X + (Width / 2); } }
+        public float CenterY { get { return Y + (Height / 2); } }
+        public Vector2 Center
+        {
+            get
+            {
+                return new Vector2(X + (Width / 2), Y + (Height / 2));
+            }
+        }
 
         public static RectF Empty { get { return new RectF(0, 0, 0, 0); } }
 
@@ -36,11 +45,6 @@ namespace UILayout
                 return false;
 
             return (this.x == ((RectF)obj).x) && (this.y == ((RectF)obj).y) && (this.width == ((RectF)obj).width) && (this.height == ((RectF)obj).height);
-        }
-
-        public Vector2 GetCenter()
-        {
-            return new Vector2(x + (width / 2), y + (height / 2));
         }
 
         public void MakeEmpty()

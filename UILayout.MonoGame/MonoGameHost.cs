@@ -53,7 +53,6 @@ namespace UILayout
             base.Initialize();
 
             Window.AllowUserResizing = true;
-
         }
 
         protected override void LoadContent()

@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Globalization;
+using System.Numerics;
 
 namespace UILayout
 {
@@ -78,6 +79,23 @@ namespace UILayout
         public Vector3 ToVector3()
         {
             return new Vector3((float)R / 255.0f, (float)G / 255.0f, (float)B / 255.0f);
+        }
+
+        public static UIColor FromHex(string hex)
+        {
+            if (!string.IsNullOrEmpty(hex))
+            {
+                string colorStr = hex.TrimStart('#');
+
+                if (colorStr.Length == 6)
+                {
+                    return new UIColor(int.Parse(colorStr.Substring(0, 2), NumberStyles.HexNumber),
+                        int.Parse(colorStr.Substring(2, 2), NumberStyles.HexNumber),
+                        int.Parse(colorStr.Substring(4, 2), NumberStyles.HexNumber));
+                }
+            }
+
+            return UIColor.Transparent;
         }
 
         public static UIColor Lerp(UIColor color1, UIColor color2, float lerp)

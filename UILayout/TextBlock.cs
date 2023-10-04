@@ -2,10 +2,47 @@
 
 namespace UILayout
 {
+    public static class StringBuilderExtensions
+    {
+        static char[] numberBuffer = new char[16];  // Not thread safe - should find a better way
+
+        public static StringBuilder AppendNumber(this StringBuilder stringBuilder, int number)
+        {
+            return stringBuilder.AppendNumber(number, 0);
+        }
+
+        public static StringBuilder AppendNumber(this StringBuilder stringBuilder, int number, int minDigits)
+        {
+            if (number < 0)
+            {
+                stringBuilder.Append('-');
+                number = -number;
+            }
+
+            int index = 0;
+
+            do
+            {
+                int digit = number % 10;
+                numberBuffer[index] = (char)('0' + digit);
+                number /= 10;
+                ++index;
+            }
+            while (number > 0 || index < minDigits);
+
+            for (--index; index >= 0; --index)
+            {
+                stringBuilder.Append(numberBuffer[index]);
+            }
+
+            return stringBuilder;
+        }
+    }
+
     public class TextBlock : UIElement
     {
         public static UIFont DefaultFont { get; set; } = UIFont.DefaultFont;
-        public static UIColor DefaultColor { get; set; } = UIColor.Black;
+        public static UIColor DefaultColor { get; set; } = UIColor.White;
 
         public string Text { get; set; }
 

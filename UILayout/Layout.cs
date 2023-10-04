@@ -25,6 +25,8 @@ namespace UILayout
         public GraphicsContext2D GraphicsContext { get; protected set; }
         public InputManager InputManager { get; protected set; }
 
+        public float SecondsElapsed { get; private set; }
+
         protected bool haveDirty = false;
         protected RectF dirtyRect = RectF.Empty;
 
@@ -32,6 +34,8 @@ namespace UILayout
         public UIElement RootUIElement { get; set; }
         public bool HaveDirty { get => haveDirty; }
         public RectF DirtyRect { get { return dirtyRect; } set { dirtyRect = value; } }
+
+        Dictionary<int, UIElement> touchCapture = new Dictionary<int, UIElement>();
 
         public UIElement ActiveUIElement
         {
@@ -90,7 +94,7 @@ namespace UILayout
             return fonts[name];
         }
 
-        public void SetBounds(RectF bounds)
+        public virtual void SetBounds(RectF bounds)
         {
             this.Bounds = bounds;
         }
@@ -130,20 +134,15 @@ namespace UILayout
             Draw(RootUIElement);
         }
 
-        public void Update(float secondsElapsed)
+        public virtual void Update(float secondsElapsed)
         {
+            SecondsElapsed = secondsElapsed;
+
             InputManager.Update(secondsElapsed);
 
-            UIElement active = ActiveUIElement;
-
-            if (active != null)
+            foreach (Touch touch in InputManager.GetTouches())
             {
-                foreach (Touch touch in InputManager.GetTouches())
-                {
-                    active.HandleTouch(touch);
-                }
-
-                active.HandleInput(InputManager);
+                HandleTouch(touch);
             }
         }
 
@@ -165,12 +164,39 @@ namespace UILayout
 
         public bool HandleTouch(in Touch touch)
         {
-            UIElement active = ActiveUIElement;
+            if (touchCapture.ContainsKey(touch.TouchID))
+            {
+                bool result = touchCapture[touch.TouchID].HandleTouch(touch);
 
-            if (active != null)
-                return active.HandleTouch(touch);
+                if ((touch.TouchState == ETouchState.Invalid) || (touch.TouchState == ETouchState.Released))
+                {
+                    touchCapture.Remove(touch.TouchID);
+                }
+
+                return result;
+            }
+            else
+            {
+                UIElement active = ActiveUIElement;
+
+                if (active != null)
+                    return active.HandleTouch(touch);
+            }
 
             return false;
+        }
+
+        internal void CaptureTouch(int touchID, UIElement captureElement)
+        {
+            touchCapture[touchID] = captureElement;
+        }
+
+        internal void ReleaseTouch(int touchID, UIElement captureElement)
+        {
+            if (touchCapture.ContainsKey(touchID) && touchCapture[touchID] == captureElement)
+            {
+                touchCapture.Remove(touchID);
+            }
         }
 
         public void ShowPopup(UIElement popup)

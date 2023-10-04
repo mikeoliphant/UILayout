@@ -118,7 +118,7 @@ namespace UILayout
 
                 if (child.Visible)
                 {
-                    float dist = Vector2.Distance(point, child.ContentBounds.GetCenter());
+                    float dist = Vector2.Distance(point, child.ContentBounds.Center);
 
                     if (dist < minDist)
                     {
