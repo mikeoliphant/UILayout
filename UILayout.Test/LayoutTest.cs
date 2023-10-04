@@ -22,6 +22,8 @@ namespace UILayout.Test
             Layout.DefaultPressedNinePatch = Layout.Current.AddImage("ButtonPressed");
             Layout.DefaultUnpressedNinePatch = Layout.Current.AddImage("ButtonUnpressed");
 
+            TextBlock.DefaultColor = UIColor.Black;
+
             VerticalSlider verticalSlider = new VerticalSlider("ButtonPressed")
             {
                 DesiredHeight = 100

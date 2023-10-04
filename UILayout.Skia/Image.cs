@@ -27,7 +27,7 @@ namespace UILayout
 
         public UIImage(string resourceName)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
+            Assembly assembly = Assembly.GetEntryAssembly();
 
             using (Stream stream = assembly.GetManifestResourceStream(assembly.GetName().Name + ".Resources." + resourceName + ".png"))
             {

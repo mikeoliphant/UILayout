@@ -57,6 +57,23 @@ namespace SkiaTest
 
             MouseDown += LayoutControl_MouseDown;
             MouseUp += LayoutControl_MouseUp;
+            MouseMove += LayoutControl_MouseMove;
+        }
+
+        private void LayoutControl_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+            {
+                Point p = e.GetPosition(this);
+
+                Touch touch = new Touch()
+                {
+                    Position = new Vector2((float)p.X, (float)p.Y),
+                    TouchState = ETouchState.Moved
+                };
+
+                Layout.HandleTouch(touch);
+            }
         }
 
         private void LayoutControl_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

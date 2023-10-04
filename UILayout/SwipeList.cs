@@ -162,6 +162,8 @@ namespace UILayout
                 totDrag += Math.Abs(touch.Position.Y - lastDragY);
 
                 lastDragY = touch.Position.Y;
+
+                UpdateContentLayout();
             }
 
             if ((touch.TouchState == ETouchState.Released))
