@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Drawing;
+using System.Numerics;
 
 namespace UILayout
 {
@@ -6,6 +7,7 @@ namespace UILayout
     {
         public UIImage Image { get; set; }
         public UIColor Color { get; set; } = UIColor.White;
+        public Rectangle? SourceRectangle { get; set; } = null;
 
         public ImageElement(string imageName)
             : this(Layout.Current.GetImage(imageName))
@@ -24,9 +26,16 @@ namespace UILayout
 
             if (Image != null)
             {
-                width = Image.Width;
-                height = Image.Height;
-
+                if (SourceRectangle.HasValue)
+                {
+                    width = SourceRectangle.Value.Width;
+                    height = SourceRectangle.Value.Height;
+                }
+                else
+                {
+                    width = Image.Width;
+                    height = Image.Height;
+                }
             }
         }
 
@@ -34,7 +43,14 @@ namespace UILayout
         {
             base.DrawContents();
 
-            Layout.Current.GraphicsContext.DrawImage(Image, ContentBounds.X, ContentBounds.Y, Color);
+            if (SourceRectangle.HasValue)
+            {
+                Layout.Current.GraphicsContext.DrawImage(Image, SourceRectangle.Value, new RectF(ContentBounds.X, ContentBounds.Y, ContentBounds.Width, ContentBounds.Height), Color);
+            }
+            else
+            {
+                Layout.Current.GraphicsContext.DrawImage(Image, new Rectangle(0, 0, Image.Width, Image.Height), new RectF(ContentBounds.X, ContentBounds.Y, ContentBounds.Width, ContentBounds.Height), Color);
+            }
         }
     }
 

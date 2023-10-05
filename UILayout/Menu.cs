@@ -7,9 +7,10 @@ using MenuItemCollection = System.Collections.ArrayList;
 
 namespace UILayout
 {
-    public class Menu : VerticalStack, IPopup
+    public class Menu : NinePatchWrapper, IPopup
     {
         public Action CloseAction { get; set; }
+        public bool CloseOnTouchOutOfBounds { get; set; }
 
         public static UIColor DefaultTextColor = UIColor.White;
         public static UIColor DefaultTextHighlightColor = new UIColor(255, 255, 100, 255);
@@ -17,13 +18,28 @@ namespace UILayout
         public UIColor TextColor { get; set; }
         public UIColor TextHighlightColor { get; set; }
 
+        VerticalStack menuStack;
+
         public Menu()
+            : this(Layout.DefaultOutlineNinePatch)
+        {
+
+        }
+
+        public Menu(string ninePatchImageName)
+            : this(Layout.Current.GetImage(ninePatchImageName))
+        {
+
+        }
+
+        public Menu(UIImage ninePatchImage)
+            : base(ninePatchImage)
         {
             TextColor = DefaultTextColor;
             TextHighlightColor = DefaultTextHighlightColor;
 
-            HorizontalAlignment = EHorizontalAlignment.Center;
-            VerticalAlignment = EVerticalAlignment.Center;
+            menuStack = new VerticalStack();
+            Child = menuStack;
         }
 
         public Menu(MenuItemCollection menuItems)
@@ -34,14 +50,14 @@ namespace UILayout
 
         public void SetMenuItems(MenuItemCollection menuItems)
         {
-            Children.Clear();
+            menuStack.Children.Clear();
 
             foreach (MenuItem menuItem in menuItems)
             {
-                TextButton button = new TextButton(menuItem.Text);
+                TextButton button = new TextButton(menuItem.Text) { HorizontalAlignment = EHorizontalAlignment.Stretch };
                 button.ClickAction = delegate { DoMenuItem(menuItem); };
 
-                Children.Add(button);
+                menuStack.Children.Add(button);
             }
         }
 

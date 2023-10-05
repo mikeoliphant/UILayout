@@ -17,7 +17,7 @@ namespace UILayout.Test
             BackgroundColor = UIColor.Yellow;
             Padding = new LayoutPadding(10);
            
-            UIImage ninePatch = Layout.Current.AddImage("OutlineNinePatch");
+            Layout.DefaultOutlineNinePatch = Layout.Current.AddImage("OutlineNinePatch");
 
             Layout.DefaultPressedNinePatch = Layout.Current.AddImage("ButtonPressed");
             Layout.DefaultUnpressedNinePatch = Layout.Current.AddImage("ButtonUnpressed");
@@ -88,8 +88,7 @@ namespace UILayout.Test
             };
             Children.Add(buttonStack);
 
-
-            InputDialog dialog = new InputDialog(ninePatch, new TextBlock { Text = "Do you want to?", TextColor = UIColor.Black });
+            InputDialog dialog = new InputDialog(Layout.DefaultOutlineNinePatch, new TextBlock { Text = "Do you want to?", TextColor = UIColor.Black });
 
             dialog.AddInput(new DialogInput { Text = "Ok", CloseOnInput = true } );
             dialog.AddInput(new DialogInput { Text = "Cancel", CloseOnInput = true });
@@ -109,21 +108,24 @@ namespace UILayout.Test
             {
                 new ContextMenuItem { Text = "Item 1" },
                 new ContextMenuItem { Text = "Item 2"},
-                new ContextMenuItem { Text = "Item 3"}
+                new ContextMenuItem { Text = "Item 3 longer"}
             };
 
             Menu menu = new Menu(menuItems);
 
-            buttonStack.Children.Add(new TextButton()
+            TextButton menuButton = new TextButton()
             {
                 Text = "Popup Menu",
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center,
-                ClickAction = delegate
-                {
-                    Layout.Current.ShowPopup(menu);
-                }
-            });
+            };
+
+            menuButton.ClickAction = delegate
+            {
+                Layout.Current.ShowPopup(menu, menuButton.ContentBounds.Center);
+            };
+
+            buttonStack.Children.Add(menuButton);
 
             SwipeList swipeList = new SwipeList()
             {

@@ -86,11 +86,16 @@ namespace UILayout
 
                         if (ClickAction != null)
                             ClickAction();
+
+                        if (PressAction != null)
+                            PressAction();
                     }
                     else
                     {
                         if (!IsPressed)
                         {
+                            CaptureTouch(touch);
+
                             Toggle();
 
                             if (PressAction != null)
@@ -101,6 +106,8 @@ namespace UILayout
                 case ETouchState.Released:
                     if (!IsToggleButton)
                     {
+                        ReleaseTouch();
+
                         if (IsPressed)
                         {
                             Toggle();

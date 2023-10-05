@@ -146,14 +146,14 @@ namespace UILayout
                 touchItem = itemPos;
             }
 
-            if ((touch.TouchState == ETouchState.Pressed))
+            if (touch.TouchState == ETouchState.Pressed)
             {
                 dragStartY = lastDragY = touch.Position.Y;
                 dragStartOffset = offset;
                 totDrag = 0;
             }
 
-            if ((touch.TouchState == ETouchState.Moved))
+            if (touch.TouchState == ETouchState.Moved)
             {
                 float diff = touch.Position.Y - dragStartY;
 
@@ -166,7 +166,7 @@ namespace UILayout
                 UpdateContentLayout();
             }
 
-            if ((touch.TouchState == ETouchState.Released))
+            if (touch.TouchState == ETouchState.Released)
             {
                 if (totDrag < 5)
                 {

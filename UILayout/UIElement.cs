@@ -139,6 +139,19 @@ namespace UILayout
             if ((HorizontalAlignment == EHorizontalAlignment.Absolute) || (VerticalAlignment == EVerticalAlignment.Absolute))
             {
                 GetContentSize(out layoutWidth, out layoutHeight);
+
+                if (DesiredWidth != 0)
+                {
+                    layoutWidth = DesiredWidth;
+                }
+
+                if (DesiredHeight != 0)
+                {
+                    layoutHeight = DesiredHeight;
+                }
+
+                layoutWidth += Padding.Left + Padding.Right;
+                layoutHeight += Padding.Top + Padding.Bottom;
             }
             else
             {

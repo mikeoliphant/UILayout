@@ -1,6 +1,7 @@
 ﻿using System;
 #if !GENERICS_UNSUPPORTED
 using System.Collections.Generic;
+using System.Numerics;
 #endif
 
 namespace UILayout
@@ -8,6 +9,7 @@ namespace UILayout
     public interface IPopup
     {
         Action CloseAction { get; set; }
+        bool CloseOnTouchOutOfBounds { get; set; }
         void Opened();
     }
 
@@ -213,6 +215,23 @@ namespace UILayout
             AddDirtyRect(popup.layoutBounds);
         }
 
+        public void ShowPopup(UIElement popup, Vector2 anchorPoint)
+        {
+            ContextUIElementWrapper contextElementWrapper = new ContextUIElementWrapper(anchorPoint);
+            contextElementWrapper.Child = popup;
+
+            popupStack.Add(contextElementWrapper);
+
+            contextElementWrapper.SetBounds(Bounds, null);
+
+            if (popup is IPopup)
+            {
+                (popup as IPopup).CloseAction = delegate { ClosePopup(contextElementWrapper); };
+                (popup as IPopup).CloseOnTouchOutOfBounds = true;
+            }
+
+            AddDirtyRect(popup.layoutBounds);
+        }
 
         public void ShowContinuePopup(string text)
         {
@@ -263,6 +282,61 @@ namespace UILayout
             popupStack.Remove(popup);
 
             AddDirtyRect(popup.layoutBounds);
+        }
+    }
+
+    public class ContextUIElementWrapper : UIElementWrapper
+    {
+        Vector2 anchorPoint;
+
+        public ContextUIElementWrapper(Vector2 point)
+        {
+            HorizontalAlignment = EHorizontalAlignment.Absolute;
+            VerticalAlignment = EVerticalAlignment.Absolute;
+
+            anchorPoint = point;
+        }
+
+        public override void SetBounds(RectF bounds, UIElement parent)
+        {
+            float horizontalOffset = anchorPoint.X - bounds.X;
+            float verticalOffset = anchorPoint.Y - bounds.Y;
+
+            float width, height;
+
+            base.GetContentSize(out width, out height);
+
+            if ((horizontalOffset + width) > bounds.Width)
+            {
+                horizontalOffset = anchorPoint.X - bounds.X - width;
+
+                if (horizontalOffset < 0)
+                    horizontalOffset = 0;
+            }
+
+            if ((verticalOffset + height) > bounds.Height)
+            {
+                verticalOffset = anchorPoint.Y - bounds.Y - height;
+
+                if (verticalOffset < 0)
+                    verticalOffset = 0;
+            }
+
+            Margin = new LayoutPadding(horizontalOffset, verticalOffset);
+
+            base.SetBounds(bounds, parent);
+        }
+
+        public override bool HandleTouch(in Touch touch)
+        {
+            if ((touch.TouchState == ETouchState.Invalid) || ((touch.TouchState == ETouchState.Released) && !Child.ContentBounds.Contains(touch.Position)))
+            {
+                Layout.Current.ClosePopup(this);
+
+                return true;
+            }
+
+            return base.HandleTouch(touch);
         }
     }
 }
