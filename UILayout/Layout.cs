@@ -9,7 +9,6 @@ namespace UILayout
     public interface IPopup
     {
         Action CloseAction { get; set; }
-        bool CloseOnTouchOutOfBounds { get; set; }
         void Opened();
     }
 
@@ -188,9 +187,14 @@ namespace UILayout
             return false;
         }
 
-        internal void CaptureTouch(int touchID, UIElement captureElement)
+        internal bool CaptureTouch(int touchID, UIElement captureElement)
         {
+            if (touchCapture.ContainsKey(touchID))
+                return false;
+
             touchCapture[touchID] = captureElement;
+
+            return true;
         }
 
         internal void ReleaseTouch(int touchID, UIElement captureElement)
@@ -227,7 +231,6 @@ namespace UILayout
             if (popup is IPopup)
             {
                 (popup as IPopup).CloseAction = delegate { ClosePopup(contextElementWrapper); };
-                (popup as IPopup).CloseOnTouchOutOfBounds = true;
             }
 
             AddDirtyRect(popup.layoutBounds);

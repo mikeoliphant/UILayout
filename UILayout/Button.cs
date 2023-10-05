@@ -257,6 +257,13 @@ namespace UILayout
 
     public class ImageButton : NinePatchButton
     {
+        public UIColor ImageColor
+        {
+            get { return imageElement.Color;  }
+            set { imageElement.Color = value; }
+        }
+
+
         ImageElement imageElement;
 
         public ImageButton(string imageName)
@@ -288,6 +295,8 @@ namespace UILayout
             unpressedImageElement = new ImageElement(unpressedImage);
 
             SetElements(pressedImageElement, unpressedImageElement);
+
+            IsToggleButton = true;
         }
     }
 }

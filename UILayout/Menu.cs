@@ -10,7 +10,6 @@ namespace UILayout
     public class Menu : NinePatchWrapper, IPopup
     {
         public Action CloseAction { get; set; }
-        public bool CloseOnTouchOutOfBounds { get; set; }
 
         public static UIColor DefaultTextColor = UIColor.White;
         public static UIColor DefaultTextHighlightColor = new UIColor(255, 255, 100, 255);

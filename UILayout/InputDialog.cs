@@ -24,7 +24,6 @@ namespace UILayout
         public static float DefaultButtonSpacing = 2;
 
         public Action CloseAction { get { return inputStack.CloseAction; } set { inputStack.CloseAction = value; } }
-        public bool CloseOnTouchOutOfBounds { get; set; }
 
         public float ButtonSpacing
         {

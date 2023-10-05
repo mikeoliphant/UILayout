@@ -269,7 +269,6 @@ namespace UILayout
         }
     }
 
-
     public class HorizontalStack : ListUIElement
     {
         protected override void GetContentSize(out float width, out float height)

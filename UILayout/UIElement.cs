@@ -245,12 +245,13 @@ namespace UILayout
 
         public void CaptureTouch(Touch touch)
         {
-            HaveTouchCapture = true;
-            CapturedTouchID = touch.TouchID;
+            if (Layout.Current.CaptureTouch(CapturedTouchID, this))
+            {
+                HaveTouchCapture = true;
+                CapturedTouchID = touch.TouchID;
 
-            TouchCaptureStartPosition = touch.Position;
-
-            Layout.Current.CaptureTouch(CapturedTouchID, this);
+                TouchCaptureStartPosition = touch.Position;
+            }
         }
 
         public void ReleaseTouch()
