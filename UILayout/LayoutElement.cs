@@ -1,5 +1,6 @@
-﻿#if !GENERICS_UNSUPPORTED
+﻿using System;
 using System.Numerics;
+#if !GENERICS_UNSUPPORTED
 using UIElementCollection = System.Collections.Generic.List<UILayout.UIElement>;
 #else
 using UIElementCollection = System.Collections.ArrayList;
@@ -54,6 +55,19 @@ namespace UILayout
         {
             if (Child != null)
                 Child.HandleInput(inputManager);
+        }
+
+        public override UIElement AcceptsDrop(UIElement dragElement, object dropObject, in Touch touch)
+        {
+            if (Child != null)
+            {
+                UIElement dropElement = Child.AcceptsDrop(dragElement, dropObject, touch);
+
+                if (dropElement != null)
+                    return dropElement;
+            }
+
+            return base.AcceptsDrop(dragElement, dropObject, touch);
         }
     }
 
@@ -156,6 +170,24 @@ namespace UILayout
             {
                 (Children[i] as UIElement).HandleInput(inputManager);
             }
+        }
+
+        public override UIElement AcceptsDrop(UIElement dragElement, object dropObject, in Touch touch)
+        {
+            for (int i = Children.Count - 1; i >= 0; i--)
+            {
+                UIElement child = Children[i] as UIElement;
+
+                if (child.Visible && child.LayoutBounds.Contains(touch.Position))
+                {
+                    UIElement dropElement = child.AcceptsDrop(dragElement, dropObject, touch);
+
+                    if (dropElement != null)
+                        return dropElement;
+                }
+            }
+
+            return base.AcceptsDrop(dragElement, dropObject, touch);
         }
     }
 
@@ -421,4 +453,125 @@ namespace UILayout
         }
     }
 
+    public class DragDropHandler
+    {
+        public bool InternalOnly { get; set; }
+        public Type DragType { get; set; }
+        public Action<object> DragCompleteAction { get; set; }
+
+        public virtual bool HandleTouch(in Touch touch)
+        {
+            return false;
+        }
+
+        public virtual UIElement AcceptsDrop(UIElement dragElement, object dropObject, in Touch touch)
+        {
+            return null;
+        }
+
+        public virtual bool HandleDrop(UIElement dragElement, object dropObject, in Touch touch)
+        {
+            return false;
+        }
+
+        public virtual void HandleDragCancelled(object dropObject)
+        {
+        }
+
+        public virtual void HandleDragCompleted(object dropObject)
+        {
+            if (DragCompleteAction != null)
+                DragCompleteAction(dropObject);
+        }
+    }
+
+    public class ListUIDragDropHandler : DragDropHandler
+    {
+        public ListUIElement ListElement { get; set; }
+
+        public ListUIDragDropHandler()
+        {
+            InternalOnly = true;
+        }
+
+        Vector2 startPosition;
+        UIElement dragElement;
+
+        public override bool HandleTouch(in Touch touch)
+        {
+            switch (touch.TouchState)
+            {
+                case ETouchState.Pressed:
+                    dragElement = ListElement.FindClosestChild(touch.Position);
+                    startPosition = touch.Position;
+                    break;
+                case ETouchState.Moved:
+                    if (dragElement != null)
+                    {
+                        float delta = Vector2.Distance(startPosition, touch.Position);
+
+                        if (delta > 5)
+                        {
+                            ListElement.BeginDrag(touch.TouchID, dragElement);
+                        }
+                    }
+                    break;
+                case ETouchState.Released:
+                    break;
+                case ETouchState.Invalid:
+                    break;
+                default:
+                    break;
+            }
+
+            return false;
+        }
+
+        public override UIElement AcceptsDrop(UIElement dragElement, object dropObject, in Touch touch)
+        {
+            if (InternalOnly)
+            {
+                if (dragElement != ListElement)
+                    return null;
+
+                if (ListElement.Children.Contains(dropObject as UIElement))
+                {
+                    return ListElement;
+                }
+            }
+            else
+            {
+                if ((DragType != null) && (DragType.IsAssignableFrom(dropObject.GetType())))
+                    return ListElement;
+            }
+
+            return null;
+        }
+
+        public override bool HandleDrop(UIElement dragElement, object dropObject, in Touch touch)
+        {
+            UIElement dropOnChild = ListElement.FindClosestChild(touch.Position);
+
+            if (dropObject == dropOnChild)
+                return false;
+
+            if (dragElement == ListElement)
+            {
+                ListElement.Children.Remove(dropObject as UIElement);
+                ListElement.Children.Insert(ListElement.Children.IndexOf(dropOnChild), dropObject as UIElement);
+            }
+            else
+            {
+                (dragElement as ListUIElement).Children.Remove(dropObject as UIElement);
+                ListElement.Children.Insert(ListElement.Children.IndexOf(dropOnChild), dropObject as UIElement);
+
+                if (DragCompleteAction != null)
+                    DragCompleteAction(dropObject);
+            }
+
+            Layout.Current.UpdateLayout();
+
+            return true;
+        }
+    }
 }

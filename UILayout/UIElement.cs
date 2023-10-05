@@ -77,6 +77,7 @@ namespace UILayout
         public bool HaveTouchCapture { get; private set; }
         public Vector2 TouchCaptureStartPosition { get; private set; }
         public int CapturedTouchID { get; private set; }
+        public DragDropHandler DragDropHandler { get; set; }
 
         public UIElement()
         {
@@ -240,6 +241,11 @@ namespace UILayout
 
         public virtual bool HandleTouch(in Touch touch)
         {
+            if (DragDropHandler != null)
+            {
+                return DragDropHandler.HandleTouch(touch);
+            }
+
             return false;
         }
 
@@ -268,6 +274,49 @@ namespace UILayout
         public virtual void HandleInput(InputManager inputManager)
         {
 
+        }
+
+        public void BeginDrag(int touchID, object obj)
+        {
+            BeginDrag(touchID, obj, Layout.DefaultDragImage);
+        }
+
+        public void BeginDrag(int touchID, object obj, UIImage image)
+        {
+            BeginDrag(touchID, obj, image, -image.Width / 2, -image.Height / 2);
+        }
+
+        public void BeginDrag(int touchID, object obj, UIImage image, float imageXOffset, float imageYOffset)
+        {
+            Layout.Current.BeginDrag(this, touchID, obj, image, imageXOffset, imageYOffset);
+        }
+
+        public virtual UIElement AcceptsDrop(UIElement dragElement, object dropObject, in Touch touch)
+        {
+            if (DragDropHandler != null)
+                return DragDropHandler.AcceptsDrop(dragElement, dropObject, touch);
+
+            return null;
+        }
+
+        public virtual bool HandleDrop(UIElement dragElement, object dropObject, in Touch touch)
+        {
+            if (DragDropHandler != null)
+                return DragDropHandler.HandleDrop(dragElement, dropObject, touch);
+
+            return false;
+        }
+
+        public virtual void HandleDragCompleted(object dropObject)
+        {
+            if (DragDropHandler != null)
+                DragDropHandler.HandleDragCompleted(dropObject);
+        }
+
+        public virtual void HandleDragCancelled(object dropObject)
+        {
+            if (DragDropHandler != null)
+                DragDropHandler.HandleDragCancelled(dropObject);
         }
 
         public void Draw()

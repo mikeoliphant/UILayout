@@ -16,11 +16,13 @@ namespace UILayout.Test
         {
             BackgroundColor = UIColor.Yellow;
             Padding = new LayoutPadding(10);
-           
+
             Layout.DefaultOutlineNinePatch = Layout.Current.AddImage("OutlineNinePatch");
 
             Layout.DefaultPressedNinePatch = Layout.Current.AddImage("ButtonPressed");
             Layout.DefaultUnpressedNinePatch = Layout.Current.AddImage("ButtonUnpressed");
+
+            Layout.DefaultDragImage = Layout.Current.GetImage("ButtonPressed");
 
             TextBlock.DefaultColor = UIColor.Black;
 
@@ -52,16 +54,43 @@ namespace UILayout.Test
                 });
             }
 
-            VerticalStack textStack = new VerticalStack()
+            VerticalStack bottomStack = new VerticalStack()
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
-                VerticalAlignment = EVerticalAlignment.Bottom
+                VerticalAlignment = EVerticalAlignment.Bottom,
+                ChildSpacing = 20
             };
-            Children.Add(textStack);
+            Children.Add(bottomStack);
+
+            HorizontalStack dragDropStack = new HorizontalStack()
+            {
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                ChildSpacing = 2
+            };
+            bottomStack.Children.Add(dragDropStack);
+
+            ListUIDragDropHandler dragDropHander = new ListUIDragDropHandler()
+            {
+                ListElement = dragDropStack,
+                DragType = typeof(NinePatchWrapper),
+                InternalOnly = true                
+            };
+
+            dragDropStack.DragDropHandler = dragDropHander;
+
+            for (int i = 0; i < 5; i++)
+            {
+                dragDropStack.Children.Add(new NinePatchWrapper(Layout.Current.GetImage("ButtonPressed"))
+                {
+                    Child = new TextBlock("Drag " + (i + 1).ToString())
+                });
+            }
+
+            bottomStack.Children.Add(dragDropStack);
 
             Layout.Current.InputManager.AddMapping("SpacePressed", new KeyMapping(InputKey.Space));
 
-            textStack.Children.Add(spaceText = new TextBlock
+            bottomStack.Children.Add(spaceText = new TextBlock
             {
                 Text = "Press Space",
                 TextColor = UIColor.Black,
@@ -71,7 +100,7 @@ namespace UILayout.Test
                 Padding = new LayoutPadding(20, 10)
             });
 
-            textStack.Children.Add(new TextBlock
+            bottomStack.Children.Add(new TextBlock
             {
                 Text = "Descendery Text",
                 TextColor = UIColor.Black,

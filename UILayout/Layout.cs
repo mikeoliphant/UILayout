@@ -19,6 +19,7 @@ namespace UILayout
         public static UIImage DefaultOutlineNinePatch { get; set; }
         public static UIImage DefaultPressedNinePatch { get; set; }
         public static UIImage DefaultUnpressedNinePatch { get; set; }
+        public static UIImage DefaultDragImage { get; set; }
 
         Dictionary<string, UIImage> images = new Dictionary<string, UIImage>();
         Dictionary<string, UIFont> fonts = new Dictionary<string, UIFont>();
@@ -36,6 +37,14 @@ namespace UILayout
         public bool HaveDirty { get => haveDirty; }
         public RectF DirtyRect { get { return dirtyRect; } set { dirtyRect = value; } }
 
+        object dragObject = null;
+        int dragTouchID;
+        UIElement dragInitiator = null;
+        UIImage dragImage = null;
+        float dragImageXOffset = 0;
+        float dragImageYOffset = 0;
+        Vector2 dragImagePosition;
+
         Dictionary<int, UIElement> touchCapture = new Dictionary<int, UIElement>();
 
         public UIElement ActiveUIElement
@@ -48,6 +57,14 @@ namespace UILayout
                 }
 
                 return RootUIElement;
+            }
+        }
+
+        public bool InDrag
+        {
+            get
+            {
+                return (dragObject != null);
             }
         }
 
@@ -160,11 +177,53 @@ namespace UILayout
                 popup.Draw();
             }
 
+            if ((dragImage != null) && (dragImagePosition.X != float.MinValue))
+            {
+                GraphicsContext.DrawImage(dragImage, (int)(dragImagePosition.X + dragImageXOffset), (int)(dragImagePosition.Y + dragImageYOffset), UIColor.White, 1.0f);
+            }
+
             ClearDirtyRect();
         }
 
         public bool HandleTouch(in Touch touch)
         {
+            UIElement activeElement = ActiveUIElement;
+
+            if ((dragObject != null) && (dragTouchID == touch.TouchID))
+            {
+                switch (touch.TouchState)
+                {
+                    case ETouchState.Moved:
+                        dragImagePosition = touch.Position;
+                        //activeElement.DragHover(dragInitiator, dragObject, touch);
+                        break;
+                    case ETouchState.Released:
+                        UIElement dropElement = activeElement.AcceptsDrop(dragInitiator, dragObject, touch);
+
+                        if ((dropElement != null) && dropElement.HandleDrop(dragInitiator, dragObject, touch))
+                        {
+                            dragInitiator.HandleDragCompleted(dragObject);
+                        }
+                        else
+                        {
+                            dragInitiator.HandleDragCancelled(dragObject);
+                        }
+
+                        dragObject = null;
+                        dragImage = null;
+
+                        break;
+                    case ETouchState.Held:
+                        //activeElement.DragHover(dragInitiator, dragObject, touch);
+                        break;
+                    case ETouchState.Invalid:
+                        dragObject = null;
+                        break;
+                }
+
+                return true;
+            }
+
             if (touchCapture.ContainsKey(touch.TouchID))
             {
                 bool result = touchCapture[touch.TouchID].HandleTouch(touch);
@@ -178,13 +237,22 @@ namespace UILayout
             }
             else
             {
-                UIElement active = ActiveUIElement;
-
-                if (active != null)
-                    return active.HandleTouch(touch);
+                if (activeElement != null)
+                    return activeElement.HandleTouch(touch);
             }
 
             return false;
+        }
+
+        public void BeginDrag(UIElement initiator, int touchID, object obj, UIImage image, float offsetX, float offsetY)
+        {
+            dragInitiator = initiator;
+            dragTouchID = touchID;
+            dragObject = obj;
+            dragImage = image;
+            dragImageXOffset = offsetX;
+            dragImageYOffset = offsetY;
+            dragImagePosition = new Vector2(float.MinValue);
         }
 
         internal bool CaptureTouch(int touchID, UIElement captureElement)
