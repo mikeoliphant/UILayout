@@ -34,6 +34,11 @@ namespace UILayout
             }
         }
 
+        public override Task<string> GetKeyboardInputAsync(string title, string defaultText)
+        {
+            return KeyboardInput.Show(title, null);
+        }
+
         public override void SetBounds(RectF bounds)
         {
             base.SetBounds(new RectF(bounds.X, bounds.Y, bounds.Width / Scale, bounds.Height / Scale));

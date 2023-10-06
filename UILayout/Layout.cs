@@ -2,6 +2,7 @@
 #if !GENERICS_UNSUPPORTED
 using System.Collections.Generic;
 using System.Numerics;
+using System.Threading.Tasks;
 #endif
 
 namespace UILayout
@@ -353,6 +354,16 @@ namespace UILayout
             popupStack.Remove(popup);
 
             AddDirtyRect(popup.layoutBounds);
+        }
+
+        public void GetKeyboardInput(string title, string defaultText, Action<string, object> callback, object userData)
+        {
+            GetKeyboardInputAsync(title, defaultText).ContinueWith(t => callback(t.Result, userData));
+        }
+
+        public virtual Task<string> GetKeyboardInputAsync(string title, string defaultText)
+        {
+            throw new NotImplementedException();
         }
     }
 
