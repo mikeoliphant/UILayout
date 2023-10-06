@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using System;
 using System.IO;
 using System.Reflection;
 using SkiaSharp;
@@ -7,8 +7,8 @@ namespace UILayout
 {
     public partial class UIImage
     {
-        public int ActualWidth { get { return Bitmap.Width; } }
-        public int ActualHeight { get { return Bitmap.Height; } }
+        public virtual int ActualWidth { get { return Bitmap.Width; } }
+        public virtual int ActualHeight { get { return Bitmap.Height; } }
 
         SKBitmap bitmap;
 
@@ -35,6 +35,11 @@ namespace UILayout
             }
         }
 
+        public UIImage(int width, int height)
+            : this(new SKBitmap(width, height))
+        {
+        }
+
         public UIImage(SKBitmap bitmap)
         {
             this.Bitmap = bitmap;
@@ -43,6 +48,16 @@ namespace UILayout
         public UIImage(UIImage baseImage)
         {
             Bitmap = baseImage.Bitmap;
+        }
+
+        public UIColor[] GetData()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetData(UIColor[] setData)
+        {
+            throw new NotImplementedException();
         }
     }
 }

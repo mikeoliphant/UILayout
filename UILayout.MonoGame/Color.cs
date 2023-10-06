@@ -2,7 +2,7 @@
 
 namespace UILayout
 {
-    public partial class UIColor
+    public partial struct UIColor
     {
         public Color NativeColor
         {

@@ -1,24 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SharpDX.MediaFoundation;
 
 namespace UILayout
 {
     public partial class UIImage
     {
         public Texture2D Texture { get; private set; }
-        public int ActualWidth { get { return Texture.Width; } }
-        public int ActualHeight { get { return Texture.Height; } }
+        public virtual int ActualWidth { get { return Texture.Width; } }
+        public virtual int ActualHeight { get { return Texture.Height; } }
 
         public UIImage(string resourceName)
+            : this(MonoGameLayout.Current.Host.Content.Load<Texture2D>(Path.Combine("Textures", resourceName)))
         {
-            Texture = MonoGameLayout.Current.Host.Content.Load<Texture2D>(Path.Combine("Textures", resourceName));
+        }
+
+        public UIImage(int width, int height)
+            : this(new Texture2D(MonoGameLayout.Current.Host.GraphicsDevice, width, height, false, SurfaceFormat.Color))
+        {
+        }
+
+        public UIImage(Texture2D texture)
+        {
+            this.Texture = texture;
 
             Width = Texture.Width;
             Height = Texture.Height;
@@ -27,6 +32,20 @@ namespace UILayout
         public UIImage(UIImage baseImage)
         {
             Texture = baseImage.Texture;
+        }
+
+        public UIColor[] GetData()
+        {
+            UIColor[] tmpData = new UIColor[ActualWidth * ActualHeight];
+
+            Texture.GetData<UIColor>(0, new Rectangle(XOffset, YOffset, Width, Height), tmpData, 0, Width * Height);
+
+            return tmpData;
+        }
+
+        public void SetData(UIColor[] setData)
+        {
+            Texture.SetData<UIColor>(0, new Rectangle(XOffset, YOffset, Width, Height), setData, 0, setData.Length);
         }
     }
 }

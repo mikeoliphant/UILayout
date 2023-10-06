@@ -1,9 +1,11 @@
 ﻿using System.Globalization;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace UILayout
 {
-    public partial class UIColor
+    [StructLayout(LayoutKind.Sequential, Size = 4)]
+    public partial struct UIColor
     {
         public static UIColor Transparent { get => new UIColor(0, 0, 0, 0); }
         public static UIColor White { get => new UIColor(255, 255, 255); }
@@ -74,6 +76,7 @@ namespace UILayout
             R = (byte)(colorVec.X * 255);
             G = (byte)(colorVec.Y * 255);
             B = (byte)(colorVec.Z * 255);
+            A = (byte)255;
         }
 
         public Vector3 ToVector3()
