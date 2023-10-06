@@ -79,6 +79,28 @@ namespace UILayout
             A = (byte)255;
         }
 
+        public static UIColor operator *(UIColor c, float value)
+        {
+            return new UIColor((byte)(((float)c.R * value)), (byte)(((float)c.G * value)), (byte)(((float)c.B * value)), c.A);
+        }
+
+        public static UIColor operator *(UIColor c1, UIColor c2)
+        {
+            return new UIColor((c1.R * c2.R) / 256, (c1.G * c2.G) / 256, (c1.B * c2.B) / 256, (c1.A * c2.A) / 256);
+        }
+
+        public static bool operator ==(UIColor c1, UIColor c2)
+        {
+            return (c1.R == c2.R) && (c1.G == c2.G) && (c1.B == c2.B) && (c1.A == c2.A);
+        }
+
+        public static bool operator !=(UIColor c1, UIColor c2)
+        {
+            return !(c1 == c2);
+        }
+
+
+
         public Vector3 ToVector3()
         {
             return new Vector3((float)R / 255.0f, (float)G / 255.0f, (float)B / 255.0f);
