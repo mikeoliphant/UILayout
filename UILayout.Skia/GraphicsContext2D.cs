@@ -33,36 +33,36 @@ namespace UILayout
             Canvas.DrawBitmap(image.Bitmap, new SKRect(image.XOffset, image.YOffset, image.Width, image.Height), new SKRect((int)x, (int)y, (int)x + image.Width, (int)y + image.Height));
         }
 
-        public void DrawImage(UIImage image, float x, float y, UIColor color)
+        public void DrawImage(UIImage image, float x, float y, in UIColor color)
         {
             colorPaint.Color = color.NativeColor;
 
             Canvas.DrawBitmap(image.Bitmap, new SKRect(image.XOffset, image.YOffset, image.Width, image.Height), new SKRect((int)x, (int)y, (int)x + image.Width, (int)y + image.Height), colorPaint);
         }
 
-        public void DrawImage(UIImage image, float x, float y, UIColor color, float scale)
+        public void DrawImage(UIImage image, float x, float y, in UIColor color, float scale)
         {
             colorPaint.Color = color.NativeColor;
 
             Canvas.DrawBitmap(image.Bitmap, new SKRect(image.XOffset, image.YOffset, image.Width, image.Height), new SKRect((int)x, (int)y, (int)x + image.Width, (int)y + image.Height), colorPaint);
         }
 
-        public void DrawImage(UIImage image, float x, float y, in System.Drawing.Rectangle srcRectangle)
+        public void DrawImage(UIImage image, float x, float y, in Rectangle srcRectangle)
         {
             Canvas.DrawBitmap(image.Bitmap, new SKRect(srcRectangle.X + image.XOffset, srcRectangle.Y + image.YOffset, srcRectangle.Right, srcRectangle.Bottom), new SKRect((int)x, (int)y, (int)x + image.Width, (int)y + image.Height));
         }
 
-        public void DrawImage(UIImage image, float x, float y, in System.Drawing.Rectangle srcRectangle, UIColor color, float scale)
+        public void DrawImage(UIImage image, float x, float y, in Rectangle srcRectangle, in UIColor color, float scale)
         {
             Canvas.DrawBitmap(image.Bitmap, new SKRect(srcRectangle.X + image.XOffset, srcRectangle.Y + image.YOffset, srcRectangle.Right, srcRectangle.Bottom), new SKRect((int)x, (int)y, (int)x + image.Width, (int)y + image.Height));
         }
 
-        public void DrawImage(UIImage image, in System.Drawing.Rectangle srcRectangle, in RectF destRectangle)
+        public void DrawImage(UIImage image, in Rectangle srcRectangle, in RectF destRectangle)
         {
             Canvas.DrawBitmap(image.Bitmap, new SKRect(srcRectangle.X + image.XOffset, srcRectangle.Y + image.YOffset, srcRectangle.Right, srcRectangle.Bottom), new SKRect((int)destRectangle.X, (int)destRectangle.Y, (int)destRectangle.Right, (int)destRectangle.Bottom));
         }
 
-        public void DrawImage(UIImage image, in System.Drawing.Rectangle srcRectangle, in RectF destRectangle, UIColor color)
+        public void DrawImage(UIImage image, in Rectangle srcRectangle, in RectF destRectangle, in UIColor color)
         {
             colorPaint.Color = color.NativeColor;
 
@@ -70,19 +70,19 @@ namespace UILayout
                 new SKRect((int)destRectangle.X, (int)destRectangle.Y, (int)destRectangle.Right, (int)destRectangle.Bottom), colorPaint);
         }
 
-        public void DrawImage(UIImage image, float x, float y, UIColor color, float rotation, Vector2 origin, float scale)
+        public void DrawImage(UIImage image, float x, float y, in UIColor color, float rotation, in Vector2 origin, float scale)
         {
             throw new NotImplementedException();
         }
 
-        public void DrawRectangle(in RectF rectangle, UIColor color)
+        public void DrawRectangle(in RectF rectangle, in UIColor color)
         {
             colorPaint.Color = color.NativeColor;
 
             Canvas.DrawRect(new SKRect(rectangle.X, rectangle.Y, rectangle.Right, rectangle.Bottom), colorPaint);
         }
 
-        public void DrawText(String text, UIFont font, float x, float y, UIColor color)
+        public void DrawText(String text, UIFont font, float x, float y, in UIColor color)
         {
             textPaint.Color = color.NativeColor;
             textPaint.Typeface = font.Typeface;
@@ -91,7 +91,7 @@ namespace UILayout
             Canvas.DrawText(text, x, y + font.TextHeight, textPaint);
         }
 
-        public void DrawText(String text, UIFont font, float x, float y, UIColor color, float scale)
+        public void DrawText(String text, UIFont font, float x, float y, in UIColor color, float scale)
         {
             textPaint.Color = color.NativeColor;
             textPaint.Typeface = font.Typeface;
@@ -100,7 +100,7 @@ namespace UILayout
             Canvas.DrawText(text, x, y + font.TextHeight, textPaint);
         }
 
-        public void DrawText(StringBuilder text, UIFont font, float x, float y, UIColor color)
+        public void DrawText(StringBuilder text, UIFont font, float x, float y, in UIColor color)
         {
             textPaint.Color = color.NativeColor;
             textPaint.Typeface = font.Typeface;
@@ -109,7 +109,7 @@ namespace UILayout
             Canvas.DrawText(text.ToString(), x, y + font.TextHeight, textPaint);
         }
 
-        public void DrawText(StringBuilder text, UIFont font, float x, float y, UIColor color, float scale)
+        public void DrawText(StringBuilder text, UIFont font, float x, float y, in UIColor color, float scale)
         {
             textPaint.Color = color.NativeColor;
             textPaint.Typeface = font.Typeface;

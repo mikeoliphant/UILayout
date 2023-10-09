@@ -99,8 +99,6 @@ namespace UILayout
             return !(c1 == c2);
         }
 
-
-
         public Vector3 ToVector3()
         {
             return new Vector3((float)R / 255.0f, (float)G / 255.0f, (float)B / 255.0f);

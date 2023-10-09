@@ -123,7 +123,7 @@ namespace UILayout
         }
 
 
-        public override void SetBounds(RectF layout, UIElement parent)
+        public override void SetBounds(in RectF layout, UIElement parent)
         {
             base.SetBounds(layout, parent);
 
@@ -147,7 +147,7 @@ namespace UILayout
             });
         }
 
-        public override void SetBounds(RectF layout, UIElement parent)
+        public override void SetBounds(in RectF layout, UIElement parent)
         {
             base.SetBounds(layout, parent);
 
@@ -174,7 +174,7 @@ namespace UILayout
             });
         }
 
-        public override void SetBounds(RectF layout, UIElement parent)
+        public override void SetBounds(in RectF layout, UIElement parent)
         {
             base.SetBounds(layout, parent);
 

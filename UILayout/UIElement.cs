@@ -116,7 +116,7 @@ namespace UILayout
             height = 0;
         }
 
-        public virtual void SetBounds(RectF bounds, UIElement parent)
+        public virtual void SetBounds(in RectF bounds, UIElement parent)
         {
             if (parent != null)
             {
@@ -249,7 +249,7 @@ namespace UILayout
             return false;
         }
 
-        public void CaptureTouch(Touch touch)
+        public void CaptureTouch(in Touch touch)
         {
             if (Layout.Current.CaptureTouch(CapturedTouchID, this))
             {

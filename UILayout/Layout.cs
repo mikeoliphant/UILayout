@@ -113,7 +113,7 @@ namespace UILayout
             return fonts[name];
         }
 
-        public virtual void SetBounds(RectF bounds)
+        public virtual void SetBounds(in RectF bounds)
         {
             this.Bounds = bounds;
         }
@@ -133,7 +133,7 @@ namespace UILayout
             }
             else
             {
-                dirtyRect.UnionWith(in dirty);
+                dirtyRect.UnionWith(dirty);
             }
         }
 
@@ -163,6 +163,11 @@ namespace UILayout
             {
                 HandleTouch(touch);
             }
+
+            UIElement activeElement = ActiveUIElement;
+
+            if (activeElement != null)
+                activeElement.HandleInput(InputManager);
         }
 
         public virtual void Draw(UIElement startElement)
@@ -288,7 +293,7 @@ namespace UILayout
             AddDirtyRect(popup.layoutBounds);
         }
 
-        public void ShowPopup(UIElement popup, Vector2 anchorPoint)
+        public void ShowPopup(UIElement popup, in Vector2 anchorPoint)
         {
             ContextUIElementWrapper contextElementWrapper = new ContextUIElementWrapper(anchorPoint);
             contextElementWrapper.Child = popup;
@@ -379,7 +384,7 @@ namespace UILayout
             anchorPoint = point;
         }
 
-        public override void SetBounds(RectF bounds, UIElement parent)
+        public override void SetBounds(in RectF bounds, UIElement parent)
         {
             float horizontalOffset = anchorPoint.X - bounds.X;
             float verticalOffset = anchorPoint.Y - bounds.Y;

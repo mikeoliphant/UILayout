@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace UILayout
 {
@@ -39,6 +41,10 @@ namespace UILayout
                 graphics.PreferredBackBufferWidth = ScreenWidth;
                 graphics.PreferredBackBufferHeight = ScreenHeight;
             }
+
+            //graphics.GraphicsProfile = GraphicsProfile.HiDef;
+            //graphics.PreferMultiSampling = true;
+            //graphics.ApplyChanges();
 
             Content = new AssemblyRelativeContentManager(Services);
 
@@ -103,7 +109,7 @@ namespace UILayout
         {
             base.Draw(gameTime);
 
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
 
             if ((GraphicsDevice.Viewport.Bounds.Width != Layout.Bounds.Width) || (GraphicsDevice.Viewport.Bounds.Height != Layout.Bounds.Height))
             {

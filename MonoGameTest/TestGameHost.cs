@@ -27,7 +27,6 @@ namespace MonoGameTest
             }
 
             Layout.GraphicsContext.SingleWhitePixelImage = new UIImage("SingleWhitePixel");
-            TextBlock.DefaultColor = UIColor.Black;
 
             Layout.RootUIElement = new UILayout.Test.LayoutTest();
         }

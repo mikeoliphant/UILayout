@@ -39,7 +39,7 @@ namespace UILayout
             return KeyboardInput.Show(title, null);
         }
 
-        public override void SetBounds(RectF bounds)
+        public override void SetBounds(in RectF bounds)
         {
             base.SetBounds(new RectF(bounds.X, bounds.Y, bounds.Width / Scale, bounds.Height / Scale));
         }
