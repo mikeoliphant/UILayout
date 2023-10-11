@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using System.Text.RegularExpressions;
 #if !GENERICS_UNSUPPORTED
 using UIElementCollection = System.Collections.Generic.List<UILayout.UIElement>;
 #else
@@ -502,11 +503,12 @@ namespace UILayout
             switch (touch.TouchState)
             {
                 case ETouchState.Pressed:
+                    ListElement.CaptureTouch(touch);
                     dragElement = ListElement.FindClosestChild(touch.Position);
                     startPosition = touch.Position;
                     break;
                 case ETouchState.Moved:
-                    if (dragElement != null)
+                    if (ListElement.HaveTouchCapture && (dragElement != null))
                     {
                         float delta = Vector2.Distance(startPosition, touch.Position);
 
@@ -517,10 +519,8 @@ namespace UILayout
                     }
                     break;
                 case ETouchState.Released:
-                    break;
                 case ETouchState.Invalid:
-                    break;
-                default:
+                    ListElement.ReleaseTouch();
                     break;
             }
 
@@ -572,6 +572,11 @@ namespace UILayout
             Layout.Current.UpdateLayout();
 
             return true;
+        }
+
+        public override void HandleDragCancelled(object dropObject)
+        {
+            ListElement.ReleaseTouch();
         }
     }
 }

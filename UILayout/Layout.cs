@@ -231,8 +231,13 @@ namespace UILayout
                         //activeElement.DragHover(dragInitiator, dragObject, touch);
                         break;
                     case ETouchState.Invalid:
-                        dragObject = null;
                         UpdateDragDirty();
+
+                        dragInitiator.HandleDragCancelled(dragObject);
+
+                        dragImage = null;
+                        dragObject = null;
+
                         break;
                 }
 
