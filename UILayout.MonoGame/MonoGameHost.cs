@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+using System.Windows.Forms;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Reflection;
 
 namespace UILayout
 {
@@ -18,6 +14,14 @@ namespace UILayout
         public int ScreenHeight { get; private set; }
 
         public MonoGameLayout Layout { get; private set; }
+
+        public Form Form
+        {
+            get
+            {
+                { return Window.GetType().GetField("Form", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Window) as Form; }
+            }
+        }
 
         GraphicsDeviceManager graphics;
 
@@ -113,6 +117,9 @@ namespace UILayout
 
             if ((GraphicsDevice.Viewport.Bounds.Width != Layout.Bounds.Width) || (GraphicsDevice.Viewport.Bounds.Height != Layout.Bounds.Height))
             {
+                ScreenWidth = GraphicsDevice.Viewport.Bounds.Width;
+                ScreenHeight = GraphicsDevice.Viewport.Bounds.Height;
+
                 Layout.SetBounds(new RectF(0, 0, GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height));
 
                 Layout.UpdateLayout();

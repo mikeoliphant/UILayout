@@ -6,6 +6,9 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography.Pkcs;
 using System.Xml.Serialization;
 using UILayout;
 
@@ -634,9 +637,73 @@ namespace ImageSheetProcessor
             AddFont(name, font, 0x20, 0x7f, 16, antialias: true);
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct KerningPair
+        {
+            public Int16 wFirst;
+            public Int16 wSecond;
+            public Int32 iKernAmount;
+        }
+
+        [DllImport("Gdi32.dll", EntryPoint = "GetKerningPairs", SetLastError = true)]
+        static extern int GetKerningPairs(int hdc, int nNumPairs, [In, Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] KerningPair[] kerningPairs);
+
+        [DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
+        static extern IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
+
+        [DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
+        static extern bool DeleteObject(IntPtr hdc);
+
+        [DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
+        static extern int SetMapMode(IntPtr hdc, int iMode);
+
         public void AddFont(string name, Font font, int minChar, int maxChar, int glphsPerLine, bool antialias)
         {
             string destFile = Path.Combine(DestPath, name) + ".png";
+
+            IntPtr hdc = measureGraphics.GetHdc();
+            SetMapMode(hdc, 1); // MM_TEXT
+
+            Font fontClone = (Font)font.Clone();
+            IntPtr hFont = fontClone.ToHfont();
+            SelectObject(hdc, hFont);
+
+            int numKerningPairs = GetKerningPairs(hdc.ToInt32(), 0, null);
+
+            KerningPair[] kerningPairs = new KerningPair[numKerningPairs];
+
+            GetKerningPairs(hdc.ToInt32(), numKerningPairs, kerningPairs);
+
+            DeleteObject(hFont);
+            measureGraphics.ReleaseHdc();
+
+            Dictionary<(Int16, Int16), Int32> kernDict = new Dictionary<(short, short), int>();
+
+            foreach (KerningPair pair in kerningPairs)
+            {
+                if (pair.iKernAmount != 0)
+                {
+                    kernDict[(pair.wFirst, pair.wSecond)] = pair.iKernAmount;
+                }
+            }
+
+            SpriteFontDefinition fontEntry = new SpriteFontDefinition();
+
+            fontEntry.Name = name;
+            fontEntry.KernPairs = new List<SpriteFontKernPair>();
+
+            for (char ch = (char)minChar; ch < maxChar; ch++)
+            {
+                for (char ch2 = (char)minChar; ch2 < maxChar; ch2++)
+                {
+                    int kern;
+
+                    if (kernDict.TryGetValue(((Int16)ch, (Int16)ch2), out kern))
+                    {
+                        fontEntry.KernPairs.Add(new SpriteFontKernPair { Ch1 = ch, Ch2 = ch2, Kern = kern });
+                    }
+                }
+            }
 
             List<Bitmap> bitmaps = new List<Bitmap>();
             List<Rectangle> cropRects = new List<Rectangle>();
@@ -678,9 +745,6 @@ namespace ImageSheetProcessor
                 }
             }
 
-            SpriteFontDefinition fontEntry = new SpriteFontDefinition();
-
-            fontEntry.Name = name;
             fontEntry.Glyphs = new SpriteFontGlyph[cropRects.Count];
 
             for (int i = 0; i < cropRects.Count; i++)
@@ -694,7 +758,7 @@ namespace ImageSheetProcessor
 
             imageSheet.Fonts.Add(fontEntry);
 
-            Bitmap shadowed = null;
+            Bitmap shadowed = null;            
 
             using (Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb))
             {

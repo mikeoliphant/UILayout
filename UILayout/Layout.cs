@@ -1,6 +1,8 @@
 ﻿using System;
 #if !GENERICS_UNSUPPORTED
 using System.Collections.Generic;
+using System.Data.Common;
+using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
 #endif
@@ -200,7 +202,11 @@ namespace UILayout
                 switch (touch.TouchState)
                 {
                     case ETouchState.Moved:
+                        if (dragImagePosition.X != float.MinValue)
+                            UpdateDragDirty();
                         dragImagePosition = touch.Position;
+                        UpdateDragDirty();
+
                         //activeElement.DragHover(dragInitiator, dragObject, touch);
                         break;
                     case ETouchState.Released:
@@ -215,6 +221,8 @@ namespace UILayout
                             dragInitiator.HandleDragCancelled(dragObject);
                         }
 
+                        UpdateDragDirty();
+
                         dragObject = null;
                         dragImage = null;
 
@@ -224,6 +232,7 @@ namespace UILayout
                         break;
                     case ETouchState.Invalid:
                         dragObject = null;
+                        UpdateDragDirty();
                         break;
                 }
 
@@ -259,6 +268,11 @@ namespace UILayout
             dragImageXOffset = offsetX;
             dragImageYOffset = offsetY;
             dragImagePosition = new Vector2(float.MinValue);
+        }
+
+        void UpdateDragDirty()
+        {
+            AddDirtyRect(new RectF(dragImagePosition.X + dragImageXOffset, dragImagePosition.Y + dragImageYOffset, dragImage.Width, dragImage.Height));
         }
 
         internal bool CaptureTouch(int touchID, UIElement captureElement)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpDX.MediaFoundation;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
@@ -14,6 +15,13 @@ namespace UILayout
         public int Height;
     }
 
+    public struct SpriteFontKernPair
+    {
+        public UInt16 Ch1;
+        public UInt16 Ch2;
+        public Int32 Kern;
+    }
+
     public class SpriteFontDefinition
     {
         public string Name { get; set; }
@@ -23,6 +31,7 @@ namespace UILayout
         public int GlyphsPerRow { get; set; }
         public string GlyphString { get; set; }
         public SpriteFontGlyph[] Glyphs { get; set; }
+        public List<SpriteFontKernPair> KernPairs { get; set; }
     }
 
     public class SpriteFont
@@ -39,6 +48,8 @@ namespace UILayout
         protected int width;
         protected int height;
         protected float emptyRowHeight;
+
+        Dictionary<(int, int), int> kernDict;
 
         [XmlIgnore]
         public UIImage FontImage
@@ -104,6 +115,16 @@ namespace UILayout
             font.Spacing = -1;
             font.LineSpacing = -1;
             font.EmptyLinePercent = 0.5f;
+
+            font.kernDict = new Dictionary<(int, int), int>();
+
+            if ((fontDefinition.KernPairs != null) && (fontDefinition.KernPairs.Count > 0))
+            {
+                foreach (SpriteFontKernPair pair in fontDefinition.KernPairs)
+                {
+                    font.kernDict[(pair.Ch1, pair.Ch2)] = pair.Kern;
+                }
+            }
 
             return font;
         }
@@ -171,6 +192,8 @@ namespace UILayout
 
             System.Drawing.Rectangle drawRect = System.Drawing.Rectangle.Empty;
 
+            char lastChar = '\0';
+
             for (int i = 0; i < str.Length; i++)
             {
                 char c = str[i];
@@ -179,6 +202,8 @@ namespace UILayout
                 {
                     yOffset += (((x == xOffset) ? emptyRowHeight : rowHeight) + LineSpacing) * scale;
                     xOffset = x;
+
+                    lastChar = '\0';
                 }
                 else
                 {
@@ -189,9 +214,25 @@ namespace UILayout
                     drawRect.Width = glyph.Width;
                     drawRect.Height = glyph.Height;
 
+                    if (lastChar != '\0')
+                    {
+                        float spacing = Spacing;
+
+                        Int32 kern;
+
+                        if ((kernDict != null) && kernDict.TryGetValue((lastChar, c), out kern))
+                        {
+                            spacing += kern;
+                        }
+
+                        xOffset += spacing * scale;
+                    }
+
                     graphicsContext.DrawImage(fontImage, (int)xOffset, (int)yOffset, drawRect, color, scale);
 
-                    xOffset += (glyph.Width + Spacing) * scale;
+                    xOffset += glyph.Width * scale;
+
+                    lastChar = c;
                 }
             }
         }
@@ -210,6 +251,8 @@ namespace UILayout
 
             float rowWidth = 0;
 
+            char lastChar = '\0';
+
             for (int i = 0; i < str.Length; i++)
             {
                 char c = str[i];
@@ -221,13 +264,28 @@ namespace UILayout
                     height += (((rowWidth == 0) ? emptyRowHeight : rowHeight) + LineSpacing) * scale;
 
                     rowWidth = 0;
+
+                    lastChar = '\0';
                 }
                 else
                 {
-
                     SpriteFontGlyph glyph = GetGlyph(c);
 
-                    rowWidth += (glyph.Width + Spacing) * scale;
+                    if (lastChar != '\0')
+                    {
+                        float spacing = Spacing;
+
+                        Int32 kern;
+
+                        if ((kernDict != null) && kernDict.TryGetValue((lastChar, c), out kern))
+                        {
+                            spacing += kern;
+                        }
+
+                        rowWidth += spacing * scale;
+                    }
+
+                    rowWidth += glyph.Width * scale;
                 }
             }
 
@@ -243,6 +301,8 @@ namespace UILayout
 
             System.Drawing.Rectangle drawRect = System.Drawing.Rectangle.Empty;
 
+            char lastChar = '\0';
+
             for (int i = 0; i < stringBuilder.Length; i++)
             {
                 char c = stringBuilder[i];
@@ -251,6 +311,8 @@ namespace UILayout
                 {
                     yOffset += (((x == xOffset) ? emptyRowHeight : rowHeight) + LineSpacing) * scale;
                     xOffset = x;
+
+                    lastChar = '\0';
                 }
                 else
                 {
@@ -261,9 +323,25 @@ namespace UILayout
                     drawRect.Width = glyph.Width;
                     drawRect.Height = glyph.Height;
 
+                    if (lastChar != '\0')
+                    {
+                        float spacing = Spacing;
+
+                        Int32 kern;
+
+                        if ((kernDict != null) && kernDict.TryGetValue((lastChar, c), out kern))
+                        {
+                            spacing += kern;
+                        }
+
+                        xOffset += spacing * scale;
+
+                        lastChar = c;
+                    }
+
                     graphicsContext.DrawImage(fontImage, (int)xOffset, (int)yOffset, drawRect, color, scale);
 
-                    xOffset += (glyph.Width + Spacing) * scale;
+                    xOffset += glyph.Width * scale;
                 }
             }
         }
@@ -282,6 +360,8 @@ namespace UILayout
 
             float rowWidth = 0;
 
+            char lastChar = '\0';
+
             for (int i = 0; i < stringBuilder.Length; i++)
             {
                 char c = stringBuilder[i];
@@ -293,13 +373,28 @@ namespace UILayout
                     height += (((rowWidth == 0) ? emptyRowHeight : rowHeight) + LineSpacing) * scale;
 
                     rowWidth = 0;
+
+                    lastChar = '\0';
                 }
                 else
                 {
-
                     SpriteFontGlyph glyph = GetGlyph(c);
 
-                    rowWidth += (glyph.Width + Spacing) * scale;
+                    if (lastChar != '\0')
+                    {
+                        float spacing = Spacing;
+
+                        Int32 kern;
+
+                        if ((kernDict != null) && kernDict.TryGetValue((lastChar, c), out kern))
+                        {
+                            spacing += kern;
+                        }
+
+                        rowWidth += spacing * scale;
+                    }
+
+                    rowWidth += glyph.Width * scale;
                 }
             }
 

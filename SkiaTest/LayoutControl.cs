@@ -162,6 +162,7 @@ namespace SkiaTest
                 }
 
                 RectF dirtyRect = Layout.DirtyRect;
+                dirtyRect.IntersectWith(Layout.Bounds);
 
                 PaintSurface(surface, info.WithSize(userVisibleSize));
 

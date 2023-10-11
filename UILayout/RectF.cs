@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace UILayout
 {
-    public struct RectF
+    public struct RectF : IEquatable<RectF>
     {
         private float x;
         private float y;
@@ -39,12 +39,9 @@ namespace UILayout
             this.height = height;
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(RectF other)
         {
-            if (!(obj is RectF))
-                return false;
-
-            return (this.x == ((RectF)obj).x) && (this.y == ((RectF)obj).y) && (this.width == ((RectF)obj).width) && (this.height == ((RectF)obj).height);
+            return (this.x == ((RectF)other).x) && (this.y == ((RectF)other).y) && (this.width == ((RectF)other).width) && (this.height == ((RectF)other).height);
         }
 
         public void MakeEmpty()

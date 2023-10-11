@@ -32,16 +32,16 @@ namespace UILayout.Test
             };
             Children.Add(verticalSlider);
 
-            EditableImage editImage = new EditableImage(new UIImage(100, 100));
-            editImage.DrawCircle(50, 50, 40, UIColor.Black, fill: false);
-            editImage.Fill(50, 50, UIColor.Red);
-            editImage.UpdateImageData();
+            //EditableImage editImage = new EditableImage(new UIImage(100, 100));
+            //editImage.DrawCircle(50, 50, 40, UIColor.Black, fill: false);
+            //editImage.Fill(50, 50, UIColor.Red);
+            //editImage.UpdateImageData();
 
-            Children.Add(new ImageElement(editImage.Image)
-            {
-                HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Top
-            });
+            //Children.Add(new ImageElement(editImage.Image)
+            //{
+            //    HorizontalAlignment = EHorizontalAlignment.Center,
+            //    VerticalAlignment = EVerticalAlignment.Top
+            //});
 
             HorizontalStack stack = new HorizontalStack
             {
