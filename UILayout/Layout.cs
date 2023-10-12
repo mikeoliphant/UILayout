@@ -1,11 +1,7 @@
 ﻿using System;
-#if !GENERICS_UNSUPPORTED
 using System.Collections.Generic;
-using System.Data.Common;
-using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
-#endif
 
 namespace UILayout
 {
@@ -71,11 +67,7 @@ namespace UILayout
             }
         }
 
-#if !GENERICS_UNSUPPORTED
         List<UIElement> popupStack = new List<UIElement>();
-#else
-        ArrayList popupStack = new ArrayList();
-#endif
 
         public Layout()
         {

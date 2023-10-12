@@ -11,13 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkiaTest", "SkiaTest\SkiaTe
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.Test", "UILayout.Test\UILayout.Test.shproj", "{66D9F9C2-FAED-4C0C-B0A1-EA402D54ACB1}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.nanoFramework", "UILayout.nanoFramework\UILayout.nanoFramework.shproj", "{7CB7AEBA-6408-4B9F-BCF7-BD2A1FC0694E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGameTest", "MonoGameTest\MonoGameTest.csproj", "{47F7B7A0-5F63-4900-BF71-C2834EA876BA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.MonoGame", "UILayout.MonoGame\UILayout.MonoGame.csproj", "{AC389588-EED4-426B-B204-BDAAA1D9496E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageSheetProcessor", "ImageSheetProcessor\ImageSheetProcessor.csproj", "{867A9020-0073-427A-A29F-275863F6FD94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageSheetProcessor", "ImageSheetProcessor\ImageSheetProcessor.csproj", "{867A9020-0073-427A-A29F-275863F6FD94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,7 +53,6 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		UILayout.Test\UILayout.Test.projitems*{47f7b7a0-5f63-4900-bf71-c2834ea876ba}*SharedItemsImports = 5
 		UILayout.Test\UILayout.Test.projitems*{66d9f9c2-faed-4c0c-b0a1-ea402d54acb1}*SharedItemsImports = 13
-		UILayout.nanoFramework\UILayout.nanoFramework.projitems*{7cb7aeba-6408-4b9f-bcf7-bd2a1fc0694e}*SharedItemsImports = 13
 		UILayout\UILayout.projitems*{7da2b397-a39f-4e5b-96ed-f206329982c9}*SharedItemsImports = 13
 		UILayout\UILayout.projitems*{8c8cd599-cf81-4789-8aa3-e3882eb3655f}*SharedItemsImports = 5
 		UILayout.Test\UILayout.Test.projitems*{91dec317-23ac-42a0-8a09-6b719b3f8444}*SharedItemsImports = 5

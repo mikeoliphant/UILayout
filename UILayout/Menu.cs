@@ -1,9 +1,5 @@
 ﻿using System;
-#if !GENERICS_UNSUPPORTED
-using MenuItemCollection = System.Collections.Generic.List<UILayout.MenuItem>;
-#else
-using MenuItemCollection = System.Collections.ArrayList;
-#endif
+using System.Collections.Generic;
 
 namespace UILayout
 {
@@ -41,13 +37,13 @@ namespace UILayout
             Child = menuStack;
         }
 
-        public Menu(MenuItemCollection menuItems)
+        public Menu(List<MenuItem> menuItems)
             : this()
         {
             SetMenuItems(menuItems);
         }
 
-        public void SetMenuItems(MenuItemCollection menuItems)
+        public void SetMenuItems(List<MenuItem> menuItems)
         {
             menuStack.Children.Clear();
 

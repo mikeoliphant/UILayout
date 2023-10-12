@@ -1,11 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
-using System.Text.RegularExpressions;
-#if !GENERICS_UNSUPPORTED
-using UIElementCollection = System.Collections.Generic.List<UILayout.UIElement>;
-#else
-using UIElementCollection = System.Collections.ArrayList;
-#endif
 
 namespace UILayout
 {
@@ -74,13 +69,13 @@ namespace UILayout
 
     public class ListUIElement : LayoutElement
     {
-        protected UIElementCollection children = new UIElementCollection();
+        protected List<UIElement> children = new List<UIElement>();
 
         public bool DrawInReverse { get; set; }
         public float ChildSpacing { get; set; }
         public bool ChildrenEqualSize { get; set; }
 
-        public virtual UIElementCollection Children
+        public virtual List<UIElement> Children
         {
             get { return children; }
             set { children = value; }

@@ -1,10 +1,5 @@
 ﻿using System;
-#if !GENERICS_UNSUPPORTED
 using System.Collections.Generic;
-using MenuItemCollection = System.Collections.Generic.List<UILayout.MenuItem>;
-#else
-using MenuItemCollection = ArrayList;
-#endif
 
 namespace UILayout.Test
 {
@@ -144,7 +139,7 @@ namespace UILayout.Test
                 }
             });
 
-            MenuItemCollection menuItems = new MenuItemCollection()
+            List<MenuItem> menuItems = new List<MenuItem>
             {
                 new ContextMenuItem { Text = "Item 1" },
                 new ContextMenuItem { Text = "Item 2"},

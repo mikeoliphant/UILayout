@@ -1,7 +1,5 @@
 ﻿using System;
-#if !GENERICS_UNSUPPORTED
 using System.Collections.Generic;
-#endif
 
 namespace UILayout
 {
@@ -108,11 +106,7 @@ namespace UILayout
         public ListUIElement InputContainer { get; private set; }
 
         IPopup hostElement;
-#if !GENERICS_UNSUPPORTED
         List<DialogInput> inputs = new List<DialogInput>();
-#else
-        ArrayList inputs = new ArrayList();
-#endif
         int selectedInput = 0;
 
         public DialogInputStack(IPopup hostElement, ListUIElement inputContainer, params DialogInput[] inputs)
