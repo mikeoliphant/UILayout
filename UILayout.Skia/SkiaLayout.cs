@@ -11,6 +11,8 @@ namespace UILayout
         public SkiaLayout()
         {
             GraphicsContext = new GraphicsContext2D();
+
+            DefaultFont = new UIFont { Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright), TextSize = 24 };
         }
     }
 }

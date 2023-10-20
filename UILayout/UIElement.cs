@@ -278,7 +278,7 @@ namespace UILayout
 
         public void BeginDrag(int touchID, object obj)
         {
-            BeginDrag(touchID, obj, Layout.DefaultDragImage);
+            BeginDrag(touchID, obj, Layout.Current.DefaultDragImage);
         }
 
         public void BeginDrag(int touchID, object obj, UIImage image)

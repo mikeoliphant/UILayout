@@ -550,15 +550,37 @@ namespace UILayout
             if (dropObject == dropOnChild)
                 return false;
 
+            int dropIndex = ListElement.Children.IndexOf(dropOnChild);
+
+            if (ListElement is VerticalStack)
+            {
+                if (touch.Position.Y > dropOnChild.ContentBounds.CenterY)
+                {
+                    dropIndex++;
+                }
+            }
+            else
+            {
+                if (touch.Position.X > dropOnChild.ContentBounds.CenterX)
+                {
+                    dropIndex++;
+                }
+            }
+
             if (dragElement == ListElement)
             {
+                int currentIndex = ListElement.Children.IndexOf(dropObject as UIElement);
+
+                if (currentIndex < dropIndex)
+                    dropIndex--;
+
                 ListElement.Children.Remove(dropObject as UIElement);
-                ListElement.Children.Insert(ListElement.Children.IndexOf(dropOnChild), dropObject as UIElement);
+                ListElement.Children.Insert(dropIndex, dropObject as UIElement);
             }
             else
             {
                 (dragElement as ListUIElement).Children.Remove(dropObject as UIElement);
-                ListElement.Children.Insert(ListElement.Children.IndexOf(dropOnChild), dropObject as UIElement);
+                ListElement.Children.Insert(dropIndex, dropObject as UIElement);
 
                 if (DragCompleteAction != null)
                     DragCompleteAction(dropObject);

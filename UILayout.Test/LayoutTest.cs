@@ -12,14 +12,14 @@ namespace UILayout.Test
             BackgroundColor = UIColor.Yellow;
             Padding = new LayoutPadding(10);
 
-            Layout.DefaultOutlineNinePatch = Layout.Current.AddImage("OutlineNinePatch");
+            Layout.Current.DefaultOutlineNinePatch = Layout.Current.AddImage("OutlineNinePatch");
 
-            Layout.DefaultPressedNinePatch = Layout.Current.AddImage("ButtonPressed");
-            Layout.DefaultUnpressedNinePatch = Layout.Current.AddImage("ButtonUnpressed");
+            Layout.Current.DefaultPressedNinePatch = Layout.Current.AddImage("ButtonPressed");
+            Layout.Current.DefaultUnpressedNinePatch = Layout.Current.AddImage("ButtonUnpressed");
 
-            Layout.DefaultDragImage = Layout.Current.GetImage("ButtonPressed");
+            Layout.Current.DefaultDragImage = Layout.Current.GetImage("ButtonPressed");
 
-            TextBlock.DefaultColor = UIColor.Black;
+            Layout.Current.DefaultForegroundColor = UIColor.Black;
 
             VerticalSlider verticalSlider = new VerticalSlider("ButtonPressed")
             {
@@ -123,7 +123,7 @@ namespace UILayout.Test
             };
             Children.Add(buttonStack);
 
-            InputDialog dialog = new InputDialog(Layout.DefaultOutlineNinePatch, new TextBlock { Text = "Do you want to?", TextColor = UIColor.Black });
+            InputDialog dialog = new InputDialog(Layout.Current.DefaultOutlineNinePatch, new TextBlock { Text = "Do you want to?", TextColor = UIColor.Black });
 
             dialog.AddInput(new DialogInput { Text = "Ok", CloseOnInput = true } );
             dialog.AddInput(new DialogInput { Text = "Cancel", CloseOnInput = true });
@@ -164,7 +164,6 @@ namespace UILayout.Test
 
             SwipeList swipeList = new SwipeList()
             {
-                Font = TextBlock.DefaultFont,
                 TextColor = UIColor.Black,
                 VerticalAlignment = EVerticalAlignment.Stretch,
                 HorizontalAlignment = EHorizontalAlignment.Center,

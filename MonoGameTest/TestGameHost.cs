@@ -23,7 +23,7 @@ namespace MonoGameTest
 
                 Layout.AddImage(fontDef.Name);
 
-                UIFont.DefaultFont = new UIFont { SpriteFont = UILayout.SpriteFont.CreateFromDefinition(fontDef) };
+                Layout.DefaultFont = new UIFont { SpriteFont = UILayout.SpriteFont.CreateFromDefinition(fontDef) };
             }
 
             Layout.GraphicsContext.SingleWhitePixelImage = new UIImage("SingleWhitePixel");

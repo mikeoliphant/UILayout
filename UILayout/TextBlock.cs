@@ -41,9 +41,6 @@ namespace UILayout
 
     public class TextBlock : UIElement
     {
-        public static UIFont DefaultFont { get; set; } = UIFont.DefaultFont;
-        public static UIColor DefaultColor { get; set; } = UIColor.White;
-
         public string Text { get; set; }
 
         public UIColor TextColor { get; set; }
@@ -51,8 +48,8 @@ namespace UILayout
 
         public TextBlock()
         {
-            TextFont = DefaultFont;
-            TextColor = DefaultColor;
+            TextFont = Layout.Current.DefaultFont;
+            TextColor = Layout.Current.DefaultForegroundColor;
         }
 
         public TextBlock(string text)
@@ -90,9 +87,6 @@ namespace UILayout
 
     public class StringBuilderTextBlock : UIElement
     {
-        public static UIFont DefaultFont { get; set; } = UIFont.DefaultFont;
-        public static UIColor DefaultColor { get; set; } = UIColor.Black;
-
         public StringBuilder StringBuilder { get; set; }
 
         public UIColor TextColor { get; set; }
@@ -100,8 +94,8 @@ namespace UILayout
 
         public StringBuilderTextBlock()
         {
-            TextFont = DefaultFont;
-            TextColor = DefaultColor;
+            TextFont = Layout.Current.DefaultFont;
+            TextColor = Layout.Current.DefaultForegroundColor;
 
             StringBuilder = new StringBuilder();
         }

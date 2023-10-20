@@ -16,7 +16,7 @@ namespace UILayout
         VerticalStack menuStack;
 
         public Menu()
-            : this(Layout.DefaultOutlineNinePatch)
+            : this(Layout.Current.DefaultOutlineNinePatch)
         {
 
         }

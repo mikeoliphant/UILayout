@@ -15,10 +15,13 @@ namespace UILayout
     {
         public static Layout Current { get; private set; }
 
-        public static UIImage DefaultOutlineNinePatch { get; set; }
-        public static UIImage DefaultPressedNinePatch { get; set; }
-        public static UIImage DefaultUnpressedNinePatch { get; set; }
-        public static UIImage DefaultDragImage { get; set; }
+        public UIFont DefaultFont { get; set; }
+        public UIColor DefaultForegroundColor { get; set; }
+
+        public UIImage DefaultOutlineNinePatch { get; set; }
+        public UIImage DefaultPressedNinePatch { get; set; }
+        public UIImage DefaultUnpressedNinePatch { get; set; }
+        public UIImage DefaultDragImage { get; set; }        
 
         Dictionary<string, UIImage> images = new Dictionary<string, UIImage>();
         Dictionary<string, UIFont> fonts = new Dictionary<string, UIFont>();
@@ -333,36 +336,36 @@ namespace UILayout
 
         public void ShowContinuePopup(string text, Action continueAction)
         {
-            ShowPopup(new InputDialog(Layout.DefaultOutlineNinePatch, new TextBlock(text), new DialogInput { Text = "Continue", WaitForRelease = true, Action = continueAction, CloseOnInput = true }));
+            ShowPopup(new InputDialog(Layout.Current.DefaultOutlineNinePatch, new TextBlock(text), new DialogInput { Text = "Continue", WaitForRelease = true, Action = continueAction, CloseOnInput = true }));
         }
 
         public void ShowContinuePopup(UIElement contents, Action continueAction)
         {
-            ShowPopup(new InputDialog(Layout.DefaultOutlineNinePatch, contents, new DialogInput { Text = "Continue", WaitForRelease = true, Action = continueAction, CloseOnInput = true }));
+            ShowPopup(new InputDialog(Layout.Current.DefaultOutlineNinePatch, contents, new DialogInput { Text = "Continue", WaitForRelease = true, Action = continueAction, CloseOnInput = true }));
         }
 
         public void ShowConfirmationPopup(string text, Action confirmAction)
         {
-            ShowPopup(new InputDialog(Layout.DefaultOutlineNinePatch, new TextBlock(text),
+            ShowPopup(new InputDialog(Layout.Current.DefaultOutlineNinePatch, new TextBlock(text),
                 new DialogInput { Text = "Yes", Action = confirmAction, WaitForRelease = true, CloseOnInput = true },
                 new DialogInput { Text = "No", WaitForRelease = true, CloseOnInput = true }));
         }
 
         public void ShowConfirmationPopup(UIElement contents, Action confirmAction)
         {
-            ShowPopup(new InputDialog(Layout.DefaultOutlineNinePatch, contents,
+            ShowPopup(new InputDialog(Layout.Current.DefaultOutlineNinePatch, contents,
                 new DialogInput { Text = "Yes", Action = confirmAction, WaitForRelease = true, CloseOnInput = true },
                 new DialogInput { Text = "No", WaitForRelease = true, CloseOnInput = true }));
         }
 
         public void ShowBackPopup(string text)
         {
-            ShowPopup(new InputDialog(Layout.DefaultOutlineNinePatch, new TextBlock(text), new DialogInput { Text = "Back", WaitForRelease = true, CloseOnInput = true }));
+            ShowPopup(new InputDialog(Layout.Current.DefaultOutlineNinePatch, new TextBlock(text), new DialogInput { Text = "Back", WaitForRelease = true, CloseOnInput = true }));
         }
 
         public void ShowBackPopup(UIElement contents)
         {
-            ShowPopup(new InputDialog(Layout.DefaultOutlineNinePatch, contents, new DialogInput { Text = "Back", WaitForRelease = true, CloseOnInput = true }));
+            ShowPopup(new InputDialog(Layout.Current.DefaultOutlineNinePatch, contents, new DialogInput { Text = "Back", WaitForRelease = true, CloseOnInput = true }));
         }
 
         public void ClosePopup(UIElement popup)

@@ -131,16 +131,16 @@ namespace UILayout
 
         public void SetElements(UIElement pressedElement, UIElement unpressedElement)
         {
-            if (Layout.DefaultPressedNinePatch != null)
+            if (Layout.Current.DefaultPressedNinePatch != null)
             {
-                PressedElement = new NinePatchWrapper(Layout.DefaultPressedNinePatch)
+                PressedElement = new NinePatchWrapper(Layout.Current.DefaultPressedNinePatch)
                 {
                     Child = pressedElement,
                     HorizontalAlignment = EHorizontalAlignment.Stretch,
                     VerticalAlignment = EVerticalAlignment.Stretch
                 };
 
-                UnpressedElement = new NinePatchWrapper(Layout.DefaultUnpressedNinePatch)
+                UnpressedElement = new NinePatchWrapper(Layout.Current.DefaultUnpressedNinePatch)
                 {
                     Child = unpressedElement,
                     HorizontalAlignment = EHorizontalAlignment.Stretch,
