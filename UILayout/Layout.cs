@@ -16,7 +16,7 @@ namespace UILayout
         public static Layout Current { get; private set; }
 
         public UIFont DefaultFont { get; set; }
-        public UIColor DefaultForegroundColor { get; set; }
+        public UIColor DefaultForegroundColor { get; set; } = UIColor.Black;
 
         public UIImage DefaultOutlineNinePatch { get; set; }
         public UIImage DefaultPressedNinePatch { get; set; }
