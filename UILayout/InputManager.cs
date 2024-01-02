@@ -95,6 +95,7 @@ namespace UILayout
         float secondsElapsed;
 
         public int MouseWheelDelta { get; private set; }
+        public Vector2 MousePosition { get; private set; }
 
         public void AddMapping(string name, IInputMapping mapping)
         {

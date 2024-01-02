@@ -133,7 +133,6 @@ namespace UILayout
         float dragStartY = 0;
         float lastDragY = 0;
         float dragStartOffset = 0;
-        float totDrag = 0;
 
         public override bool HandleTouch(in Touch touch)
         {
@@ -150,7 +149,6 @@ namespace UILayout
             {
                 dragStartY = lastDragY = touch.Position.Y;
                 dragStartOffset = offset;
-                totDrag = 0;
             }
 
             if (touch.TouchState == ETouchState.Moved)
@@ -159,20 +157,15 @@ namespace UILayout
 
                 offset = dragStartOffset - diff;
 
-                totDrag += Math.Abs(touch.Position.Y - lastDragY);
-
                 lastDragY = touch.Position.Y;
 
                 UpdateContentLayout();
             }
 
-            if (touch.TouchState == ETouchState.Released)
+            if (IsTap(touch))
             {
-                if (totDrag < 5)
-                {
-                    if (itemPos < items.Count)
-                        SelectAction(itemPos);
-                }
+                if (itemPos < items.Count)
+                    SelectAction(itemPos);
             }
 
             return true;

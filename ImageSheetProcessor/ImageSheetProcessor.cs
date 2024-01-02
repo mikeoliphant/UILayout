@@ -758,32 +758,30 @@ namespace ImageSheetProcessor
 
             imageSheet.Fonts.Add(fontEntry);
 
-            Bitmap shadowed = null;            
+            //Bitmap shadowed = null;            
+            Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
 
-            using (Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb))
+            using (Graphics outputGraphics = Graphics.FromImage(bitmap))
             {
-                using (Graphics outputGraphics = Graphics.FromImage(bitmap))
+                outputGraphics.CompositingMode = CompositingMode.SourceCopy;
+
+                for (int i = 0; i < bitmaps.Count; i++)
                 {
-                    outputGraphics.CompositingMode = CompositingMode.SourceCopy;
-
-                    for (int i = 0; i < bitmaps.Count; i++)
-                    {
-                        outputGraphics.DrawImage(bitmaps[i], new Rectangle(xPositions[i], yPositions[i], cropRects[i].Width, cropRects[i].Height), cropRects[i], GraphicsUnit.Pixel);
-                    }
-
-                    outputGraphics.Flush();
+                    outputGraphics.DrawImage(bitmaps[i], new Rectangle(xPositions[i], yPositions[i], cropRects[i].Width, cropRects[i].Height), cropRects[i], GraphicsUnit.Pixel);
                 }
 
-                shadowed = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-
-                AddShadow(bitmap, shadowed, new Rectangle(0, 0, width, height), new Point(0, 0));
-
-                SaveAndManifest(shadowed, destFile);
+                outputGraphics.Flush();
             }
 
+            //shadowed = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+
+            //AddShadow(bitmap, shadowed, new Rectangle(0, 0, width, height), new Point(0, 0));
+
+            SaveAndManifest(bitmap, destFile);
+
             // Clean up temporary objects.
-            foreach (Bitmap bitmap in bitmaps)
-                bitmap.Dispose();
+            foreach (Bitmap glyph in bitmaps)
+                glyph.Dispose();
         }
 
         private Bitmap RasterizeCharacter(char ch, Font font, bool antialias)

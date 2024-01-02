@@ -40,6 +40,8 @@ namespace UILayout
 
             Vector2 position = new Vector2(mouseState.X, mouseState.Y) / (Layout.Current as MonoGameLayout).Scale;
 
+            MousePosition = position;
+
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
                 if (lastMouseState.LeftButton == ButtonState.Released)

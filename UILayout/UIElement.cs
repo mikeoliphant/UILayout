@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 namespace UILayout
 {
@@ -78,6 +79,10 @@ namespace UILayout
         public Vector2 TouchCaptureStartPosition { get; private set; }
         public int CapturedTouchID { get; private set; }
         public DragDropHandler DragDropHandler { get; set; }
+
+        float lastDragY = 0;
+        float totDrag = 0;
+        DateTime lastTapTime = DateTime.MinValue;
 
         public UIElement()
         {
@@ -269,6 +274,49 @@ namespace UILayout
         {
             HaveTouchCapture = false;
             Layout.Current.ReleaseTouch(touchID, this);
+        }
+
+        protected bool IsTap(in Touch touch)
+        {
+            if (touch.TouchState == ETouchState.Pressed)
+            {
+                lastDragY = touch.Position.Y;
+                totDrag = 0;
+            }
+
+            if (touch.TouchState == ETouchState.Moved)
+            {
+                totDrag += Math.Abs(touch.Position.Y - lastDragY);
+
+                lastDragY = touch.Position.Y;
+            }
+
+            if (touch.TouchState == ETouchState.Released)
+            {
+                if (totDrag < 5)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool IsDoubleTap(in Touch touch)
+        {
+            if (IsTap(touch))
+            {
+                DateTime now = DateTime.Now;
+
+                if ((now - lastTapTime).TotalSeconds < 0.5)
+                {
+                    return true;
+                }
+
+                lastTapTime = now;
+            }
+
+            return false;
         }
 
         public virtual void HandleInput(InputManager inputManager)
