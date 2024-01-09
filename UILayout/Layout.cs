@@ -38,6 +38,7 @@ namespace UILayout
         public UIElement RootUIElement { get; set; }
         public bool HaveDirty { get => haveDirty; }
         public RectF DirtyRect { get { return dirtyRect; } set { dirtyRect = value; } }
+        public virtual bool InputIsActive { get { return true;  } }
 
         object dragObject = null;
         int dragTouchID;
@@ -156,15 +157,18 @@ namespace UILayout
 
             InputManager.Update(secondsElapsed);
 
-            foreach (Touch touch in InputManager.GetTouches())
+            if (InputIsActive)
             {
-                HandleTouch(touch);
+                foreach (Touch touch in InputManager.GetTouches())
+                {
+                    HandleTouch(touch);
+                }
+
+                UIElement activeElement = ActiveUIElement;
+
+                if (activeElement != null)
+                    activeElement.HandleInput(InputManager);
             }
-
-            UIElement activeElement = ActiveUIElement;
-
-            if (activeElement != null)
-                activeElement.HandleInput(InputManager);
         }
 
         public virtual void Draw(UIElement startElement)

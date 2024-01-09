@@ -625,16 +625,62 @@ namespace ImageSheetProcessor
             height = (int)Math.Ceiling(size.Height);
         }
 
-        public void AddFont(string name, string fontFamily, float emSize)
+        public void AddText(string name, string text, string fontFamily, float emSize)
         {
-            AddFont(name, fontFamily, FontStyle.Regular, emSize);
+            AddText(name, text, new Font(fontFamily, emSize));
         }
 
-        public void AddFont(string name, string fontFamily, FontStyle fontStyle, float emSize)
+        public void AddText(string name, string text, string fontFamily, FontStyle fontStyle, float emSize)
         {
             Font font = new Font(fontFamily, emSize, fontStyle);
+            
+            AddText(name, text, font);
+        }
 
-            AddFont(name, font, 0x20, 0x7f, 16, antialias: true);
+        public void AddText(string name, string text, Font font)
+        {
+            AddText(name, text, font, 0x20, 0x7f, 16, antialias: true);
+        }
+
+        public void AddText(string name, string text, Font font, int minChar, int maxChar, int glphsPerLine, bool antialias)
+        {
+            string destFile = Path.Combine(DestPath, name) + ".png";
+
+            int width;
+            int height;
+
+            MeasureString(text, font, out width, out height);
+
+            Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+
+            using (Graphics bitmapGraphics = Graphics.FromImage(bitmap))
+            {
+                if (antialias)
+                {
+                    bitmapGraphics.TextRenderingHint =
+                        TextRenderingHint.AntiAliasGridFit;
+                }
+                else
+                {
+                    bitmapGraphics.TextRenderingHint =
+                        TextRenderingHint.SingleBitPerPixelGridFit;
+                }
+
+                bitmapGraphics.Clear(Color.Transparent);
+
+                using (Brush brush = new SolidBrush(Color.White))
+                using (StringFormat format = new StringFormat())
+                {
+                    format.Alignment = StringAlignment.Near;
+                    format.LineAlignment = StringAlignment.Near;
+
+                    bitmapGraphics.DrawString(text, font, brush, 0, 0, format);
+                }
+
+                bitmapGraphics.Flush();
+            }
+
+            SaveAndManifest(bitmap, destFile);
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -656,6 +702,19 @@ namespace ImageSheetProcessor
 
         [DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
         static extern int SetMapMode(IntPtr hdc, int iMode);
+
+
+        public void AddFont(string name, string fontFamily, float emSize)
+        {
+            AddFont(name, fontFamily, FontStyle.Regular, emSize);
+        }
+
+        public void AddFont(string name, string fontFamily, FontStyle fontStyle, float emSize)
+        {
+            Font font = new Font(fontFamily, emSize, fontStyle);
+
+            AddFont(name, font, 0x20, 0x7f, 16, antialias: true);
+        }
 
         public void AddFont(string name, Font font, int minChar, int maxChar, int glphsPerLine, bool antialias)
         {

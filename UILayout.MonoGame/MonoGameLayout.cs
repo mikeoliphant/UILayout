@@ -1,19 +1,28 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace UILayout
 {
     public class MonoGameLayout : Layout
-    {
+    {        
         public static new MonoGameLayout Current { get { return Layout.Current as MonoGameLayout; } }
 
         public MonoGameHost Host { get; private set; }
 
         public float Scale { get; protected set; } = 1.0f;
+        public override bool InputIsActive
+        {
+            get
+            {
+                return System.Windows.Forms.Form.ActiveForm == (System.Windows.Forms.Control.FromHandle(Host.Window.Handle) as System.Windows.Forms.Form);
+            }
+        }
 
         public MonoGameLayout()
         {
