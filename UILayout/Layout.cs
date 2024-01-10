@@ -80,6 +80,10 @@ namespace UILayout
             InputManager = new InputManager();
         }
 
+        public virtual void Exiting()
+        {
+        }
+
         public UIImage AddImage(string name)
         {
             images[name] = new UIImage(name);

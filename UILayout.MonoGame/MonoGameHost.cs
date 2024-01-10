@@ -34,6 +34,7 @@ namespace UILayout
 
             graphics.IsFullScreen = fullscreen;
             graphics.SynchronizeWithVerticalRetrace = true;
+            IsFixedTimeStep = false;
 
             if (screenWidth == 0)
             {
@@ -127,6 +128,13 @@ namespace UILayout
 
             Layout.AddDirtyRect(Layout.Bounds);
             Layout.Draw();
+        }
+
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            Layout.Exiting();
+
+            base.OnExiting(sender, args);
         }
     }
 
