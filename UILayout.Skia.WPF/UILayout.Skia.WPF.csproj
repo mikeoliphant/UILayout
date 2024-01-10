@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="2.88.6" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\UILayout.Skia\UILayout.Skia.csproj" />
   </ItemGroup>
 
