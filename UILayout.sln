@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.MonoGame", "UILayo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageSheetProcessor", "ImageSheetProcessor\ImageSheetProcessor.csproj", "{867A9020-0073-427A-A29F-275863F6FD94}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UILayout.Skia.WPF", "UILayout.Skia.WPF\UILayout.Skia.WPF.csproj", "{DAE5DFB4-D8AA-4D0F-84CD-95098D69CC2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{867A9020-0073-427A-A29F-275863F6FD94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{867A9020-0073-427A-A29F-275863F6FD94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{867A9020-0073-427A-A29F-275863F6FD94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAE5DFB4-D8AA-4D0F-84CD-95098D69CC2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAE5DFB4-D8AA-4D0F-84CD-95098D69CC2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAE5DFB4-D8AA-4D0F-84CD-95098D69CC2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAE5DFB4-D8AA-4D0F-84CD-95098D69CC2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

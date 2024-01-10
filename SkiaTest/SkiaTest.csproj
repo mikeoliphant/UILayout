@@ -18,11 +18,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\UILayout.Skia\UILayout.Skia.csproj" />
+		<Folder Include="Resources\" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Resources\" />
+	  <ProjectReference Include="..\UILayout.Skia.WPF\UILayout.Skia.WPF.csproj" />
 	</ItemGroup>
 
 	<Import Project="..\UILayout.Test\UILayout.Test.projitems" Label="Shared" />
