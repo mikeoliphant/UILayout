@@ -7,19 +7,57 @@ namespace UILayout
 {
     public class SwipeList : UIElement
     {
-        public UIFont Font { get; set; } = Layout.Current.DefaultFont;
-        public float FontScale { get; set; } = 1.0f;
+        public UIFont Font
+        {
+            get => font;
+
+            set
+            {
+                font = value;
+
+                UpdateItemHeight();
+            }
+        }
+
+        public float FontScale
+        {
+            get => fontScale;
+            set
+            {
+                fontScale = value;
+
+                UpdateItemHeight();
+            }
+        }
+
         public UIColor TextColor { get; set; } = UIColor.White;
         public UIColor HighlightColor { get; set; } = new UIColor(200, 200, 200, 255);
-
         public Action<int> SelectAction { get; set; }
         public Action<int> HoldAction { get; set; }
         public float ItemHeight { get; set; }
         public float ItemXOffset { get; set; }
         public float ItemYOffset { get; set; }
 
+        public int CurrentTopItemIndex
+        {
+            get
+            {
+                return (int)(offset / ItemHeight);
+            }
+        }
+
+        public int NumDisplayedItems
+        {
+            get
+            {
+                return (int)(ContentBounds.Height / ItemHeight);
+            }
+        }
+
         IList items;
 
+        UIFont font = Layout.Current.DefaultFont;
+        float fontScale = 1.0f;
         float offset = 0;
         float velocity;
         protected StringBuilder sb = new StringBuilder();
@@ -43,12 +81,17 @@ namespace UILayout
             TextColor = UIColor.White;
 
             ItemXOffset = 10;
+
+            UpdateItemHeight();
         }
 
-        public override void UpdateContentLayout()
+        public void SetTopItem(int topItem)
         {
-            base.UpdateContentLayout();
+            offset = topItem * ItemHeight;
+        }
 
+        void UpdateItemHeight()
+        {
             ItemHeight = (Font.TextHeight * FontScale) * 1.1f;
             ItemYOffset = (ItemHeight - (Font.TextHeight * FontScale)) / 2;
         }

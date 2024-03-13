@@ -50,6 +50,11 @@ namespace UILayout
             Bitmap = baseImage.Bitmap;
         }
 
+        public void SetPixel(int x, int y, SKColor color)
+        {
+            Bitmap.SetPixel(x, y, color);
+        }
+        
         public UIColor[] GetData()
         {
             throw new NotImplementedException();
