@@ -13,11 +13,11 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.Test", "UILayout.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoGameTest", "MonoGameTest\MonoGameTest.csproj", "{47F7B7A0-5F63-4900-BF71-C2834EA876BA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.MonoGame", "UILayout.MonoGame\UILayout.MonoGame.csproj", "{AC389588-EED4-426B-B204-BDAAA1D9496E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageSheetProcessor", "ImageSheetProcessor\ImageSheetProcessor.csproj", "{867A9020-0073-427A-A29F-275863F6FD94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UILayout.Skia.WPF", "UILayout.Skia.WPF\UILayout.Skia.WPF.csproj", "{DAE5DFB4-D8AA-4D0F-84CD-95098D69CC2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.Skia.WPF", "UILayout.Skia.WPF\UILayout.Skia.WPF.csproj", "{DAE5DFB4-D8AA-4D0F-84CD-95098D69CC2D}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.MonoGame", "UILayout.MonoGame\UILayout.MonoGame.shproj", "{D7307594-237F-43DA-BD6B-D0BC2BD9B276}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +37,6 @@ Global
 		{47F7B7A0-5F63-4900-BF71-C2834EA876BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47F7B7A0-5F63-4900-BF71-C2834EA876BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47F7B7A0-5F63-4900-BF71-C2834EA876BA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AC389588-EED4-426B-B204-BDAAA1D9496E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AC389588-EED4-426B-B204-BDAAA1D9496E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AC389588-EED4-426B-B204-BDAAA1D9496E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AC389588-EED4-426B-B204-BDAAA1D9496E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{867A9020-0073-427A-A29F-275863F6FD94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{867A9020-0073-427A-A29F-275863F6FD94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{867A9020-0073-427A-A29F-275863F6FD94}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,11 +53,15 @@ Global
 		SolutionGuid = {B3DE844C-79C2-4FC9-9C96-5457339160C3}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		UILayout.MonoGame\UILayout.MonoGame.projitems*{47f7b7a0-5f63-4900-bf71-c2834ea876ba}*SharedItemsImports = 5
 		UILayout.Test\UILayout.Test.projitems*{47f7b7a0-5f63-4900-bf71-c2834ea876ba}*SharedItemsImports = 5
+		UILayout\UILayout.projitems*{47f7b7a0-5f63-4900-bf71-c2834ea876ba}*SharedItemsImports = 5
 		UILayout.Test\UILayout.Test.projitems*{66d9f9c2-faed-4c0c-b0a1-ea402d54acb1}*SharedItemsImports = 13
 		UILayout\UILayout.projitems*{7da2b397-a39f-4e5b-96ed-f206329982c9}*SharedItemsImports = 13
+		UILayout.MonoGame\UILayout.MonoGame.projitems*{867a9020-0073-427a-a29f-275863f6fd94}*SharedItemsImports = 5
+		UILayout\UILayout.projitems*{867a9020-0073-427a-a29f-275863f6fd94}*SharedItemsImports = 5
 		UILayout\UILayout.projitems*{8c8cd599-cf81-4789-8aa3-e3882eb3655f}*SharedItemsImports = 5
 		UILayout.Test\UILayout.Test.projitems*{91dec317-23ac-42a0-8a09-6b719b3f8444}*SharedItemsImports = 5
-		UILayout\UILayout.projitems*{ac389588-eed4-426b-b204-bdaaa1d9496e}*SharedItemsImports = 5
+		UILayout.MonoGame\UILayout.MonoGame.projitems*{d7307594-237f-43da-bd6b-d0bc2bd9b276}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

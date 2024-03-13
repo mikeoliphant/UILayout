@@ -15,12 +15,11 @@
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\UILayout.MonoGame\UILayout.MonoGame.csproj" />
-  </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />
     <Exec Command="dotnet tool restore" />
   </Target>
   <Import Project="..\UILayout.Test\UILayout.Test.projitems" Label="Shared" />
+  <Import Project="..\UILayout.MonoGame\UILayout.MonoGame.projitems" Label="Shared" />
+  <Import Project="..\UILayout\UILayout.projitems" Label="Shared" />
 </Project>

@@ -9,8 +9,8 @@
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\UILayout.MonoGame\UILayout.MonoGame.csproj" />
-  </ItemGroup>
+  <Import Project="..\UILayout\UILayout.projitems" Label="Shared" />
+
+  <Import Project="..\UILayout.MonoGame\UILayout.MonoGame.projitems" Label="Shared" />
 
 </Project>
