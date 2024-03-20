@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+#if !ANDROID
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+#endif
 
 namespace UILayout
 {
@@ -20,7 +21,11 @@ namespace UILayout
         {
             get
             {
+#if ANDROID
+return true;
+#else
                 return System.Windows.Forms.Form.ActiveForm == (System.Windows.Forms.Control.FromHandle(Host.Window.Handle) as System.Windows.Forms.Form);
+#endif
             }
         }
 

@@ -1,5 +1,7 @@
 ﻿using System;
+#if !ANDROID
 using System.Windows.Forms;
+#endif
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -15,6 +17,7 @@ namespace UILayout
 
         public MonoGameLayout Layout { get; private set; }
 
+#if !ANDROID
         public Form Form
         {
             get
@@ -22,6 +25,7 @@ namespace UILayout
                 { return Window.GetType().GetField("Form", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Window) as Form; }
             }
         }
+#endif
 
         GraphicsDeviceManager graphics;
 
@@ -38,6 +42,13 @@ namespace UILayout
 
             if (screenWidth == 0)
             {
+//#if ANDROID
+//                graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+//                graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+
+//                graphics.ApplyChanges();
+//#endif 
+
                 ScreenWidth = graphics.PreferredBackBufferWidth;
                 ScreenHeight = graphics.PreferredBackBufferHeight;
             }
