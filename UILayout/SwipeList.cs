@@ -5,7 +5,7 @@ using System.Text;
 
 namespace UILayout
 {
-    public class SwipeList : UIElement
+    public class SwipeList : UIElement, IScrollable
     {
         public UIFont Font
         {
@@ -65,6 +65,7 @@ namespace UILayout
         int touchItem;
         int firstVisibleItem;
         int lastVisibleItem;
+        VerticalScrollBar scrollBar;
 
         public IList Items
         {
@@ -72,7 +73,12 @@ namespace UILayout
             set
             {
                 items = value;
-                offset = 0;
+                SetOffset(0);
+
+                if (scrollBar != null)
+                {
+                    scrollBar.SetVisiblePercent((ContentBounds.Height / ItemHeight) / (float)Items.Count);
+                }
             }
         }
 
@@ -85,26 +91,43 @@ namespace UILayout
             UpdateItemHeight();
         }
 
-        public void SetTopItem(int topItem)
+        public void SetScrollBar(VerticalScrollBar scrollBar)
         {
-            offset = topItem * ItemHeight;
+            this.scrollBar = scrollBar;
+
+            if (items != null)
+            {
+                scrollBar.SetVisiblePercent((ContentBounds.Height / ItemHeight) / (float)Items.Count);
+            }
+            else
+            {
+                scrollBar.SetVisiblePercent(1.0f);
+            }
+
+            scrollBar.Scrollable = this;
         }
 
-        void UpdateItemHeight()
+        public void ScrollBackward()
         {
-            ItemHeight = (Font.TextHeight * FontScale) * 1.1f;
-            ItemYOffset = (ItemHeight - (Font.TextHeight * FontScale)) / 2;
+            PreviousItem();
         }
 
-        protected override void DrawContents()
+        public void ScrollForward()
         {
-            base.DrawContents();
+            NextItem();
+        }
 
-            firstVisibleItem = -1;
-            lastVisibleItem = -1;
+        public void SetScrollPercent(float scrollPercent)
+        {
+            if (Items != null)
+            {
+                SetOffset((float)Items.Count * scrollPercent * ItemHeight);
+            }
+        }
 
-            if (items == null)
-                return;
+        void SetOffset(float newOffset)
+        {
+            this.offset = newOffset;
 
             if (offset < 0)
                 offset = 0;
@@ -121,6 +144,42 @@ namespace UILayout
                 offset = maxOffset;
             }
 
+            if (scrollBar != null)
+            {
+                scrollBar.SetScrollPercent((offset / ItemHeight) / (float)Items.Count);
+            }
+        }
+
+        public void SetTopItem(int topItem)
+        {
+            SetOffset(topItem * ItemHeight);
+        }
+
+        void UpdateItemHeight()
+        {
+            ItemHeight = (Font.TextHeight * FontScale) * 1.1f;
+            ItemYOffset = (ItemHeight - (Font.TextHeight * FontScale)) / 2;
+        }
+
+        public override void UpdateContentLayout()
+        {
+            base.UpdateContentLayout();
+
+            if (scrollBar != null)
+            {
+                scrollBar.SetVisiblePercent((ContentBounds.Height / ItemHeight) / (float)Items.Count);
+            }
+        }
+
+        protected override void DrawContents()
+        {
+            base.DrawContents();
+
+            firstVisibleItem = -1;
+            lastVisibleItem = -1;
+
+            if (items == null)
+                return;
 
             int item = (int)Math.Floor(offset / ItemHeight);
             float itemOffset = (item * ItemHeight) - offset;
@@ -198,7 +257,7 @@ namespace UILayout
             {
                 float diff = touch.Position.Y - dragStartY;
 
-                offset = dragStartOffset - diff;
+                SetOffset(dragStartOffset - diff);
 
                 lastDragY = touch.Position.Y;
 
@@ -272,14 +331,14 @@ namespace UILayout
 
         public void FirstItem()
         {
-            offset = 0;
+            SetOffset(0);
         }
 
         public void LastItem()
         {
             if (Items != null)
             {
-                offset = (Items.Count * (ItemHeight + 1)) - ContentBounds.Height;
+                SetOffset((Items.Count * (ItemHeight + 1)) - ContentBounds.Height);
 
                 EnforceEvenItemBounds();
             }
@@ -289,17 +348,17 @@ namespace UILayout
         {
             if (offset < 0)
             {
-                offset = 0;
+                SetOffset(0);
             }
             else
             {
-                offset = (int)(offset / ItemHeight) * ItemHeight;
+                SetOffset((int)(offset / ItemHeight) * ItemHeight);
 
                 int itemsDisplayed = (int)(ContentBounds.Height / ItemHeight);
 
                 if ((int)(offset / ItemHeight) > (Items.Count - itemsDisplayed))
                 {
-                    offset = (Items.Count - itemsDisplayed) * ItemHeight;
+                    SetOffset((Items.Count - itemsDisplayed) * ItemHeight);
                 }
             }
         }

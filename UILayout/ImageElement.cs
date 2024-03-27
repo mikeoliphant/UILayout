@@ -102,6 +102,7 @@ namespace UILayout
             {
                 image = value;
 
+                Padding = new LayoutPadding(image.Width / 2, image.Height / 2);
                 UpdateNintePatch();
             }
         }
@@ -135,8 +136,6 @@ namespace UILayout
         {
             if (Image != null)
             {
-                Padding = new LayoutPadding(image.Width / 2, image.Height / 2);
-
                 imageWidths[0] = imageWidths[2] = (image.Width / 2) - 1;
                 imageWidths[1] = 2;
 

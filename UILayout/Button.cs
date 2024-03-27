@@ -170,6 +170,14 @@ namespace UILayout
         }
     }
 
+    public class EmptyButton : NinePatchButton
+    {
+        public EmptyButton()
+        {
+            SetElements(null, null);
+        }
+    }
+
     public class TextButton : NinePatchButton
     {
         public string Text

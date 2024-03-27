@@ -12,6 +12,9 @@ namespace UILayout.Test
             BackgroundColor = UIColor.Yellow;
             Padding = new LayoutPadding(10);
 
+            Layout.Current.AddImage("ScrollUpArrow");
+            Layout.Current.AddImage("ScrollDownArrow");
+
             Layout.Current.DefaultOutlineNinePatch = Layout.Current.AddImage("OutlineNinePatch");
 
             Layout.Current.DefaultPressedNinePatch = Layout.Current.AddImage("ButtonPressed");
@@ -162,14 +165,31 @@ namespace UILayout.Test
 
             buttonStack.Children.Add(menuButton);
 
+            HorizontalStack swipeStack = new HorizontalStack()
+            {
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center
+            };
+
             SwipeList swipeList = new SwipeList()
             {
                 TextColor = UIColor.Black,
-                VerticalAlignment = EVerticalAlignment.Stretch,
+                DesiredHeight = 200,
                 HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
                 DesiredWidth = 100,
                 BackgroundColor = UIColor.White
             };
+            swipeStack.Children.Add(swipeList);
+
+            var scrollBar = new VerticalScrollBarWithArrows()
+            {
+                VerticalAlignment = EVerticalAlignment.Stretch,
+            };
+
+            swipeStack.Children.Add(scrollBar);
+
+            swipeList.SetScrollBar(scrollBar.ScrollBar);
 
             List<string> items = new List<string>();
 
@@ -181,7 +201,7 @@ namespace UILayout.Test
             swipeList.Items = items;
             swipeList.SelectAction = delegate (int item)
             {
-                Layout.Current.ClosePopup(swipeList);
+                Layout.Current.ClosePopup(swipeStack);
             };
 
             buttonStack.Children.Add(new TextButton()
@@ -191,7 +211,7 @@ namespace UILayout.Test
                 VerticalAlignment = EVerticalAlignment.Center,
                 ClickAction = delegate
                 {
-                    Layout.Current.ShowPopup(swipeList);
+                    Layout.Current.ShowPopup(swipeStack);
                 }
             });
         }
