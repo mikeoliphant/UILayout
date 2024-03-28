@@ -117,6 +117,16 @@ namespace UILayout
             NextItem();
         }
 
+        public void ScrollPageBackward()
+        {
+            PreviousPage();
+        }
+
+        public void ScrollPageForward()
+        {
+            NextPage();
+        }
+
         public void SetScrollPercent(float scrollPercent)
         {
             if (Items != null)

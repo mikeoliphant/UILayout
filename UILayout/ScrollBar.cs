@@ -9,6 +9,8 @@ namespace UILayout
     {
         void ScrollBackward();
         void ScrollForward();
+        void ScrollPageBackward();
+        void ScrollPageForward();
         void SetScrollPercent(float scrollPercent);
     }
 
@@ -50,7 +52,7 @@ namespace UILayout
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
                 DesiredHeight = 20,
-                ClickAction = ScrollBar.ScrollForaward
+                ClickAction = ScrollBar.ScrollForward
             });
         }
 
@@ -94,7 +96,7 @@ namespace UILayout
                 Scrollable.ScrollBackward();
         }
 
-        public void ScrollForaward()
+        public void ScrollForward()
         {
             if (Scrollable != null)
                 Scrollable.ScrollForward();
@@ -139,11 +141,13 @@ namespace UILayout
                 case ETouchState.Pressed:
                     if (touch.Position.Y < bar.ContentBounds.Top)
                     {
-                        ScrollBackward();
+                        if (Scrollable != null)
+                            Scrollable.ScrollPageBackward();
                     }
                     else if (touch.Position.Y > bar.ContentBounds.Bottom)
                     {
-                        ScrollForaward();
+                        if (Scrollable != null)
+                            Scrollable.ScrollPageForward();
                     }
                     else
                     {
