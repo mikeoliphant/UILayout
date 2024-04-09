@@ -35,7 +35,7 @@ namespace UILayout
 
         public UIColor[] GetData()
         {
-            UIColor[] tmpData = new UIColor[ActualWidth * ActualHeight];
+            UIColor[] tmpData = new UIColor[Width * Height];
 
             Texture.GetData<UIColor>(0, new Rectangle(XOffset, YOffset, Width, Height), tmpData, 0, Width * Height);
 

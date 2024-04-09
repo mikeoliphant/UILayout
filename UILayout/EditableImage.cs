@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
-using System.Text;
 
 namespace UILayout
 {
@@ -582,7 +581,7 @@ namespace UILayout
         {
             for (int y = 0; y < Image.Height; y++)
             {
-                DrawScanLine(Image.XOffset, Image.XOffset + Image.Width, y + Image.YOffset, color);
+                DrawScanLine(0, Image.Width, y, color);
             }
         }
 
@@ -596,7 +595,7 @@ namespace UILayout
             if (!IsInBounds(x, y))
                 return false;
 
-            imageData[x + Image.XOffset + (y + Image.YOffset) * Image.ActualWidth] = color;
+            imageData[x + (y * Image.Width)] = color;
 
             return true;
         }
@@ -606,7 +605,7 @@ namespace UILayout
             if (!IsInBounds(x, y))
                 return false;
 
-            imageData[x + Image.XOffset + (y + Image.YOffset) * Image.ActualWidth] = penColor;
+            imageData[x + (y * Image.Width)] = penColor;
 
             return true;
         }
@@ -616,7 +615,7 @@ namespace UILayout
             if (!IsInBounds(x, y))
                 return UIColor.Transparent;
 
-            return imageData[x + Image.XOffset + (y + Image.YOffset) * Image.ActualWidth];
+            return imageData[x + (y * Image.Width)];
         }
 
         public void UpdateImageData()
