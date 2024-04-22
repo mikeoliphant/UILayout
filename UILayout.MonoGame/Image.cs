@@ -28,6 +28,14 @@ namespace UILayout
             Height = Texture.Height;
         }
 
+        public UIImage(Stream stream)
+        {
+            this.Texture = Texture2D.FromStream(MonoGameLayout.Current.Host.GraphicsDevice, stream);
+
+            Width = Texture.Width;
+            Height = Texture.Height;
+        }
+
         public UIImage(UIImage baseImage)
         {
             Texture = baseImage.Texture;
