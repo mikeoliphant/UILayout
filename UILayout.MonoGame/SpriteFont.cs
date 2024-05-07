@@ -285,6 +285,8 @@ namespace UILayout
                     }
 
                     rowWidth += glyph.Width * scale;
+
+                    lastChar = c;
                 }
             }
 
@@ -394,6 +396,8 @@ namespace UILayout
                     }
 
                     rowWidth += glyph.Width * scale;
+
+                    lastChar = c;
                 }
             }
 
