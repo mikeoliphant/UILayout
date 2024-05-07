@@ -37,6 +37,7 @@ namespace UILayout
         public float ItemHeight { get; set; }
         public float ItemXOffset { get; set; }
         public float ItemYOffset { get; set; }
+        public int LastSelectedItem { get; set; } = -1;
 
         public int CurrentTopItemIndex
         {
@@ -115,6 +116,16 @@ namespace UILayout
         public void ScrollForward()
         {
             NextItem();
+        }
+
+        public void ScrollPageBackward()
+        {
+            PreviousPage();
+        }
+
+        public void ScrollPageForward()
+        {
+            NextPage();
         }
 
         public void SetScrollPercent(float scrollPercent)
@@ -217,6 +228,11 @@ namespace UILayout
                 Layout.Current.GraphicsContext.DrawRectangle(new RectF(ContentBounds.X, y, ContentBounds.Width, ItemHeight), HighlightColor);
             }
 
+            if (item == LastSelectedItem)
+            {
+                Layout.Current.GraphicsContext.DrawRectangle(new RectF(ContentBounds.X, y, ContentBounds.Width, ItemHeight), HighlightColor);
+            }
+
             DrawItemContents(item, ContentBounds.X + ItemXOffset, y + ItemYOffset);
         }
 
@@ -269,7 +285,11 @@ namespace UILayout
             if (IsTap(touch))
             {
                 if (itemPos < items.Count)
+                {
+                    LastSelectedItem = itemPos;
+
                     SelectAction(itemPos);
+                }
             }
 
             return true;
@@ -331,12 +351,12 @@ namespace UILayout
             }
         }
 
-        public void FirstItem()
+        public void GoToFirstItem()
         {
             SetOffset(0);
         }
 
-        public void LastItem()
+        public void GoToLastItem()
         {
             if (Items != null)
             {

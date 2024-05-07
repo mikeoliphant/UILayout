@@ -8,7 +8,7 @@ namespace UILayout
         public Action<float> ChangeAction { get; set; }
         public bool InvertLevel { get; set; }
 
-        protected float level;
+        public float Level { get; protected set; }
         protected UIImage levelImage;
         protected float captureStartLevel;
 
@@ -35,11 +35,11 @@ namespace UILayout
         {
             if (isHorizontal)
             {
-                levelImageElement.Padding = new LayoutPadding((ContentBounds.Width * level) - (float)Math.Ceiling((levelImage.Width) / 2f), 0);
+                levelImageElement.Padding = new LayoutPadding((ContentBounds.Width * Level) - (float)Math.Ceiling((levelImage.Width) / 2f), 0);
             }
             else
             {
-                levelImageElement.Padding = new LayoutPadding(0, (ContentBounds.Height * level) - (float)Math.Ceiling((levelImage.Height) / 2f));
+                levelImageElement.Padding = new LayoutPadding(0, (ContentBounds.Height * Level) - (float)Math.Ceiling((levelImage.Height) / 2f));
             }
 
             base.UpdateContentLayout();
@@ -53,7 +53,7 @@ namespace UILayout
         void UpdateLevel(float level, bool sendChange)
         {
             level = MathUtil.Saturate(level);
-            this.level = level;
+            this.Level = level;
 
             if (sendChange && (ChangeAction != null))
                 ChangeAction(InvertLevel ? (1.0f - level) : level);
@@ -66,7 +66,7 @@ namespace UILayout
             switch (touch.TouchState)
             {
                 case ETouchState.Pressed:
-                    captureStartLevel = level;
+                    captureStartLevel = Level;
                     CaptureTouch(touch);
                     break;
                 case ETouchState.Moved:

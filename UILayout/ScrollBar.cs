@@ -9,25 +9,18 @@ namespace UILayout
     {
         void ScrollBackward();
         void ScrollForward();
+        void ScrollPageBackward();
+        void ScrollPageForward();
         void SetScrollPercent(float scrollPercent);
     }
 
-    public class VerticalScrollBarWithArrows : Dock
+    public class VerticalScrollBarWithArrows : VerticalStack
     {
         public VerticalScrollBar ScrollBar { get; private set; }
 
-        ListUIElement barStack;
-
         public VerticalScrollBarWithArrows()
         {
-            VerticalStack vStack = new VerticalStack()
-            {
-                HorizontalAlignment = EHorizontalAlignment.Stretch,
-                VerticalAlignment = EVerticalAlignment.Stretch                
-            };
-
-            barStack = vStack;
-            Children.Add(barStack);
+            VerticalAlignment = EVerticalAlignment.Stretch;
 
             NinePatchWrapper gutter = new NinePatchWrapper(Layout.Current.GetImage("ButtonPressed"))
             {
@@ -44,22 +37,22 @@ namespace UILayout
             };
 
 
-            vStack.Children.Add(new ImageButton("ScrollUpArrow")
+            Children.Add(new ImageButton("ScrollUpArrow")
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
                 DesiredHeight = 20,
                 ClickAction = ScrollBar.ScrollBackward
             });
 
-            vStack.Children.Add(gutter);
+            Children.Add(gutter);
 
             gutter.Child = ScrollBar;
 
-            vStack.Children.Add(new ImageButton("ScrollDownArrow")
+            Children.Add(new ImageButton("ScrollDownArrow")
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
                 DesiredHeight = 20,
-                ClickAction = ScrollBar.ScrollForaward
+                ClickAction = ScrollBar.ScrollForward
             });
         }
 
@@ -103,7 +96,7 @@ namespace UILayout
                 Scrollable.ScrollBackward();
         }
 
-        public void ScrollForaward()
+        public void ScrollForward()
         {
             if (Scrollable != null)
                 Scrollable.ScrollForward();
@@ -148,11 +141,13 @@ namespace UILayout
                 case ETouchState.Pressed:
                     if (touch.Position.Y < bar.ContentBounds.Top)
                     {
-                        ScrollBackward();
+                        if (Scrollable != null)
+                            Scrollable.ScrollPageBackward();
                     }
                     else if (touch.Position.Y > bar.ContentBounds.Bottom)
                     {
-                        ScrollForaward();
+                        if (Scrollable != null)
+                            Scrollable.ScrollPageForward();
                     }
                     else
                     {
