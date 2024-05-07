@@ -148,6 +148,8 @@ namespace UILayout
             {
                 scrollBar.SetScrollPercent((offset / ItemHeight) / (float)Items.Count);
             }
+
+            UpdateContentLayout();
         }
 
         public void SetTopItem(int topItem)
