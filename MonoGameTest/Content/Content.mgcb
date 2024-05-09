@@ -49,6 +49,30 @@
 /processorParam:TextureFormat=Color
 /build:../../TestResources/OutlineNinePatch.png;Textures/OutlineNinePatch.png
 
+#begin ../../TestResources/ScrollDownArrow.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../TestResources/ScrollDownArrow.png;Textures/ScrollDownArrow.png
+
+#begin ../../TestResources/ScrollUpArrow.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../TestResources/ScrollUpArrow.png;Textures/ScrollUpArrow.png
+
 #begin Textures/Font.png
 /importer:TextureImporter
 /processor:TextureProcessor

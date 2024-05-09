@@ -22,6 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)MathUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Menu.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RectF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ScrollBar.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Slider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SwipeList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TextBlock.cs" />
