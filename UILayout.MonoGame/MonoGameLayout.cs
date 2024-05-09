@@ -16,7 +16,7 @@ namespace UILayout
 
         public MonoGameHost Host { get; private set; }
 
-        public float Scale { get; protected set; } = 1.0f;
+        public float Scale { get; set; } = 1.0f;
         public override bool InputIsActive
         {
             get

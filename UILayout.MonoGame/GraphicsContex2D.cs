@@ -70,9 +70,9 @@ namespace UILayout
                 new Rectangle(srcRectangle.X + image.XOffset, srcRectangle.Y + image.YOffset, srcRectangle.Width, srcRectangle.Height), color.NativeColor);
         }
 
-        public void DrawImage(UIImage image, float x, float y, in UIColor color, float rotation, in Vector2 origin, float scale)
+        public void DrawImage(UIImage image, float x, float y, in UIColor color, float rotation, in System.Numerics.Vector2 origin, float scale)
         {
-            spriteBatch.Draw(image.Texture, new Vector2(x, y), new Rectangle(image.XOffset, image.YOffset, image.Width, image.Height), color.NativeColor, rotation, origin, scale, SpriteEffects.None, 0);
+            spriteBatch.Draw(image.Texture, new Vector2(x, y), new Rectangle(image.XOffset, image.YOffset, image.Width, image.Height), color.NativeColor, rotation, new Vector2(origin.X, origin.Y), scale, SpriteEffects.None, 0);
         }
 
         public void DrawRectangle(in RectF rectangle, in UIColor color)
