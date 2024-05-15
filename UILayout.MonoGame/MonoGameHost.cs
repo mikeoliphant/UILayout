@@ -3,10 +3,10 @@
 using System.Windows.Forms;
 #endif
 using System.IO;
+using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System.Reflection;
 
 namespace UILayout
 {
@@ -62,7 +62,9 @@ namespace UILayout
             //graphics.PreferMultiSampling = true;
             //graphics.ApplyChanges();
 
+#if !ANDROID
             Content = new AssemblyRelativeContentManager(Services);
+#endif
 
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -102,7 +104,11 @@ namespace UILayout
 
         public Stream OpenContentStream(string contentPath)
         {
+#if ANDROID
+            return TitleContainer.OpenStream(Path.Combine(Content.RootDirectory, contentPath));
+#else
             return AssemblyRelativeContentManager.OpenAseemblyRelativeStream(Path.Combine(Content.RootDirectory, contentPath));
+#endif
         }
 
         protected override void Update(GameTime gameTime)

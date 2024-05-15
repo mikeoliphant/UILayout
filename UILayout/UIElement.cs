@@ -256,7 +256,7 @@ namespace UILayout
 
         public void CaptureTouch(in Touch touch)
         {
-            if (Layout.Current.CaptureTouch(CapturedTouchID, this))
+            if (Layout.Current.CaptureTouch(touch.TouchID, this))
             {
                 HaveTouchCapture = true;
                 CapturedTouchID = touch.TouchID;
