@@ -21,6 +21,8 @@ namespace UILayout.Skia.WPF
         private SKSurface surface;
         private bool ignorePixelScaling;
 
+        float scaleX = 1.0f;
+        float scaleY = 1.0f;
         bool needRePaint = false;
 
         public SkiaLayout Layout { get; private set; }
@@ -60,6 +62,11 @@ namespace UILayout.Skia.WPF
             MouseLeave += LayoutControl_MouseLeave;
         }
 
+        Vector2 GetPostion(in Point p)
+        {
+            return new Vector2((float)p.X * (IgnorePixelScaling ? 1.0f : scaleX), (float)p.Y * (IgnorePixelScaling ? 1.0f : scaleY));
+        }
+
         private void LayoutControl_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
@@ -68,7 +75,7 @@ namespace UILayout.Skia.WPF
 
                 Touch touch = new Touch()
                 {
-                    Position = new Vector2((float)p.X, (float)p.Y),
+                    Position = GetPostion(p),
                     TouchState = ETouchState.Invalid
                 };
 
@@ -84,7 +91,7 @@ namespace UILayout.Skia.WPF
 
                 Touch touch = new Touch()
                 {
-                    Position = new Vector2((float)p.X, (float)p.Y),
+                    Position = GetPostion(p),
                     TouchState = ETouchState.Moved
                 };
 
@@ -98,7 +105,7 @@ namespace UILayout.Skia.WPF
 
             Touch touch = new Touch()
             {
-                Position = new Vector2((float)p.X, (float)p.Y),
+                Position = GetPostion(p),
                 TouchState = ETouchState.Pressed
             };
 
@@ -111,7 +118,7 @@ namespace UILayout.Skia.WPF
 
             Touch touch = new Touch()
             {
-                Position = new Vector2((float)p.X, (float)p.Y),
+                Position = GetPostion(p),
                 TouchState = ETouchState.Released
             };
 
@@ -137,7 +144,7 @@ namespace UILayout.Skia.WPF
             if (Visibility != Visibility.Visible || PresentationSource.FromVisual(this) == null)
                 return;
 
-            var size = CreateSize(out var unscaledSize, out var scaleX, out var scaleY);
+            var size = CreateSize(out var unscaledSize, out scaleX, out scaleY);
             var userVisibleSize = IgnorePixelScaling ? unscaledSize : size;
 
             CanvasSize = userVisibleSize;
