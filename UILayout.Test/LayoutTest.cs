@@ -12,6 +12,8 @@ namespace UILayout.Test
             BackgroundColor = UIColor.Yellow;
             Padding = new LayoutPadding(10);
 
+            Layout.Current.AddImage("ScrollBar");
+            Layout.Current.AddImage("ScrollBarGutter");
             Layout.Current.AddImage("ScrollUpArrow");
             Layout.Current.AddImage("ScrollDownArrow");
 
@@ -20,7 +22,7 @@ namespace UILayout.Test
             Layout.Current.DefaultPressedNinePatch = Layout.Current.AddImage("ButtonPressed");
             Layout.Current.DefaultUnpressedNinePatch = Layout.Current.AddImage("ButtonUnpressed");
 
-            Layout.Current.DefaultDragImage = Layout.Current.GetImage("ButtonPressed");
+            Layout.Current.DefaultDragImage = Layout.Current.GetImage("ButtonUnpressed");
 
             Layout.Current.DefaultForegroundColor = UIColor.Black;
 

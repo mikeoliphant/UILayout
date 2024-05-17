@@ -8,6 +8,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\ScrollBar.png" />
+	  <None Remove="Resources\ScrollBarGutter.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="..\TestResources\ScrollBar.png" Link="Resources\ScrollBar.png" />
+	  <EmbeddedResource Include="..\TestResources\ScrollBarGutter.png" Link="Resources\ScrollBarGutter.png" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <EmbeddedResource Include="..\TestResources\ScrollDownArrow.png" Link="Resources\ScrollDownArrow.png" />
 	  <EmbeddedResource Include="..\TestResources\ScrollUpArrow.png" Link="Resources\ScrollUpArrow.png" />
 	</ItemGroup>
@@ -20,10 +30,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Resources\" />
 	</ItemGroup>
 
 	<ItemGroup>

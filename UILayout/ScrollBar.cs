@@ -22,7 +22,7 @@ namespace UILayout
         {
             VerticalAlignment = EVerticalAlignment.Stretch;
 
-            NinePatchWrapper gutter = new NinePatchWrapper(Layout.Current.GetImage("ButtonPressed"))
+            NinePatchWrapper gutter = new NinePatchWrapper(Layout.Current.GetImage("ScrollBarGutter"))
             {
                 Padding = new LayoutPadding(0),
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
@@ -77,7 +77,7 @@ namespace UILayout
 
         public VerticalScrollBar()
         {
-            Child = bar = new NinePatchWrapper(Layout.Current.GetImage("ButtonUnpressed"))
+            Child = bar = new NinePatchWrapper(Layout.Current.GetImage("ScrollBar"))
             {
                 Padding = new LayoutPadding(0),
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
