@@ -111,8 +111,8 @@ namespace UILayout
 
         int[] imageWidths = new int[3];
         int[] imageHeights = new int[3];
-        float[] destWidths = new float[3];
-        float[] destHeights = new float[3];
+        int[] destWidths = new int[3];
+        int[] destHeights = new int[3];
 
         public NinePatchWrapper()
         {
@@ -143,10 +143,10 @@ namespace UILayout
                 imageHeights[1] = 2;
 
                 destWidths[0] = destWidths[2] = imageWidths[0];
-                destWidths[1] = layoutBounds.Width - (destWidths[0] + destWidths[2]);
+                destWidths[1] = (int)(layoutBounds.Width - (destWidths[0] + destWidths[2]));
 
                 destHeights[0] = destHeights[2] = imageHeights[0];
-                destHeights[1] = layoutBounds.Height - (destHeights[0] + destHeights[2]);
+                destHeights[1] = (int)(layoutBounds.Height - (destHeights[0] + destHeights[2]));
             }
         }
 
@@ -155,7 +155,7 @@ namespace UILayout
             if (Image != null)
             {
                 int srcOffsetY = 0;
-                float destOffsetY = layoutBounds.Y;
+                int destOffsetY = (int)layoutBounds.Y;
 
                 for (int y = 0; y < 3; y++)
                 {

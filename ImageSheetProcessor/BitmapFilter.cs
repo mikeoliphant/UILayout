@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -113,7 +112,7 @@ namespace ImageSheetProcessor
                 throw new ArgumentException();
             }
 
-            // raduis
+            // radius
             int r = size / 2;
             // kernel
             float[,] kernel = new float[size, size];

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace UILayout
 {
@@ -89,12 +91,9 @@ namespace UILayout
         {
             SetPen(color);
 
-            for (int x = 0; x < ImageWidth; x++)
+            for (int y = 0; y < ImageHeight; y++)
             {
-                for (int y = 0; y < ImageHeight; y++)
-                {
-                    SetPixel(x, y);
-                }
+                DrawScanLine(0, ImageWidth, y);
             }
         }
 
@@ -540,7 +539,40 @@ namespace UILayout
         }
     }
 
-    public class EditableImage : UICanvas2D<UIColor>
+    public class SimpleCanvas<T> : UICanvas2D<T>
+    {
+        internal T[] canvasData = null;
+
+        public override bool SetPixel(int x, int y, in T color)
+        {
+            if (!IsInBounds(x, y))
+                return false;
+
+            canvasData[x + (y * ImageWidth)] = color;
+
+            return true;
+        }
+
+        public override bool SetPixel(int x, int y)
+        {
+            if (!IsInBounds(x, y))
+                return false;
+
+            canvasData[x + (y * ImageWidth)] = penColor;
+
+            return true;
+        }
+
+        public override T GetPixel(int x, int y)
+        {
+            if (!IsInBounds(x, y))
+                return default(T);
+
+            return canvasData[x + (y * ImageWidth)];
+        }
+    }
+
+    public class EditableImage : SimpleCanvas<UIColor>
     {
         public UIImage Image { get; private set; }
 
@@ -548,24 +580,17 @@ namespace UILayout
         public override int ImageHeight { get { return Image.Height; } }
         public override Rectangle ImageRectangle { get { return new Rectangle(0, 0, Image.Width, Image.Height); } }
 
-        UIColor penColor = UIColor.White;
-
-        UIColor[] imageData = null;
-
         public EditableImage()
         {
+            penColor = UIColor.White;
         }
 
         public EditableImage(UIImage image)
         {
             this.Image = image;
 
-            imageData = image.GetData();
+            canvasData = image.GetData();
         }
-
-        //public EditableImage(int width, int height)
-        //{
-        //}
 
         //public EditableImage(int width, int height, bool createTexture)
         //{
@@ -577,51 +602,132 @@ namespace UILayout
         //    Image = createTexture ? new UIImage(width, height) : new DummyImage(width, height, cacheData: true);
         //}
 
-        public override void Clear(in UIColor color)
-        {
-            for (int y = 0; y < Image.Height; y++)
-            {
-                DrawScanLine(0, Image.Width, y, color);
-            }
-        }
-
-        public override void SetPen(in UIColor pen)
-        {
-            this.penColor = pen;
-        }
-
-        public override bool SetPixel(int x, int y, in UIColor color)
-        {
-            if (!IsInBounds(x, y))
-                return false;
-
-            imageData[x + (y * Image.Width)] = color;
-
-            return true;
-        }
-
-        public override bool SetPixel(int x, int y)
-        {
-            if (!IsInBounds(x, y))
-                return false;
-
-            imageData[x + (y * Image.Width)] = penColor;
-
-            return true;
-        }
-
-        public override UIColor GetPixel(int x, int y)
-        {
-            if (!IsInBounds(x, y))
-                return UIColor.Transparent;
-
-            return imageData[x + (y * Image.Width)];
-        }
-
         public void UpdateImageData()
         {
-            Image.SetData(imageData);
+            Image.SetData(canvasData);
         }
     }
 
+    public class ImageFilter
+    {
+        protected float[,] convolution;
+
+        protected float[,] Calculate1DSampleKernel(float deviation, int size)
+        {
+            float[,] ret = new float[size, 1];
+            float sum = 0;
+            int half = size / 2;
+
+            for (int i = 0; i < size; i++)
+            {
+                ret[i, 0] = (float)(1 / (Math.Sqrt(2 * Math.PI) * deviation) * Math.Exp(-(i - half) * (i - half) / (2 * deviation * deviation)));
+                sum += ret[i, 0];
+            }
+
+            return ret;
+        }
+
+
+        public void Apply(SimpleCanvas<UIColor> sourceImage, SimpleCanvas<UIColor> destImage)
+        {
+            int size = convolution.GetLength(0) / 2;
+            float weight = 0;
+            float r = 0;
+            float g = 0;
+            float b = 0;
+            float a = 0;
+
+            unsafe
+            {
+                fixed (byte* srcPixels = MemoryMarshal.Cast<UIColor, byte>(sourceImage.canvasData))
+                {
+                    fixed (byte* destPixels = MemoryMarshal.Cast<UIColor, byte>(destImage.canvasData))
+                    {
+                        for (int y = 0; y < sourceImage.ImageHeight; y++)
+                        {
+                            for (int x = 0; x < sourceImage.ImageWidth; x++)
+                            {
+                                weight = 0;
+                                b = 0;
+                                g = 0;
+                                r = 0;
+                                a = 0;
+
+                                for (int convY = Math.Max(0, y - size); convY <= Math.Min(sourceImage.ImageHeight - 1, y + size); convY++)
+                                {
+                                    for (int convX = Math.Max(0, x - size); convX <= Math.Min(sourceImage.ImageWidth - 1, x + size); convX++)
+                                    {
+
+                                        //float aWeight = (float)c.A / 255.0f;
+                                        byte* offset = srcPixels + (convY * sourceImage.ImageWidth) + (convX * 4);
+
+                                        float convWeight = convolution[convX - x + size, convY - y + size];
+
+                                        b += (float)*offset++ * convWeight;
+
+                                        g += (float)*offset++ * convWeight;// *aWeight;
+                                        r += (float)*offset++ * convWeight;// *aWeight;
+                                        a += (float)*offset++ * convWeight;// *aWeight;
+
+                                        weight += convWeight;
+                                    }
+                                }
+
+                                byte* destOffset = destPixels + (y * sourceImage.ImageWidth) + (x * 4);
+
+                                *destOffset++ = (byte)(b / weight);
+                                *destOffset++ = (byte)(g / weight);
+                                *destOffset++ = (byte)(r / weight);
+                                *destOffset++ = (byte)(a / weight);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public class GaussianBlur : ImageFilter
+    {
+        float sigma;
+        float sqrSigma;
+
+        public GaussianBlur(int size, float deviation)
+        {
+            sigma = deviation;
+            sqrSigma = sigma * sigma;
+
+            convolution = GaussianKernel2D(size);
+        }
+
+        private float Gaussian2D(float x, float y)
+        {
+            return (float)(Math.Exp((x * x + y * y) / (-2 * sqrSigma)) / (2 * Math.PI * sqrSigma));
+        }
+
+        private float[,] GaussianKernel2D(int size)
+        {
+            // check for evem size and for out of range
+            if (((size % 2) == 0) || (size < 3) || (size > 101))
+            {
+                throw new ArgumentException();
+            }
+
+            // radius
+            int r = size / 2;
+            // kernel
+            float[,] kernel = new float[size, size];
+
+            // compute kernel
+            for (int y = -r, i = 0; i < size; y++, i++)
+            {
+                for (int x = -r, j = 0; j < size; x++, j++)
+                {
+                    kernel[i, j] = Gaussian2D(x, y);
+                }
+            }
+
+            return kernel;
+        }
+    }
 }

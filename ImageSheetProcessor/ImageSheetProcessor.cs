@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography.Pkcs;
 using System.Xml.Serialization;
 using UILayout;
 
@@ -530,6 +527,12 @@ namespace ImageSheetProcessor
             catch { }
         }
 
+        public void Add(string textureName, Bitmap bitmap)
+        {
+            string destFile = Path.Combine(DestPath, textureName) + ".png";
+            SaveAndManifest(bitmap, destFile);
+        }
+
         public void Add(string textureName)
         {
             string srcFile = GetSourcePath(textureName);
@@ -579,6 +582,20 @@ namespace ImageSheetProcessor
             SaveAndManifest(newBitmap, destFile);
         }
 
+        public Bitmap AddShadow(Bitmap srcBitmap)
+        {
+            Bitmap newBitmap = new Bitmap(srcBitmap.Width, srcBitmap.Height);
+
+            AddShadow(srcBitmap, newBitmap);
+
+            return newBitmap;
+        }
+
+        public void AddShadow(Bitmap srcBitmap, Bitmap destBitmap)
+        {
+            AddShadow(srcBitmap, destBitmap, new Rectangle(0, 0, srcBitmap.Width, srcBitmap.Height), new Point(0, 0));
+        }
+
         public void AddShadow(Bitmap srcBitmap, Bitmap destBitmap, Rectangle srcRect, Point destOffset)
         {
             AddShadow(srcBitmap, destBitmap, Graphics.FromImage(destBitmap), srcRect, destOffset);
@@ -625,27 +642,25 @@ namespace ImageSheetProcessor
             height = (int)Math.Ceiling(size.Height);
         }
 
-        public void AddText(string name, string text, string fontFamily, float emSize)
+        public Bitmap CreateText(string name, string text, string fontFamily, float emSize)
         {
-            AddText(name, text, new Font(fontFamily, emSize));
+            return CreateText(text, new Font(fontFamily, emSize));
         }
 
-        public void AddText(string name, string text, string fontFamily, FontStyle fontStyle, float emSize)
+        public Bitmap CreateText(string text, string fontFamily, FontStyle fontStyle, float emSize)
         {
             Font font = new Font(fontFamily, emSize, fontStyle);
-            
-            AddText(name, text, font);
+
+            return CreateText(text, font);
         }
 
-        public void AddText(string name, string text, Font font)
+        public Bitmap CreateText(string text, Font font)
         {
-            AddText(name, text, font, 0x20, 0x7f, 16, antialias: true);
+            return CreateText(text, font, 0x20, 0x7f, 16, antialias: true);
         }
 
-        public void AddText(string name, string text, Font font, int minChar, int maxChar, int glphsPerLine, bool antialias)
+        public Bitmap CreateText(string text, Font font, int minChar, int maxChar, int glphsPerLine, bool antialias)
         {
-            string destFile = Path.Combine(DestPath, name) + ".png";
-
             int width;
             int height;
 
@@ -680,7 +695,7 @@ namespace ImageSheetProcessor
                 bitmapGraphics.Flush();
             }
 
-            SaveAndManifest(bitmap, destFile);
+            return bitmap;
         }
 
         [StructLayout(LayoutKind.Sequential)]
