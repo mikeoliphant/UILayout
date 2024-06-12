@@ -656,10 +656,10 @@ namespace ImageSheetProcessor
 
         public Bitmap CreateText(string text, Font font)
         {
-            return CreateText(text, font, 0x20, 0x7f, 16, antialias: true);
+            return CreateText(text, font, antialias: true);
         }
 
-        public Bitmap CreateText(string text, Font font, int minChar, int maxChar, int glphsPerLine, bool antialias)
+        public Bitmap CreateText(string text, Font font, bool antialias)
         {
             int width;
             int height;
@@ -684,12 +684,14 @@ namespace ImageSheetProcessor
                 bitmapGraphics.Clear(Color.Transparent);
 
                 using (Brush brush = new SolidBrush(Color.White))
-                using (StringFormat format = new StringFormat())
                 {
-                    format.Alignment = StringAlignment.Near;
-                    format.LineAlignment = StringAlignment.Near;
+                    using (StringFormat format = new StringFormat())
+                    {
+                        format.Alignment = StringAlignment.Near;
+                        format.LineAlignment = StringAlignment.Near;
 
-                    bitmapGraphics.DrawString(text, font, brush, 0, 0, format);
+                        bitmapGraphics.DrawString(text, font, brush, 0, 0, format);
+                    }
                 }
 
                 bitmapGraphics.Flush();
@@ -728,7 +730,7 @@ namespace ImageSheetProcessor
         {
             Font font = new Font(fontFamily, emSize, fontStyle);
 
-            AddFont(name, font, 0x20, 0x7f, 16, antialias: true);
+            AddFont(name, font, 0x20, 0xff, 16, antialias: true);
         }
 
         public void AddFont(string name, Font font, int minChar, int maxChar, int glphsPerLine, bool antialias)
