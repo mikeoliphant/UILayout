@@ -84,7 +84,7 @@ namespace UILayout.Test
             {
                 ListElement = dragDropStack,
                 DragType = typeof(NinePatchWrapper),
-                InternalOnly = true                
+                InternalOnly = true
             };
 
             dragDropStack.DragDropHandler = dragDropHander;
@@ -130,7 +130,7 @@ namespace UILayout.Test
 
             InputDialog dialog = new InputDialog(Layout.Current.DefaultOutlineNinePatch, new TextBlock { Text = "Do you want to?", TextColor = UIColor.Black });
 
-            dialog.AddInput(new DialogInput { Text = "Ok", CloseOnInput = true } );
+            dialog.AddInput(new DialogInput { Text = "Ok", CloseOnInput = true });
             dialog.AddInput(new DialogInput { Text = "Cancel", CloseOnInput = true });
 
             buttonStack.Children.Add(new TextButton()
@@ -214,6 +214,17 @@ namespace UILayout.Test
                 ClickAction = delegate
                 {
                     Layout.Current.ShowPopup(swipeStack);
+                }
+            });
+
+            buttonStack.Children.Add(new TextButton()
+            {
+                Text = "Text Input",
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+                ClickAction = delegate
+                {
+                    Layout.Current.GetKeyboardInputAsync("Type Something", "Default Text").ContinueWith(input => Layout.Current.ShowContinuePopup("You entered: " + input.Result));
                 }
             });
         }

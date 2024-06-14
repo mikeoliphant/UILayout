@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
@@ -48,9 +49,15 @@ namespace UILayout
         public override Task<string> GetKeyboardInputAsync(string title, string defaultText)
         {
 #if WINDOWS
-            return KeyboardInput.Show(title, null);
+            return KeyboardInput.Show(title, null, defaultText);
 #else
-            return Task.FromResult(defaultText);
+            Process process = new Process();
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.FileName = "zenity";
+            process.StartInfo.Arguments = "--entry --title=\"" + title + "\" --entry-text=\"" + defaultText + "\"";
+
+            process.Start();
+            return process.StandardOutput.ReadToEndAsync();
 #endif
         }
 
