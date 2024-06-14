@@ -1,3 +1,5 @@
-﻿using var game = new MonoGameTest.TestGameHost(800, 600, isFullscreen: false);
+﻿using System;
+
+using var game = new MonoGameTest.TestGameHost(800, 600, isFullscreen: false);
 
 game.StartGame(new UILayout.MonoGameLayout());
