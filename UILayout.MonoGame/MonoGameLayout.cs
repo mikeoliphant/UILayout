@@ -4,9 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-#if !ANDROID
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-#endif
 
 namespace UILayout
 {
@@ -21,10 +18,10 @@ namespace UILayout
         {
             get
             {
-#if ANDROID
-return true;
-#else
+#if WINDOWS
                 return System.Windows.Forms.Form.ActiveForm == (System.Windows.Forms.Control.FromHandle(Host.Window.Handle) as System.Windows.Forms.Form);
+#else
+                return true;
 #endif
             }
         }
@@ -50,7 +47,11 @@ return true;
 
         public override Task<string> GetKeyboardInputAsync(string title, string defaultText)
         {
+#if WINDOWS
             return KeyboardInput.Show(title, null);
+#else
+            return Task.FromResult(defaultText);
+#endif
         }
 
         public override void SetBounds(in RectF bounds)

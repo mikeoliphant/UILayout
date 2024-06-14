@@ -1,5 +1,5 @@
 ﻿using System;
-#if !ANDROID
+#if WINDOWS
 using System.Windows.Forms;
 #endif
 using System.IO;
@@ -17,7 +17,7 @@ namespace UILayout
 
         public MonoGameLayout Layout { get; private set; }
 
-#if !ANDROID
+#if WINDOWS
         public Form Form
         {
             get
@@ -42,13 +42,6 @@ namespace UILayout
 
             if (screenWidth == 0)
             {
-//#if ANDROID
-//                graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-//                graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-
-//                graphics.ApplyChanges();
-//#endif 
-
                 ScreenWidth = graphics.PreferredBackBufferWidth;
                 ScreenHeight = graphics.PreferredBackBufferHeight;
             }
@@ -58,11 +51,7 @@ namespace UILayout
                 graphics.PreferredBackBufferHeight = ScreenHeight;
             }
 
-            //graphics.GraphicsProfile = GraphicsProfile.HiDef;
-            //graphics.PreferMultiSampling = true;
-            //graphics.ApplyChanges();
-
-#if !ANDROID
+#if WINDOWS
             Content = new AssemblyRelativeContentManager(Services);
 #endif
 
@@ -104,10 +93,10 @@ namespace UILayout
 
         public Stream OpenContentStream(string contentPath)
         {
-#if ANDROID
-            return TitleContainer.OpenStream(Path.Combine(Content.RootDirectory, contentPath));
-#else
+#if WINDOWS
             return AssemblyRelativeContentManager.OpenAseemblyRelativeStream(Path.Combine(Content.RootDirectory, contentPath));
+#else
+            return TitleContainer.OpenStream(Path.Combine(Content.RootDirectory, contentPath));
 #endif
         }
 
