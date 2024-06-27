@@ -48,7 +48,7 @@ namespace UILayout
 
         public override Task<string> GetKeyboardInputAsync(string title, string defaultText)
         {
-#if WINDOWS
+#if WINDOWS || ANDROID
             return KeyboardInput.Show(title, null, defaultText);
 #else
             Process process = new Process();
