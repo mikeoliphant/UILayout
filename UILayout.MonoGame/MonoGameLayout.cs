@@ -13,8 +13,26 @@ namespace UILayout
         public static new MonoGameLayout Current { get { return Layout.Current as MonoGameLayout; } }
 
         public MonoGameHost Host { get; private set; }
+        public float Scale
+        {
+            get => scale;
+            set
+            {
+                if (GraphicsContext != null)
+                    GraphicsContext.Scale = value;
 
-        public float Scale { get; set; } = 1.0f;
+                if (!unscaledBounds.IsEmpty)
+                {
+                    base.SetBounds(new RectF(unscaledBounds.X, unscaledBounds.Y, unscaledBounds.Width / Scale, unscaledBounds.Height / Scale));
+                }
+
+                scale = value;
+            }
+        }
+
+        float scale = 1.0f;
+        RectF unscaledBounds = RectF.Empty;
+
         public override bool InputIsActive
         {
             get
@@ -63,6 +81,8 @@ namespace UILayout
 
         public override void SetBounds(in RectF bounds)
         {
+            this.unscaledBounds = bounds;
+
             base.SetBounds(new RectF(bounds.X, bounds.Y, bounds.Width / Scale, bounds.Height / Scale));
         }
 

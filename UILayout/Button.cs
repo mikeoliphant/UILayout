@@ -125,22 +125,30 @@ namespace UILayout
 
     public class NinePatchButton : Button
     {
+        UIImage ninePatchImage;
+
         public NinePatchButton()
+            : this(Layout.Current.DefaultPressedNinePatch)
         {
+        }
+
+        public NinePatchButton(UIImage ninePatchImage)
+        {
+            this.ninePatchImage = ninePatchImage;
         }
 
         public void SetElements(UIElement pressedElement, UIElement unpressedElement)
         {
-            if (Layout.Current.DefaultPressedNinePatch != null)
+            if (ninePatchImage != null)
             {
-                PressedElement = new NinePatchWrapper(Layout.Current.DefaultPressedNinePatch)
+                PressedElement = new NinePatchWrapper(ninePatchImage)
                 {
                     Child = pressedElement,
                     HorizontalAlignment = EHorizontalAlignment.Stretch,
                     VerticalAlignment = EVerticalAlignment.Stretch
                 };
 
-                UnpressedElement = new NinePatchWrapper(Layout.Current.DefaultUnpressedNinePatch)
+                UnpressedElement = new NinePatchWrapper(ninePatchImage)
                 {
                     Child = unpressedElement,
                     HorizontalAlignment = EHorizontalAlignment.Stretch,
