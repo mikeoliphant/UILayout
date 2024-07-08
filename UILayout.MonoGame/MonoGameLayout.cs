@@ -18,20 +18,20 @@ namespace UILayout
             get => scale;
             set
             {
-                if (GraphicsContext != null)
-                    GraphicsContext.Scale = value;
-
-                if (!unscaledBounds.IsEmpty)
-                {
-                    base.SetBounds(new RectF(unscaledBounds.X, unscaledBounds.Y, unscaledBounds.Width / Scale, unscaledBounds.Height / Scale));
-                }
-
                 scale = value;
+
+                if (GraphicsContext != null)
+                    GraphicsContext.Scale = scale;
+
+                if (!UnscaledBounds.IsEmpty)
+                {
+                    base.SetBounds(new RectF(UnscaledBounds.X, UnscaledBounds.Y, UnscaledBounds.Width / scale, UnscaledBounds.Height / scale));
+                }
             }
         }
+        public RectF UnscaledBounds { get; private set; } = RectF.Empty;
 
         float scale = 1.0f;
-        RectF unscaledBounds = RectF.Empty;
 
         public override bool InputIsActive
         {
@@ -81,7 +81,7 @@ namespace UILayout
 
         public override void SetBounds(in RectF bounds)
         {
-            this.unscaledBounds = bounds;
+            this.UnscaledBounds = bounds;
 
             base.SetBounds(new RectF(bounds.X, bounds.Y, bounds.Width / Scale, bounds.Height / Scale));
         }
