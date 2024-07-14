@@ -595,5 +595,10 @@ namespace UILayout
         {
             ListElement.ReleaseTouch();
         }
+
+        public override void HandleDragCompleted(object dropObject)
+        {
+            ListElement.ReleaseTouch();
+        }
     }
 }
