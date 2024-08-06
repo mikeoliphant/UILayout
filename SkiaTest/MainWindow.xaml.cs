@@ -1,8 +1,4 @@
-﻿using System;
-using SkiaSharp;
-using SkiaSharp.Views.Desktop;
-using System.Windows.Threading;
-using UILayout;
+﻿using UILayout;
 using UILayout.Test;
 
 namespace SkiaTest
