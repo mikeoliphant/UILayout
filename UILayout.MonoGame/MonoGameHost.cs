@@ -7,6 +7,7 @@ using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Runtime.InteropServices;
 
 namespace UILayout
 {
@@ -18,6 +19,12 @@ namespace UILayout
         public MonoGameLayout Layout { get; private set; }
 
 #if WINDOWS
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetWindowRect(IntPtr hwnd, ref System.Drawing.Rectangle rectangle);
+
         public Form Form
         {
             get
@@ -28,11 +35,14 @@ namespace UILayout
 #endif
 
         GraphicsDeviceManager graphics;
+        IntPtr parentWindow = IntPtr.Zero;
 
-        public MonoGameHost(int screenWidth, int screenHeight, bool fullscreen)
+        public MonoGameHost(IntPtr parentWindow, int screenWidth, int screenHeight, bool fullscreen)
         {
             ScreenWidth = screenWidth;
             ScreenHeight = screenHeight;
+
+            this.parentWindow = parentWindow;
 
             graphics = new GraphicsDeviceManager(this);
 
@@ -64,6 +74,17 @@ namespace UILayout
             Layout.SetHost(this);
 
             base.Initialize();
+
+#if WINDOWS
+            if (parentWindow != IntPtr.Zero)
+            {
+                Window.Position = new Microsoft.Xna.Framework.Point(0, 0);
+                Window.IsBorderless = true;
+
+                SetParent(Window.Handle, parentWindow);
+            }
+#endif
+
 
             Window.AllowUserResizing = true;
         }
