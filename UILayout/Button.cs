@@ -297,7 +297,11 @@ namespace UILayout
 
         public ImageButton(UIImage image)
         {
-            imageElement = new ImageElement(image);
+            imageElement = new ImageElement(image)
+            {
+                HorizontalAlignment = EHorizontalAlignment.Stretch,
+                VerticalAlignment = EVerticalAlignment.Stretch
+            };
 
             SetElements(imageElement, imageElement);
         }
