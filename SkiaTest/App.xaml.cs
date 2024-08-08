@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using SkiaSharp;
 using System.Windows;
+using UILayout;
+using UILayout.Skia.WPF;
+using UILayout.Test;
 
 namespace SkiaTest
 {
@@ -13,5 +11,23 @@ namespace SkiaTest
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            LayoutWindow layoutWindow = new LayoutWindow()
+            {
+                Width = 1024,
+                Height = 800
+            };
+
+            SkiaLayout ui = new SkiaLayout();
+
+            ui.RootUIElement = new LayoutTest();
+
+            layoutWindow.SkiaCanvas.SetLayout(ui);
+
+            layoutWindow.Show();
+        }
     }
 }

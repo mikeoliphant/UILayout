@@ -14,6 +14,6 @@
     <Message Text="Restoring dotnet tools" Importance="High" />
     <Exec Command="dotnet tool restore" />
   </Target>
-  <Import Project="..\UILayout\UILayout.projitems" Label="Shared" />
   <Import Project="..\UILayout.MonoGame\UILayout.MonoGame.projitems" Label="Shared" />
+  <Import Project="..\UILayout\UILayout.projitems" Label="Shared" />
 </Project>

@@ -19,11 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.Skia.WPF", "UILayo
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.MonoGame", "UILayout.MonoGame\UILayout.MonoGame.shproj", "{D7307594-237F-43DA-BD6B-D0BC2BD9B276}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UILayout.MonoGame.WindowsDX", "UILayout.MonoGame.WindowsDX\UILayout.MonoGame.WindowsDX.csproj", "{4B3BBC27-E023-4626-BAED-441E62B59FBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.MonoGame.WindowsDX", "UILayout.MonoGame.WindowsDX\UILayout.MonoGame.WindowsDX.csproj", "{4B3BBC27-E023-4626-BAED-441E62B59FBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UILayout.MonoGame.DesktopGL", "UILayout.MonoGame.DesktopGL\UILayout.MonoGame.DesktopGL.csproj", "{BE080217-1CBB-4E87-92D8-88368763CEA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.MonoGame.DesktopGL", "UILayout.MonoGame.DesktopGL\UILayout.MonoGame.DesktopGL.csproj", "{BE080217-1CBB-4E87-92D8-88368763CEA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoDesktopGLTest", "MonoDesktopGLTest\MonoDesktopGLTest.csproj", "{E291A301-7DDD-45A5-B631-DEC5C3A01CC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoDesktopGLTest", "MonoDesktopGLTest\MonoDesktopGLTest.csproj", "{E291A301-7DDD-45A5-B631-DEC5C3A01CC5}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MonoGameTestShared", "MonoGameTestShared\MonoGameTestShared.shproj", "{A0CDBD0E-3A41-42B7-9425-A838BC2C7383}"
 EndProject
