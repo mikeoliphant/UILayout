@@ -7,6 +7,8 @@ namespace UILayout
 {
     public partial class UIImage
     {
+        public static Assembly ResourceAssembly { get; set; } = Assembly.GetEntryAssembly();
+
         public virtual int ActualWidth { get { return Bitmap.Width; } }
         public virtual int ActualHeight { get { return Bitmap.Height; } }
 
@@ -27,9 +29,7 @@ namespace UILayout
 
         public UIImage(string resourceName)
         {
-            Assembly assembly = Assembly.GetEntryAssembly();
-
-            using (Stream stream = assembly.GetManifestResourceStream(assembly.GetName().Name + ".Resources." + resourceName + ".png"))
+            using (Stream stream = ResourceAssembly.GetManifestResourceStream(ResourceAssembly.GetName().Name + ".Resources." + resourceName + ".png"))
             {
                 Bitmap = SKBitmap.Decode(stream);
             }
