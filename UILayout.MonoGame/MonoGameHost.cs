@@ -37,6 +37,11 @@ namespace UILayout
         GraphicsDeviceManager graphics;
         IntPtr parentWindow = IntPtr.Zero;
 
+        public MonoGameHost(int screenWidth, int screenHeight, bool fullscreen)
+            : this(IntPtr.Zero, screenWidth, screenHeight, fullscreen)
+        {
+        }
+
         public MonoGameHost(IntPtr parentWindow, int screenWidth, int screenHeight, bool fullscreen)
         {
             ScreenWidth = screenWidth;
