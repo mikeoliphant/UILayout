@@ -90,8 +90,17 @@ namespace UILayout
             }
 #endif
 
-
             Window.AllowUserResizing = true;
+
+            Window.TextInput += Window_TextInput;
+        }
+
+        private void Window_TextInput(object sender, TextInputEventArgs e)
+        {
+            if (this.Layout != null)
+            {
+                this.Layout.HandleTextInput(e.Character);
+            }
         }
 
         protected override void LoadContent()
