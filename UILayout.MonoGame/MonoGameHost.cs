@@ -147,11 +147,11 @@ namespace UILayout
             Layout.Draw();
         }
 
-        protected override void OnExiting(object sender, EventArgs args)
+        protected override void OnDeactivated(object sender, EventArgs args)
         {
             Layout.Exiting();
 
-            base.OnExiting(sender, args);
+            base.OnDeactivated(sender, args);
         }
     }
 
