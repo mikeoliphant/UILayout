@@ -19,6 +19,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.Skia.WPF", "UILayo
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.MonoGame", "UILayout.MonoGame\UILayout.MonoGame.shproj", "{D7307594-237F-43DA-BD6B-D0BC2BD9B276}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.MonoGame.WindowsDX", "UILayout.MonoGame.WindowsDX\UILayout.MonoGame.WindowsDX.csproj", "{4B3BBC27-E023-4626-BAED-441E62B59FBB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.MonoGame.DesktopGL", "UILayout.MonoGame.DesktopGL\UILayout.MonoGame.DesktopGL.csproj", "{BE080217-1CBB-4E87-92D8-88368763CEA3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonoDesktopGLTest", "MonoDesktopGLTest\MonoDesktopGLTest.csproj", "{E291A301-7DDD-45A5-B631-DEC5C3A01CC5}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MonoGameTestShared", "MonoGameTestShared\MonoGameTestShared.shproj", "{A0CDBD0E-3A41-42B7-9425-A838BC2C7383}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +53,18 @@ Global
 		{DAE5DFB4-D8AA-4D0F-84CD-95098D69CC2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAE5DFB4-D8AA-4D0F-84CD-95098D69CC2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAE5DFB4-D8AA-4D0F-84CD-95098D69CC2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B3BBC27-E023-4626-BAED-441E62B59FBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B3BBC27-E023-4626-BAED-441E62B59FBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B3BBC27-E023-4626-BAED-441E62B59FBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B3BBC27-E023-4626-BAED-441E62B59FBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE080217-1CBB-4E87-92D8-88368763CEA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE080217-1CBB-4E87-92D8-88368763CEA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE080217-1CBB-4E87-92D8-88368763CEA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE080217-1CBB-4E87-92D8-88368763CEA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E291A301-7DDD-45A5-B631-DEC5C3A01CC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E291A301-7DDD-45A5-B631-DEC5C3A01CC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E291A301-7DDD-45A5-B631-DEC5C3A01CC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E291A301-7DDD-45A5-B631-DEC5C3A01CC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,15 +73,21 @@ Global
 		SolutionGuid = {B3DE844C-79C2-4FC9-9C96-5457339160C3}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		UILayout.MonoGame\UILayout.MonoGame.projitems*{47f7b7a0-5f63-4900-bf71-c2834ea876ba}*SharedItemsImports = 5
+		MonoGameTestShared\MonoGameTestShared.projitems*{47f7b7a0-5f63-4900-bf71-c2834ea876ba}*SharedItemsImports = 5
 		UILayout.Test\UILayout.Test.projitems*{47f7b7a0-5f63-4900-bf71-c2834ea876ba}*SharedItemsImports = 5
-		UILayout\UILayout.projitems*{47f7b7a0-5f63-4900-bf71-c2834ea876ba}*SharedItemsImports = 5
+		UILayout.MonoGame\UILayout.MonoGame.projitems*{4b3bbc27-e023-4626-baed-441e62b59fbb}*SharedItemsImports = 5
+		UILayout\UILayout.projitems*{4b3bbc27-e023-4626-baed-441e62b59fbb}*SharedItemsImports = 5
 		UILayout.Test\UILayout.Test.projitems*{66d9f9c2-faed-4c0c-b0a1-ea402d54acb1}*SharedItemsImports = 13
 		UILayout\UILayout.projitems*{7da2b397-a39f-4e5b-96ed-f206329982c9}*SharedItemsImports = 13
 		UILayout.MonoGame\UILayout.MonoGame.projitems*{867a9020-0073-427a-a29f-275863f6fd94}*SharedItemsImports = 5
 		UILayout\UILayout.projitems*{867a9020-0073-427a-a29f-275863f6fd94}*SharedItemsImports = 5
 		UILayout\UILayout.projitems*{8c8cd599-cf81-4789-8aa3-e3882eb3655f}*SharedItemsImports = 5
 		UILayout.Test\UILayout.Test.projitems*{91dec317-23ac-42a0-8a09-6b719b3f8444}*SharedItemsImports = 5
+		MonoGameTestShared\MonoGameTestShared.projitems*{a0cdbd0e-3a41-42b7-9425-a838bc2c7383}*SharedItemsImports = 13
+		UILayout.MonoGame\UILayout.MonoGame.projitems*{be080217-1cbb-4e87-92d8-88368763cea3}*SharedItemsImports = 5
+		UILayout\UILayout.projitems*{be080217-1cbb-4e87-92d8-88368763cea3}*SharedItemsImports = 5
 		UILayout.MonoGame\UILayout.MonoGame.projitems*{d7307594-237f-43da-bd6b-d0bc2bd9b276}*SharedItemsImports = 13
+		MonoGameTestShared\MonoGameTestShared.projitems*{e291a301-7ddd-45a5-b631-dec5c3a01cc5}*SharedItemsImports = 5
+		UILayout.Test\UILayout.Test.projitems*{e291a301-7ddd-45a5-b631-dec5c3a01cc5}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

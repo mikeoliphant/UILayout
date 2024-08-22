@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Svg.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -627,6 +628,33 @@ namespace ImageSheetProcessor
                     bitmap.SetPixel(x, bitmap.Height - (offset + 1), bitmap.GetPixel(x, bitmap.Height - (padding + 1)));
                 }
             }
+        }
+
+        public void AddSvg(string svgName)
+        {
+            AddSvg(svgName, null);
+        }
+
+        public void AddSvg(string svgName, float size)
+        {
+            AddSvg(svgName, new SizeF(size, size));
+        }
+
+        public void AddSvg(string svgName, SizeF? size)
+        {
+            string srcFile = Path.Combine(GetSourcePath(), svgName) + ".svg";
+            string destFile = Path.Combine(DestPath, svgName) + ".png";
+
+            var svg = Svg.SvgDocument.Open(srcFile);
+
+            if (size == null)
+            {
+                size = Size.Round(svg.GetDimensions());
+            }
+
+            Bitmap bitmap = svg.Draw((int)size.Value.Width, (int)size.Value.Height);
+
+            SaveAndManifest(bitmap, destFile);
         }
 
         Graphics measureGraphics = Graphics.FromImage(new Bitmap(1, 1, PixelFormat.Format32bppArgb));

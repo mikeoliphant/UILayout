@@ -125,22 +125,38 @@ namespace UILayout
 
     public class NinePatchButton : Button
     {
+        UIImage pressedNinePatchImage;
+        UIImage unpressedNinePatchImage;
+
         public NinePatchButton()
+            : this(Layout.Current.DefaultPressedNinePatch, Layout.Current.DefaultUnpressedNinePatch)
         {
+        }
+
+        public NinePatchButton(UIImage ninePatchImage)
+        {
+            this.pressedNinePatchImage = ninePatchImage;
+            this.unpressedNinePatchImage = ninePatchImage;
+        }
+
+        public NinePatchButton(UIImage pressedNinePatchImage, UIImage unpressedNinePatchImage)
+        {
+            this.pressedNinePatchImage = pressedNinePatchImage;
+            this.unpressedNinePatchImage = unpressedNinePatchImage;
         }
 
         public void SetElements(UIElement pressedElement, UIElement unpressedElement)
         {
-            if (Layout.Current.DefaultPressedNinePatch != null)
+            if (pressedNinePatchImage != null)
             {
-                PressedElement = new NinePatchWrapper(Layout.Current.DefaultPressedNinePatch)
+                PressedElement = new NinePatchWrapper(pressedNinePatchImage)
                 {
                     Child = pressedElement,
                     HorizontalAlignment = EHorizontalAlignment.Stretch,
                     VerticalAlignment = EVerticalAlignment.Stretch
                 };
 
-                UnpressedElement = new NinePatchWrapper(Layout.Current.DefaultUnpressedNinePatch)
+                UnpressedElement = new NinePatchWrapper(unpressedNinePatchImage)
                 {
                     Child = unpressedElement,
                     HorizontalAlignment = EHorizontalAlignment.Stretch,
@@ -281,7 +297,11 @@ namespace UILayout
 
         public ImageButton(UIImage image)
         {
-            imageElement = new ImageElement(image);
+            imageElement = new ImageElement(image)
+            {
+                HorizontalAlignment = EHorizontalAlignment.Stretch,
+                VerticalAlignment = EVerticalAlignment.Stretch
+            };
 
             SetElements(imageElement, imageElement);
         }

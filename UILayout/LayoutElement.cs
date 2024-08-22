@@ -571,8 +571,8 @@ namespace UILayout
             {
                 int currentIndex = ListElement.Children.IndexOf(dropObject as UIElement);
 
-                if (currentIndex < dropIndex)
-                    dropIndex--;
+                if ((currentIndex < (dropIndex - 1)) || (currentIndex == dropIndex))
+                    dropIndex--;                
 
                 ListElement.Children.Remove(dropObject as UIElement);
                 ListElement.Children.Insert(dropIndex, dropObject as UIElement);
@@ -592,6 +592,11 @@ namespace UILayout
         }
 
         public override void HandleDragCancelled(object dropObject)
+        {
+            ListElement.ReleaseTouch();
+        }
+
+        public override void HandleDragCompleted(object dropObject)
         {
             ListElement.ReleaseTouch();
         }

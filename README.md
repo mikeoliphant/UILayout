@@ -1,10 +1,14 @@
 # UILayout
 
-UILayout is a simple, peformant, layout-based, cross-platform user interface library.
+UILayout is a simple, peformant, layout-based, cross-platform user interface library for .NET languages.
 
 # Platforms Supported
 
 UILayout currently supports SkiaSharp and MonoGame as underlying rendering systems. As such, it has the ability to target the same platforms they do - so most platforms are potentially supported.
+
+Tested platforms:
+- Windows x64
+- Linux x64
 
 # Functionality
 

@@ -1,12 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-#if !ANDROID
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-#endif
 
 namespace UILayout
 {
@@ -15,16 +13,34 @@ namespace UILayout
         public static new MonoGameLayout Current { get { return Layout.Current as MonoGameLayout; } }
 
         public MonoGameHost Host { get; private set; }
+        public float Scale
+        {
+            get => scale;
+            set
+            {
+                scale = value;
 
-        public float Scale { get; set; } = 1.0f;
+                if (GraphicsContext != null)
+                    GraphicsContext.Scale = scale;
+
+                if (!UnscaledBounds.IsEmpty)
+                {
+                    base.SetBounds(new RectF(UnscaledBounds.X, UnscaledBounds.Y, UnscaledBounds.Width / scale, UnscaledBounds.Height / scale));
+                }
+            }
+        }
+        public RectF UnscaledBounds { get; private set; } = RectF.Empty;
+
+        float scale = 1.0f;
+
         public override bool InputIsActive
         {
             get
             {
-#if ANDROID
-return true;
-#else
+#if WINDOWS
                 return System.Windows.Forms.Form.ActiveForm == (System.Windows.Forms.Control.FromHandle(Host.Window.Handle) as System.Windows.Forms.Form);
+#else
+                return true;
 #endif
             }
         }
@@ -50,11 +66,23 @@ return true;
 
         public override Task<string> GetKeyboardInputAsync(string title, string defaultText)
         {
-            return KeyboardInput.Show(title, null);
+#if WINDOWS || ANDROID
+            return KeyboardInput.Show(title, null, defaultText);
+#else
+            Process process = new Process();
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.FileName = "zenity";
+            process.StartInfo.Arguments = "--entry --title=\"" + title + "\" --entry-text=\"" + defaultText + "\"";
+
+            process.Start();
+            return process.StandardOutput.ReadToEndAsync();
+#endif
         }
 
         public override void SetBounds(in RectF bounds)
         {
+            this.UnscaledBounds = bounds;
+
             base.SetBounds(new RectF(bounds.X, bounds.Y, bounds.Width / Scale, bounds.Height / Scale));
         }
 

@@ -15,7 +15,7 @@ namespace MonoGameTest
 
         protected override void LoadContent()
         {
-            using (Stream fontStream = File.OpenRead(Path.Combine(Content.RootDirectory, "Textures\\Font.xml")))
+            using (Stream fontStream = File.OpenRead(Path.Combine(Content.RootDirectory, Path.Combine("Textures", "Font.xml"))))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(SpriteFontDefinition));
 

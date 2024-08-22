@@ -29,10 +29,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.0" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\UILayout.Skia.WPF\UILayout.Skia.WPF.csproj" />
 	</ItemGroup>
 
