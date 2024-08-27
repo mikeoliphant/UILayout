@@ -244,6 +244,11 @@ namespace UILayout
             Layout.Current.AddDirtyRect(layoutBounds);
         }
 
+        public virtual bool HandleTextInput(char c)
+        {
+            return false;
+        }
+
         public virtual bool HandleTouch(in Touch touch)
         {
             if (DragDropHandler != null)

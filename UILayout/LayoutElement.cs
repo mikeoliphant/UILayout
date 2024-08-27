@@ -39,6 +39,14 @@ namespace UILayout
                 Child.Draw();
         }
 
+        public override bool HandleTextInput(char c)
+        {
+            if (Child != null)
+                return Child.HandleTextInput(c);
+
+            return false;
+        }
+
         public override bool HandleTouch(in Touch touch)
         {
             if (Child != null)
@@ -156,6 +164,22 @@ namespace UILayout
             }
 
             return base.HandleTouch(touch);
+        }
+
+        public override bool HandleTextInput(char c)
+        {
+            for (int i = Children.Count - 1; i >= 0; i--)
+            {
+                UIElement child = Children[i] as UIElement;
+
+                if (child.Visible)
+                {
+                    if (child.HandleTextInput(c))
+                        return true;
+                }
+            }
+
+            return base.HandleTextInput(c);
         }
 
         public override void HandleInput(InputManager inputManager)

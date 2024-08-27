@@ -196,6 +196,16 @@ namespace UILayout
             ClearDirtyRect();
         }
 
+        public bool HandleTextInput(char c)
+        {
+            UIElement activeElement = ActiveUIElement;
+
+            if (activeElement != null)
+                return activeElement.HandleTextInput(c);
+
+            return false;
+        }
+
         public bool HandleTouch(in Touch touch)
         {
             UIElement activeElement = ActiveUIElement;
