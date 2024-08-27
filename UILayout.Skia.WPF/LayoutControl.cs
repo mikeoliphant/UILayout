@@ -222,7 +222,7 @@ namespace UILayout.Skia.WPF
             }
             else
             {
-                SkiaLayout.Current.GraphicsContext.Canvas = canvas;
+                Layout.GraphicsContext.Canvas = canvas;
 
                 if (!Layout.Bounds.IsEmpty)
                     Layout.Draw();
