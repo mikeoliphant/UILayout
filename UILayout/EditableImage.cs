@@ -578,16 +578,37 @@ namespace UILayout
         public override int ImageHeight { get { return Image.Height; } }
         public override Rectangle ImageRectangle { get { return new Rectangle(0, 0, Image.Width, Image.Height); } }
 
+        int imageWidth;
+        int imageHeight;
+
         public EditableImage()
         {
             penColor = UIColor.White;
         }
 
+        public EditableImage(int imageWidth, int imageHeight)
+            : this()
+        {
+            this.imageWidth = imageWidth;
+            this.imageHeight = imageHeight;
+
+            canvasData = new UIColor[imageWidth * imageHeight];
+        }
+
         public EditableImage(UIImage image)
+        {
+            SetImage(image, cacheData: true);
+        }
+
+        public void SetImage(UIImage image, bool cacheData)
         {
             this.Image = image;
 
-            canvasData = image.GetData();
+            imageWidth = image.Width;
+            imageHeight = image.Height;
+
+            if (cacheData)
+               canvasData = image.GetData();
         }
 
         //public EditableImage(int width, int height, bool createTexture)

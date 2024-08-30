@@ -8,7 +8,7 @@ namespace UILayout
     {
         IntPtr window = IntPtr.Zero;
         GRContext glContext;
-        SKSurface surface;
+        SKSurface fbSurface;
         SkiaLayout layout;
         bool needRepaint = true;
         int currentWidth = -1;
@@ -41,12 +41,12 @@ namespace UILayout
 
         void CreateSurface(int width, int height)
         {
-            if (surface != null)
+            if (fbSurface != null)
             {
-                surface.Dispose();
-                surface = null;
+                fbSurface.Dispose();
+                fbSurface = null;
             }
-
+            
             GRBackendRenderTarget renderTarget = new GRBackendRenderTarget(
                 width: width,
                 height: height,
@@ -54,7 +54,7 @@ namespace UILayout
                 stencilBits: 0,
                 glInfo: new GRGlFramebufferInfo(fboId: 0, format: SKColorType.Rgba8888.ToGlSizedFormat()));
 
-            surface = SKSurface.Create(glContext, renderTarget, GRSurfaceOrigin.BottomLeft, SKColorType.Rgba8888);
+            fbSurface = SKSurface.Create(glContext, renderTarget, GRSurfaceOrigin.BottomLeft, SKColorType.Rgba8888);
 
             currentWidth = width;
             currentHeight = height;
@@ -64,7 +64,7 @@ namespace UILayout
         {
             this.layout = layout;
 
-            if (surface != null)
+            if (fbSurface != null)
             {
                 UpdateLayout();
             }
@@ -72,7 +72,7 @@ namespace UILayout
 
         void UpdateLayout()
         {
-            layout.GraphicsContext.Canvas = surface.Canvas;
+            layout.GraphicsContext.Canvas = fbSurface.Canvas;
 
             RectF bounds = new RectF(0, 0, currentWidth, currentHeight);
 
@@ -151,7 +151,7 @@ namespace UILayout
 
                     SDL.SDL_GetWindowSize(window, out width, out height);
 
-                    if ((surface == null) || (width != currentWidth) || (height != currentHeight))
+                    if ((fbSurface == null) || (width != currentWidth) || (height != currentHeight))
                         CreateSurface(width, height);
 
                     if (layout != null)
@@ -172,7 +172,7 @@ namespace UILayout
                     {
                         layout.Draw();
 
-                        surface.Canvas.Flush();
+                        fbSurface.Canvas.Flush();
 
                         SDL.SDL_GL_SwapWindow(window);
                     }
