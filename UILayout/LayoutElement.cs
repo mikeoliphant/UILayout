@@ -94,6 +94,8 @@ namespace UILayout
             if (!Visible)
                 return;
 
+            base.DrawContents();
+
             if (DrawInReverse)
             {
                 for (int i = children.Count - 1; i >= 0; i--)
