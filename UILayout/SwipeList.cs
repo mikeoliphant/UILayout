@@ -286,9 +286,7 @@ namespace UILayout
             {
                 if (itemPos < items.Count)
                 {
-                    LastSelectedItem = itemPos;
-
-                    SelectAction(itemPos);
+                    SelectItem(itemPos);
                 }
             }
 
@@ -311,13 +309,33 @@ namespace UILayout
             }
         }
 
+        public void SelectItem(int itemPos)
+        {
+            LastSelectedItem = itemPos;
+
+            if (SelectAction != null)
+                SelectAction(itemPos);
+
+            EnsureSelectedItemIsVisible();
+        }
+
         public void NextItem()
         {
             if (Items != null)
             {
-                offset += (ItemHeight * 1.1f);
+                if (LastSelectedItem == -1)
+                {
+                    offset += (ItemHeight * 1.1f);
 
-                EnforceEvenItemBounds();
+                    EnforceEvenItemBounds();
+                }
+                else
+                {
+                    if (LastSelectedItem < (Items.Count - 1))
+                    {
+                        SelectItem(LastSelectedItem + 1);
+                    }
+                }
             }
         }
 
@@ -325,9 +343,19 @@ namespace UILayout
         {
             if (Items != null)
             {
-                offset -= (ItemHeight * 0.9f);
+                if (LastSelectedItem == -1)
+                {
+                    offset -= (ItemHeight * 0.9f);
 
-                EnforceEvenItemBounds();
+                    EnforceEvenItemBounds();
+                }
+                else
+                {
+                    if (LastSelectedItem > 0)
+                    {
+                        SelectItem(LastSelectedItem - 1);
+                    }
+                }
             }
         }
 
@@ -363,6 +391,26 @@ namespace UILayout
                 SetOffset((Items.Count * (ItemHeight + 1)) - ContentBounds.Height);
 
                 EnforceEvenItemBounds();
+            }
+        }
+
+        void EnsureSelectedItemIsVisible()
+        {
+            if (LastSelectedItem != -1)
+            {
+                float itemOffset = LastSelectedItem * ItemHeight;
+
+                if (offset > itemOffset)
+                    SetTopItem(LastSelectedItem);
+                else
+                {
+                    float diff = itemOffset + ItemHeight - (offset + ContentBounds.Height);
+
+                    if (diff > 0)
+                    {
+                        SetOffset(offset + diff);
+                    }
+                }
             }
         }
 
