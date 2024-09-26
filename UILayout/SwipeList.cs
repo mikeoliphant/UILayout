@@ -108,16 +108,6 @@ namespace UILayout
             scrollBar.Scrollable = this;
         }
 
-        public void ScrollBackward()
-        {
-            PreviousItem();
-        }
-
-        public void ScrollForward()
-        {
-            NextItem();
-        }
-
         public void ScrollPageBackward()
         {
             PreviousPage();
@@ -301,11 +291,11 @@ namespace UILayout
 
             if (delta > 0)
             {
-                PreviousItem();
+                ScrollBackward();
             }
             else if (delta < 0)
             {
-                NextItem();
+                ScrollForward();
             }
         }
 
@@ -325,9 +315,7 @@ namespace UILayout
             {
                 if (LastSelectedItem == -1)
                 {
-                    offset += (ItemHeight * 1.1f);
-
-                    EnforceEvenItemBounds();
+                    ScrollForward();
                 }
                 else
                 {
@@ -345,9 +333,7 @@ namespace UILayout
             {
                 if (LastSelectedItem == -1)
                 {
-                    offset -= (ItemHeight * 0.9f);
-
-                    EnforceEvenItemBounds();
+                    ScrollBackward();
                 }
                 else
                 {
@@ -357,6 +343,20 @@ namespace UILayout
                     }
                 }
             }
+        }
+
+        public void ScrollBackward()
+        {
+            offset -= (ItemHeight * 0.9f);
+
+            EnforceEvenItemBounds();
+        }
+
+        public void ScrollForward()
+        {
+            offset += (ItemHeight * 1.1f);
+
+            EnforceEvenItemBounds();
         }
 
         public void NextPage()
