@@ -108,16 +108,6 @@ namespace UILayout
             scrollBar.Scrollable = this;
         }
 
-        public void ScrollBackward()
-        {
-            PreviousItem();
-        }
-
-        public void ScrollForward()
-        {
-            NextItem();
-        }
-
         public void ScrollPageBackward()
         {
             PreviousPage();
@@ -286,9 +276,7 @@ namespace UILayout
             {
                 if (itemPos < items.Count)
                 {
-                    LastSelectedItem = itemPos;
-
-                    SelectAction(itemPos);
+                    SelectItem(itemPos);
                 }
             }
 
@@ -303,21 +291,39 @@ namespace UILayout
 
             if (delta > 0)
             {
-                PreviousItem();
+                ScrollBackward();
             }
             else if (delta < 0)
             {
-                NextItem();
+                ScrollForward();
             }
+        }
+
+        public void SelectItem(int itemPos)
+        {
+            LastSelectedItem = itemPos;
+
+            if (SelectAction != null)
+                SelectAction(itemPos);
+
+            EnsureSelectedItemIsVisible();
         }
 
         public void NextItem()
         {
             if (Items != null)
             {
-                offset += (ItemHeight * 1.1f);
-
-                EnforceEvenItemBounds();
+                if (LastSelectedItem == -1)
+                {
+                    ScrollForward();
+                }
+                else
+                {
+                    if (LastSelectedItem < (Items.Count - 1))
+                    {
+                        SelectItem(LastSelectedItem + 1);
+                    }
+                }
             }
         }
 
@@ -325,10 +331,32 @@ namespace UILayout
         {
             if (Items != null)
             {
-                offset -= (ItemHeight * 0.9f);
-
-                EnforceEvenItemBounds();
+                if (LastSelectedItem == -1)
+                {
+                    ScrollBackward();
+                }
+                else
+                {
+                    if (LastSelectedItem > 0)
+                    {
+                        SelectItem(LastSelectedItem - 1);
+                    }
+                }
             }
+        }
+
+        public void ScrollBackward()
+        {
+            offset -= (ItemHeight * 0.9f);
+
+            EnforceEvenItemBounds();
+        }
+
+        public void ScrollForward()
+        {
+            offset += (ItemHeight * 1.1f);
+
+            EnforceEvenItemBounds();
         }
 
         public void NextPage()
@@ -363,6 +391,26 @@ namespace UILayout
                 SetOffset((Items.Count * (ItemHeight + 1)) - ContentBounds.Height);
 
                 EnforceEvenItemBounds();
+            }
+        }
+
+        void EnsureSelectedItemIsVisible()
+        {
+            if (LastSelectedItem != -1)
+            {
+                float itemOffset = LastSelectedItem * ItemHeight;
+
+                if (offset > itemOffset)
+                    SetTopItem(LastSelectedItem);
+                else
+                {
+                    float diff = itemOffset + ItemHeight - (offset + ContentBounds.Height);
+
+                    if (diff > 0)
+                    {
+                        SetOffset(offset + diff);
+                    }
+                }
             }
         }
 
