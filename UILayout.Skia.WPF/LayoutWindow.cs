@@ -15,6 +15,7 @@ namespace UILayout.Skia.WPF
         public static extern bool GetWindowRect(IntPtr hwnd, ref Rectangle rectangle);
 
         public LayoutControl SkiaCanvas { get; private set; }
+        public float ScreenDPI { get; private set; }
 
         public Rectangle DisplayRectangle
         {
@@ -33,6 +34,13 @@ namespace UILayout.Skia.WPF
         public LayoutWindow()
         {
             Content = SkiaCanvas = new LayoutControl();
+
+            var m = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
+
+            float scaleX = (float)m.M11;
+            float scaleY = (float)m.M22;
+
+            ScreenDPI = Math.Max(scaleX, scaleY);
         }
 
         public void SetSize(uint width, uint height)
