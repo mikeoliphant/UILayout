@@ -1,7 +1,9 @@
-﻿using System;
+﻿using SharpDX.Direct2D1.Effects;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace UILayout
 {
@@ -180,77 +182,37 @@ namespace UILayout
             return glyphs[c];
         }
 
-        // *** Note don't forget that this should be the same as the StringBuilder version ***
-        public void DrawString(String str, GraphicsContext2D graphicsContext, float x, float y, UIColor color, float scale)
-        {
-            if (String.IsNullOrEmpty(str))
-                return;
-
-            float xOffset = x;
-            float yOffset = y;
-
-            System.Drawing.Rectangle drawRect = System.Drawing.Rectangle.Empty;
-
-            char lastChar = '\0';
-
-            for (int i = 0; i < str.Length; i++)
-            {
-                char c = str[i];
-
-                if (c == '\n')
-                {
-                    yOffset += (((x == xOffset) ? emptyRowHeight : rowHeight) + LineSpacing) * scale;
-                    xOffset = x;
-
-                    lastChar = '\0';
-                }
-                else
-                {
-                    SpriteFontGlyph glyph = GetGlyph(c);
-
-                    drawRect.X = glyph.X;
-                    drawRect.Y = glyph.Y;
-                    drawRect.Width = glyph.Width;
-                    drawRect.Height = glyph.Height;
-
-                    if (lastChar != '\0')
-                    {
-                        float spacing = Spacing;
-
-                        Int32 kern;
-
-                        if ((kernDict != null) && kernDict.TryGetValue((lastChar, c), out kern))
-                        {
-                            spacing += kern;
-                        }
-
-                        xOffset += spacing * scale;
-                    }
-
-                    graphicsContext.DrawImage(fontImage, (int)xOffset, (int)yOffset, drawRect, color, scale);
-
-                    xOffset += glyph.Width * scale;
-
-                    lastChar = c;
-                }
-            }
-        }
-
-        // *** Note don't forget that this should be the same as the StringBuilder version ***
         public void MeasureString(String str, out float width, out float height)
         {
             MeasureString(str, 1, out width, out height);
         }
 
-        // *** Note don't forget that this should be the same as the StringBuilder version ***
         public void MeasureString(String str, float scale, out float width, out float height)
         {
-            width = 0;
-            height = 0;
+            (width, height, float xOffset, char lastChar) = MeasureString(str.AsSpan(), scale);
+        }
 
-            float rowWidth = 0;
+        public void MeasureString(StringBuilder stringBuilder, out float width, out float height)
+        {
+            MeasureString(stringBuilder, 1, out width, out height);
+        }
 
-            char lastChar = '\0';
+        public void MeasureString(StringBuilder stringBuilder, float scale, out float width, out float height)
+        {
+            (float Width, float Height, float XOffset, char LastChar) state = (0, 0, 0, '\0');
+
+            foreach (ReadOnlyMemory<char> chunk in stringBuilder.GetChunks())
+            {
+                state = MeasureString(chunk.Span, scale, state.Width, state.Height, state.XOffset, state.LastChar);
+            }
+
+            width = state.Width;
+            height = state.Height;
+        }
+
+        public (float Width, float Height, float XOffset, char LastChar) MeasureString(ReadOnlySpan<char> str, float scale, float width = 0, float height = 0, float xOffset = 0, char lastChar = '\0')
+        {
+            float rowWidth = xOffset;
 
             for (int i = 0; i < str.Length; i++)
             {
@@ -292,21 +254,38 @@ namespace UILayout
 
             width = Math.Max(width, rowWidth);
             height += rowHeight * scale;
+
+            return (width, height, rowWidth, lastChar);
         }
 
-        // *** Note don't forget that this should be the same as the String version ***
+        public void DrawString(String str, GraphicsContext2D graphicsContext, float x, float y, UIColor color, float scale)
+        {
+            if (String.IsNullOrEmpty(str))
+                return;
+
+            DrawString(str.AsSpan(), graphicsContext, x, y, '\0', color, scale);
+        }
+
         public void DrawString(StringBuilder stringBuilder, GraphicsContext2D graphicsContext, float x, float y, UIColor color, float scale)
+        {
+            (float X, float Y, char LastChar) state = (x, y, '\0');
+
+            foreach (ReadOnlyMemory<char> chunk in stringBuilder.GetChunks())
+            {
+                state = DrawString(chunk.Span, graphicsContext, state.X, state.Y, state.LastChar, color, scale);
+            }
+        }
+
+        public (float X, float Y, char LastChar) DrawString(ReadOnlySpan<char> str, GraphicsContext2D graphicsContext, float x, float y, char lastChar, UIColor color, float scale)
         {
             float xOffset = x;
             float yOffset = y;
 
             System.Drawing.Rectangle drawRect = System.Drawing.Rectangle.Empty;
 
-            char lastChar = '\0';
-
-            for (int i = 0; i < stringBuilder.Length; i++)
+            for (int i = 0; i < str.Length; i++)
             {
-                char c = stringBuilder[i];
+                char c = str[i];
 
                 if (c == '\n')
                 {
@@ -336,73 +315,17 @@ namespace UILayout
                         }
 
                         xOffset += spacing * scale;
-
-                        lastChar = c;
                     }
 
                     graphicsContext.DrawImage(fontImage, (int)xOffset, (int)yOffset, drawRect, color, scale);
 
                     xOffset += glyph.Width * scale;
-                }
-            }
-        }
-
-        // *** Note don't forget that this should be the same as the String version ***
-        public void MeasureString(StringBuilder stringBuilder, out float width, out float height)
-        {
-            MeasureString(stringBuilder, 1, out width, out height);
-        }
-
-        // *** Note don't forget that this should be the same as the String version ***
-        public void MeasureString(StringBuilder stringBuilder, float scale, out float width, out float height)
-        {
-            width = 0;
-            height = 0;
-
-            float rowWidth = 0;
-
-            char lastChar = '\0';
-
-            for (int i = 0; i < stringBuilder.Length; i++)
-            {
-                char c = stringBuilder[i];
-
-                if (c == '\n')
-                {
-                    width = Math.Max(width, rowWidth);
-
-                    height += (((rowWidth == 0) ? emptyRowHeight : rowHeight) + LineSpacing) * scale;
-
-                    rowWidth = 0;
-
-                    lastChar = '\0';
-                }
-                else
-                {
-                    SpriteFontGlyph glyph = GetGlyph(c);
-
-                    if (lastChar != '\0')
-                    {
-                        float spacing = Spacing;
-
-                        Int32 kern;
-
-                        if ((kernDict != null) && kernDict.TryGetValue((lastChar, c), out kern))
-                        {
-                            spacing += kern;
-                        }
-
-                        rowWidth += spacing * scale;
-                    }
-
-                    rowWidth += glyph.Width * scale;
 
                     lastChar = c;
                 }
             }
 
-            width = Math.Max(width, rowWidth);
-            height += rowHeight * scale;
+            return (xOffset, yOffset, lastChar);
         }
     }
 
