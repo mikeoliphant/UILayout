@@ -18,7 +18,7 @@ namespace UILayout
     {
         public UInt16 Ch1;
         public UInt16 Ch2;
-        public Int32 Kern;
+        public float Kern;
     }
 
     public class SpriteFontDefinition
@@ -48,7 +48,7 @@ namespace UILayout
         protected int height;
         protected float emptyRowHeight;
 
-        Dictionary<(int, int), int> kernDict;
+        Dictionary<(int, int), float> KernDict;
 
         [XmlIgnore]
         public UIImage FontImage
@@ -115,13 +115,13 @@ namespace UILayout
             font.LineSpacing = -1;
             font.EmptyLinePercent = 0.5f;
 
-            font.kernDict = new Dictionary<(int, int), int>();
+            font.KernDict = new Dictionary<(int, int), float>();
 
             if ((fontDefinition.KernPairs != null) && (fontDefinition.KernPairs.Count > 0))
             {
                 foreach (SpriteFontKernPair pair in fontDefinition.KernPairs)
                 {
-                    font.kernDict[(pair.Ch1, pair.Ch2)] = pair.Kern;
+                    font.KernDict[(pair.Ch1, pair.Ch2)] = pair.Kern;
                 }
             }
 
@@ -234,9 +234,9 @@ namespace UILayout
                     {
                         float spacing = Spacing;
 
-                        Int32 kern;
+                        float kern;
 
-                        if ((kernDict != null) && kernDict.TryGetValue((lastChar, c), out kern))
+                        if ((KernDict != null) && KernDict.TryGetValue((lastChar, c), out kern))
                         {
                             spacing += kern;
                         }
@@ -305,9 +305,9 @@ namespace UILayout
                     {
                         float spacing = Spacing;
 
-                        Int32 kern;
+                        float kern;
 
-                        if ((kernDict != null) && kernDict.TryGetValue((lastChar, c), out kern))
+                        if ((KernDict != null) && KernDict.TryGetValue((lastChar, c), out kern))
                         {
                             spacing += kern;
                         }

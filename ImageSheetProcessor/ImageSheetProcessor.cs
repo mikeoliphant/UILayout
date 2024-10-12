@@ -1,20 +1,52 @@
-﻿using Svg.Exceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing.Text;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml.Serialization;
+using SharpFont;
 using UILayout;
 
 namespace ImageSheetProcessor
 {
+    public class ProcImage : SimpleCanvas<UIColor>
+    {
+        public override int ImageWidth { get { return imageWidth; } }
+        public override int ImageHeight { get { return imageHeight; } }
+
+        int imageWidth = 0;
+        int imageHeight = 0;
+
+        public ProcImage(string imageFileName)
+        {
+            using (Stream pngStream = File.OpenRead(imageFileName))
+            {
+                var image = StbImageSharp.ImageResult.FromStream(pngStream, StbImageSharp.ColorComponents.RedGreenBlueAlpha);
+
+                this.imageWidth = image.Width;
+                this.imageHeight = image.Height;
+
+                canvasData = MemoryMarshal.Cast<byte, UIColor>(image.Data).ToArray();
+            }
+        }
+
+        public ProcImage(int imageWidth, int imageHeight)
+        {
+            this.imageWidth = imageWidth;
+            this.imageHeight = imageHeight;
+
+            canvasData = new UIColor[imageWidth * imageHeight];
+        }
+
+        public Span<byte> GetByteData()
+        {
+            return MemoryMarshal.Cast<UIColor, byte>(canvasData);
+        }
+    }
+
     public class ImageSheetEntry
     {
-        public Bitmap Bitmap { get; set; }
+        public ProcImage Image { get; set; }
         public string NamePrefix { get; set; }
     }
 
@@ -35,7 +67,6 @@ namespace ImageSheetProcessor
             get { return imageSheetGroupName != null; }
         }
 
-        protected Bitmap overlayTexture;
         protected ImageManifest imageManifest;
         protected Dictionary<string, ImageManifestSheetImage> imageDictionary = new Dictionary<string, ImageManifestSheetImage>();
         protected XmlSerializer serializer;
@@ -54,18 +85,6 @@ namespace ImageSheetProcessor
             ImageGutterSize = 1;
             ImageMaskColor = UIColor.Transparent;
             serializer = new XmlSerializer(typeof(ImageManifest));
-        }
-
-        public void SetOverlayTexture(string textureName)
-        {
-            if (string.IsNullOrEmpty(textureName))
-            {
-                overlayTexture = null;
-            }
-            else
-            {
-                overlayTexture = (Bitmap)Bitmap.FromFile(Path.Combine(SrcPath, textureName));
-            }
         }
 
         public void BeginRenderImages(string destPath)
@@ -166,12 +185,10 @@ namespace ImageSheetProcessor
 
             List<string> images = new List<string>(imageSheetGroupImages.Keys);
 
-            Bitmap outBitmap = new Bitmap(MaxImageSheetSize, MaxImageSheetSize);
-            Graphics renderer = Graphics.FromImage(outBitmap);
-            renderer.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            ProcImage outBitmap = new (MaxImageSheetSize, MaxImageSheetSize);
 
-            images.Sort(delegate (string s1, string s2) { return Math.Max(imageSheetGroupImages[s2].Bitmap.Height, imageSheetGroupImages[s2].Bitmap.Width).
-                CompareTo(Math.Max(imageSheetGroupImages[s1].Bitmap.Height, imageSheetGroupImages[s1].Bitmap.Width)); });
+            images.Sort(delegate (string s1, string s2) { return Math.Max(imageSheetGroupImages[s2].Image.ImageHeight, imageSheetGroupImages[s2].Image.ImageWidth).
+                CompareTo(Math.Max(imageSheetGroupImages[s1].Image.ImageHeight, imageSheetGroupImages[s1].Image.ImageWidth)); });
 
             do
             {
@@ -187,7 +204,7 @@ namespace ImageSheetProcessor
 
                     imageBitmap = imageSheetGroupImages[filename];
 
-                    outRect = binPack.Insert(imageBitmap.Bitmap.Width + (ImageGutterSize * 2), imageBitmap.Bitmap.Height + (ImageGutterSize * 2), MaxRectsBinPack.FreeRectChoiceHeuristic.RectContactPointRule);
+                    outRect = binPack.Insert(imageBitmap.Image.ImageWidth + (ImageGutterSize * 2), imageBitmap.Image.ImageHeight + (ImageGutterSize * 2), MaxRectsBinPack.FreeRectChoiceHeuristic.RectContactPointRule);
 
                     if (outRect.Height > 0)
                         break;
@@ -198,7 +215,7 @@ namespace ImageSheetProcessor
 
                 if (outRect.Height > 0)
                 {
-                    DrawImageWithGutter(imageBitmap.Bitmap, renderer, outRect);
+                    DrawImageWithGutter(imageBitmap.Image, outBitmap, outRect);
 
                     outRect.X += ImageGutterSize;
                     outRect.Y += ImageGutterSize;
@@ -230,26 +247,21 @@ namespace ImageSheetProcessor
 
                     if (images.Count == 0)
                     {
-                        Bitmap shrunk = AttemptShrink(imageSheet, outBitmap);
+                        ProcImage shrunk = AttemptShrink(imageSheet, outBitmap);
 
                         if (shrunk != null)
                         {
-                            outBitmap.Dispose();
-
                             outBitmap = shrunk;
                         }
                     }
 
                     SaveImage(outBitmap, Path.Combine(DestPath, imageSheetGroupName + sheetNum + ".png"));
 
-                    outBitmap.Dispose();
-
                     sheetNum++;
 
                     binPack.Init(MaxImageSheetSize, MaxImageSheetSize, false);
 
-                    outBitmap = new Bitmap(MaxImageSheetSize, MaxImageSheetSize);
-                    renderer = Graphics.FromImage(outBitmap);
+                    outBitmap = new (MaxImageSheetSize, MaxImageSheetSize);
                     imageSheet = new ImageManifestSheet();
                 }
             }
@@ -259,60 +271,60 @@ namespace ImageSheetProcessor
             this.imageSheet = null;
         }
 
-        void DrawImageWithGutter(Bitmap imageBitmap, Graphics renderer, Rectangle outRect)
+        void DrawImageWithGutter(ProcImage imageBitmap, ProcImage outBitmap, Rectangle outRect)
         {
             Rectangle srcRect;
             Rectangle destRect;
 
             // Top
-            srcRect = new Rectangle(0, 0, imageBitmap.Width, 1);
+            srcRect = new Rectangle(0, 0, imageBitmap.ImageWidth, 1);
             destRect = new Rectangle(outRect.X + ImageGutterSize, outRect.Y, outRect.Width - (ImageGutterSize * 2), ImageGutterSize);
-            renderer.DrawImage(imageBitmap, destRect, srcRect, GraphicsUnit.Pixel);
+            outBitmap.Draw(imageBitmap, destRect, srcRect);
 
             // Bottom
-            srcRect = new Rectangle(0, imageBitmap.Height - 1, imageBitmap.Width, 1);
+            srcRect = new Rectangle(0, imageBitmap.ImageHeight - 1, imageBitmap.ImageWidth, 1);
             destRect = new Rectangle(outRect.X + ImageGutterSize, outRect.Bottom - ImageGutterSize, outRect.Width - (ImageGutterSize * 2), ImageGutterSize);
-            renderer.DrawImage(imageBitmap, destRect, srcRect, GraphicsUnit.Pixel);
+            outBitmap.Draw(imageBitmap, destRect, srcRect);
 
             // Left
-            srcRect = new Rectangle(0, 0, 1, imageBitmap.Height);
+            srcRect = new Rectangle(0, 0, 1, imageBitmap.ImageHeight);
             destRect = new Rectangle(outRect.X, outRect.Y + ImageGutterSize, ImageGutterSize, outRect.Height - (ImageGutterSize * 2));
-            renderer.DrawImage(imageBitmap, destRect, srcRect, GraphicsUnit.Pixel);
+            outBitmap.Draw(imageBitmap, destRect, srcRect);
 
             // Right
-            srcRect = new Rectangle(imageBitmap.Width - 1, 0, 1, imageBitmap.Height);
+            srcRect = new Rectangle(imageBitmap.ImageWidth - 1, 0, 1, imageBitmap.ImageHeight);
             destRect = new Rectangle(outRect.Right - ImageGutterSize, outRect.Y + ImageGutterSize, ImageGutterSize, outRect.Height - (ImageGutterSize * 2));
-            renderer.DrawImage(imageBitmap, destRect, srcRect, GraphicsUnit.Pixel);
+            outBitmap.Draw(imageBitmap, destRect, srcRect);
 
             // TopLeft
             srcRect = new Rectangle(0, 0, 1, 1);
             destRect = new Rectangle(outRect.X, outRect.Y, ImageGutterSize, ImageGutterSize);
-            renderer.DrawImage(imageBitmap, destRect, srcRect, GraphicsUnit.Pixel);
+            outBitmap.Draw(imageBitmap, destRect, srcRect);
 
             // TopRight
-            srcRect = new Rectangle(imageBitmap.Width - 1, 0, 1, 1);
+            srcRect = new Rectangle(imageBitmap.ImageWidth - 1, 0, 1, 1);
             destRect = new Rectangle(outRect.Right - ImageGutterSize, outRect.Y, ImageGutterSize, ImageGutterSize);
-            renderer.DrawImage(imageBitmap, destRect, srcRect, GraphicsUnit.Pixel);
+            outBitmap.Draw(imageBitmap, destRect, srcRect);
 
             // BottomLeft
-            srcRect = new Rectangle(0, imageBitmap.Height - 1, 1, 1);
+            srcRect = new Rectangle(0, imageBitmap.ImageHeight - 1, 1, 1);
             destRect = new Rectangle(outRect.X, outRect.Bottom - ImageGutterSize, ImageGutterSize, ImageGutterSize);
-            renderer.DrawImage(imageBitmap, destRect, srcRect, GraphicsUnit.Pixel);
+            outBitmap.Draw(imageBitmap, destRect, srcRect);
 
             // BottomLeft
-            srcRect = new Rectangle(imageBitmap.Width - 1, imageBitmap.Height - 1, 1, 1);
+            srcRect = new Rectangle(imageBitmap.ImageWidth - 1, imageBitmap.ImageHeight - 1, 1, 1);
             destRect = new Rectangle(outRect.Right - ImageGutterSize, outRect.Bottom - ImageGutterSize, ImageGutterSize, ImageGutterSize);
-            renderer.DrawImage(imageBitmap, destRect, srcRect, GraphicsUnit.Pixel);
+            outBitmap.Draw(imageBitmap, destRect, srcRect);
 
             outRect.X += ImageGutterSize;
             outRect.Y += ImageGutterSize;
             outRect.Width -= (ImageGutterSize * 2);
             outRect.Height -= (ImageGutterSize * 2);
 
-            renderer.DrawImage(imageBitmap, outRect);
+            outBitmap.Draw(imageBitmap, outRect, outRect);
         }
 
-        Bitmap AttemptShrink(ImageManifestSheet imageSheet, Bitmap sourceBitmap)
+        ProcImage AttemptShrink(ImageManifestSheet imageSheet, ProcImage sourceBitmap)
         {
             int width = imageSheet.SheetWidth;
             int height = imageSheet.SheetHeight;
@@ -329,9 +341,7 @@ namespace ImageSheetProcessor
             }
 
             MaxRectsBinPack binPack = new MaxRectsBinPack(width, height, false);
-            Bitmap outBitmap = new Bitmap(width, height);
-            Graphics renderer = Graphics.FromImage(outBitmap);
-            renderer.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            ProcImage outBitmap = new (width, height);
 
             newImages.Clear();
 
@@ -347,12 +357,10 @@ namespace ImageSheetProcessor
 
                 if (outRect.Height == 0)
                 {
-                    outBitmap.Dispose();
-
                     return null;
                 }
 
-                renderer.DrawImage(sourceBitmap, outRect, new Rectangle(sprite.XOffset - gutterWidth, sprite.YOffset - gutterHeight, sprite.Width + (gutterWidth * 2), sprite.Height + (gutterHeight * 2)), GraphicsUnit.Pixel);
+                outBitmap.Draw(sourceBitmap, outRect, new Rectangle(sprite.XOffset - gutterWidth, sprite.YOffset - gutterHeight, sprite.Width + (gutterWidth * 2), sprite.Height + (gutterHeight * 2)));
 
                 outRect.X += gutterWidth;
                 outRect.Y += gutterHeight;
@@ -373,12 +381,10 @@ namespace ImageSheetProcessor
             imageSheet.SheetHeight = height;
             imageSheet.Images = newImages;
 
-            Bitmap shrunk = AttemptShrink(imageSheet, outBitmap);
+            ProcImage shrunk = AttemptShrink(imageSheet, outBitmap);
 
             if (shrunk != null)
             {
-                outBitmap.Dispose();
-
                 return shrunk;
             }
             else
@@ -387,148 +393,25 @@ namespace ImageSheetProcessor
             }
         }
 
-        public void Overlay(string texture1, string texture2, string outTexture)
-        {
-            Bitmap image1 = (Bitmap)Bitmap.FromFile(Path.Combine(DestPath, texture1) + ".png");
-            Bitmap image2 = (Bitmap)Bitmap.FromFile(Path.Combine(DestPath, texture2) + ".png");
-
-            Bitmap outImage = new Bitmap(image1);
-
-            Graphics renderer = Graphics.FromImage(outImage);
-
-            int xOffset = (image1.Width - image2.Width) / 2;
-            int yOffset = (image1.Height - image2.Height) / 2;
-
-            renderer.DrawImage(image2, xOffset, yOffset);
-
-            image1.Dispose();
-            image2.Dispose();
-
-            SaveAndManifest(outImage, Path.Combine(DestPath, outTexture + ".png"));
-        }
-
-        public void ToBlack(Bitmap srcBitmap)
+        public void ToBlack(ProcImage srcBitmap)
         {
             byte a = 0;
 
-            try
+            for (int x = 0; x < srcBitmap.ImageWidth; x++)
             {
-                BitmapData srcData = srcBitmap.LockBits(new Rectangle(0, 0, srcBitmap.Width, srcBitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-
-                unsafe
+                for (int y = 0; y < srcBitmap.ImageHeight; y++)
                 {
-                    byte* srcPixels = (byte*)srcData.Scan0;
+                    UIColor color = srcBitmap.GetPixel(x, y);
 
-                    for (int x = 0; x < srcBitmap.Width; x++)
+                    if (color.A == 255)
                     {
-                        for (int y = 0; y < srcBitmap.Height; y++)
-                        {
-                            byte* srcOffset = srcPixels + (x * 4) + (y * srcData.Stride);
-
-                            a = *(srcOffset + 3);
-
-                            if (a == 255)
-                            {
-                                *(srcOffset) = 0;
-                                *(srcOffset + 1) = 0;
-                                *(srcOffset + 2) = 0;
-                            }
-                        }
+                        srcBitmap.SetPixel(x, y, UIColor.Black);
                     }
                 }
-
-                srcBitmap.UnlockBits(srcData);
             }
-            catch { }
         }
 
-        public void ToBlackExceptPurple(Bitmap srcBitmap)
-        {
-            byte a = 0;
-
-            try
-            {
-                BitmapData srcData = srcBitmap.LockBits(new Rectangle(0, 0, srcBitmap.Width, srcBitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-
-                unsafe
-                {
-                    byte* srcPixels = (byte*)srcData.Scan0;
-
-                    for (int x = 0; x < srcBitmap.Width; x++)
-                    {
-                        for (int y = 0; y < srcBitmap.Height; y++)
-                        {
-                            byte* srcOffset = srcPixels + (x * 4) + (y * srcData.Stride);
-
-                            a = *(srcOffset + 3);
-
-                            if (a == 255)
-                            {
-                                if (*(srcOffset + 1) == 0)
-                                {
-                                    *(srcOffset + 3) = 0;
-                                }
-
-                                *(srcOffset) = 0;
-                                *(srcOffset + 1) = 0;
-                                *(srcOffset + 2) = 0;
-                            }
-                        }
-                    }
-                }
-
-                srcBitmap.UnlockBits(srcData);
-            }
-            catch { }
-        }
-
-        public void RemovePurple(Bitmap srcBitmap)
-        {
-            byte a = 0;
-            byte r = 0;
-            byte g = 0;
-            byte b = 0;
-
-            try
-            {
-                BitmapData srcData = srcBitmap.LockBits(new Rectangle(0, 0, srcBitmap.Width, srcBitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-
-                unsafe
-                {
-                    byte* srcPixels = (byte*)srcData.Scan0;
-
-                    for (int x = 0; x < srcBitmap.Width; x++)
-                    {
-                        for (int y = 0; y < srcBitmap.Height; y++)
-                        {
-                            byte* srcOffset = srcPixels + (x * 4) + (y * srcData.Stride);
-
-                            r = *(srcOffset);
-                            g = *(srcOffset + 1);
-                            b = *(srcOffset + 2);
-                            a = *(srcOffset + 3);
-
-                            if ((a == 255) && (r == 255) && (b == 255) && (g == 0))
-                            {
-                                if (*(srcOffset + 1) == 0)
-                                {
-                                    *(srcOffset + 3) = 0;
-                                }
-
-                                *(srcOffset) = 0;
-                                *(srcOffset + 1) = 0;
-                                *(srcOffset + 2) = 0;
-                            }
-                        }
-                    }
-                }
-
-                srcBitmap.UnlockBits(srcData);
-            }
-            catch { }
-        }
-
-        public void Add(string textureName, Bitmap bitmap)
+        public void Add(string textureName, ProcImage bitmap)
         {
             string destFile = Path.Combine(DestPath, textureName) + ".png";
             SaveAndManifest(bitmap, destFile);
@@ -539,7 +422,7 @@ namespace ImageSheetProcessor
             string srcFile = GetSourcePath(textureName);
             string destFile = Path.Combine(DestPath, textureName) + ".png";
 
-            Bitmap original = (Bitmap)Bitmap.FromFile(srcFile);
+            ProcImage original = new(srcFile);
 
             SaveAndManifest(original, destFile);
         }
@@ -557,7 +440,7 @@ namespace ImageSheetProcessor
 
                     if (File.Exists(tmpFile) && (new FileInfo(srcFile).LastWriteTime < new FileInfo(tmpFile).LastWriteTime))
                     {
-                        imageSheetGroupImages[destFile] = new ImageSheetEntry { Bitmap = new Bitmap(tmpFile), NamePrefix = ImageNamePrefix };
+                        imageSheetGroupImages[destFile] = new ImageSheetEntry { Image = new (tmpFile), NamePrefix = ImageNamePrefix };
 
                         return;
                     }
@@ -569,247 +452,123 @@ namespace ImageSheetProcessor
                     return;
             }
 
-            Bitmap original;
+            ProcImage original = new(srcFile);
 
-            original = (Bitmap)Bitmap.FromFile(srcFile);
+            int imageWidth = original.ImageWidth;
+            int imageHeight = original.ImageHeight;
 
-            int imageWidth = original.Width;
-            int imageHeight = original.Height;
-
-            Bitmap newBitmap = new Bitmap(original.Width, (original.Height + (VerticalPadding * 2)));
+            ProcImage newBitmap = new (original.ImageWidth, (original.ImageHeight + (VerticalPadding * 2)));
 
             AddShadow(original, newBitmap, new Rectangle(0, 0, imageWidth, imageHeight), new Point(0, VerticalPadding));
 
             SaveAndManifest(newBitmap, destFile);
         }
 
-        public Bitmap AddShadow(Bitmap srcBitmap)
+        public ProcImage AddShadow(ProcImage srcBitmap)
         {
-            Bitmap newBitmap = new Bitmap(srcBitmap.Width, srcBitmap.Height);
+            ProcImage newBitmap = new (srcBitmap.ImageWidth, srcBitmap.ImageHeight);
 
             AddShadow(srcBitmap, newBitmap);
 
             return newBitmap;
         }
 
-        public void AddShadow(Bitmap srcBitmap, Bitmap destBitmap)
+        public void AddShadow(ProcImage srcBitmap, ProcImage destBitmap)
         {
-            AddShadow(srcBitmap, destBitmap, new Rectangle(0, 0, srcBitmap.Width, srcBitmap.Height), new Point(0, 0));
+            AddShadow(srcBitmap, destBitmap, new Rectangle(0, 0, srcBitmap.ImageWidth, srcBitmap.ImageHeight), new Point(0, 0));
         }
 
-        public void AddShadow(Bitmap srcBitmap, Bitmap destBitmap, Rectangle srcRect, Point destOffset)
+        public void AddShadow(ProcImage srcBitmap, ProcImage destBitmap, Rectangle srcRect, Point destOffset)
         {
-            AddShadow(srcBitmap, destBitmap, Graphics.FromImage(destBitmap), srcRect, destOffset);
-        }
-
-        public void AddShadow(Bitmap srcBitmap, Bitmap destBitmap, Graphics destRenderer, Rectangle srcRect, Point destOffset)
-        {
-            Bitmap blurredImage = new Bitmap(srcRect.Width, srcRect.Height);
+            ProcImage blurredImage = new (srcRect.Width, srcRect.Height);
             GaussianBlur blur = new GaussianBlur(3, 1.0f / 1.5f);
 
-            destRenderer.DrawImage(srcBitmap, srcRect);
+            destBitmap.Draw(srcBitmap, srcRect, srcRect);
 
             ToBlack(destBitmap);
 
             blur.Apply(destBitmap, blurredImage);
 
-            destRenderer.DrawImage(blurredImage, new Rectangle(destOffset.X, destOffset.Y, srcRect.Width, srcRect.Height), new Rectangle(0, 0, srcRect.Width, srcRect.Height), GraphicsUnit.Pixel);
-            destRenderer.DrawImage(srcBitmap, new Rectangle(destOffset.X, destOffset.Y, srcRect.Width, srcRect.Height), new Rectangle(0, 0, srcRect.Width, srcRect.Height), GraphicsUnit.Pixel);
+            destBitmap.Draw(blurredImage, new Rectangle(destOffset.X, destOffset.Y, srcRect.Width, srcRect.Height), new Rectangle(0, 0, srcRect.Width, srcRect.Height));
+            destBitmap.Draw(srcBitmap, new Rectangle(destOffset.X, destOffset.Y, srcRect.Width, srcRect.Height), new Rectangle(0, 0, srcRect.Width, srcRect.Height));
         }
 
-        public void FillVertical(Bitmap bitmap, int padding)
+        public void FillVertical(ProcImage bitmap, int padding)
         {
             for (int offset = 0; offset < padding; offset++)
             {
-                for (int x = 0; x < bitmap.Width; x++)
+                for (int x = 0; x < bitmap.ImageWidth; x++)
                 {
                     bitmap.SetPixel(x, offset, bitmap.GetPixel(x, padding));
 
-                    bitmap.SetPixel(x, bitmap.Height - (offset + 1), bitmap.GetPixel(x, bitmap.Height - (padding + 1)));
+                    bitmap.SetPixel(x, bitmap.ImageHeight - (offset + 1), bitmap.GetPixel(x, bitmap.ImageHeight - (padding + 1)));
                 }
             }
         }
 
-        public void AddSvg(string svgName)
+        //public void AddSvg(string svgName)
+        //{
+        //    AddSvg(svgName, null);
+        //}
+
+        //public void AddSvg(string svgName, float size)
+        //{
+        //    AddSvg(svgName, new SizeF(size, size));
+        //}
+
+        //public void AddSvg(string svgName, SizeF? size)
+        //{
+        //    string srcFile = Path.Combine(GetSourcePath(), svgName) + ".svg";
+        //    string destFile = Path.Combine(DestPath, svgName) + ".png";
+
+        //    var svg = Svg.SvgDocument.Open(srcFile);
+
+        //    if (size == null)
+        //    {
+        //        size = Size.Round(svg.GetDimensions());
+        //    }
+
+        //    Bitmap bitmap = svg.Draw((int)size.Value.Width, (int)size.Value.Height);
+
+        //    SaveAndManifest(bitmap, destFile);
+        //}
+
+        public void AddFont(string name, string fontPath, float emSize)
         {
-            AddSvg(svgName, null);
+            AddFont(name, fontPath, emSize, 0x20, 0xff, 16, antialias: true);
         }
 
-        public void AddSvg(string svgName, float size)
+        public void AddFont(string name, string fontPath, float emSize, UInt16 minChar, UInt16 maxChar, int glphsPerLine, bool antialias)
         {
-            AddSvg(svgName, new SizeF(size, size));
-        }
+            Library library = new();
 
-        public void AddSvg(string svgName, SizeF? size)
-        {
-            string srcFile = Path.Combine(GetSourcePath(), svgName) + ".svg";
-            string destFile = Path.Combine(DestPath, svgName) + ".png";
+            Face face = library.NewFace(fontPath, 0);
 
-            var svg = Svg.SvgDocument.Open(srcFile);
+            //face.SetCharSize(0, 62, 96, 96);
 
-            if (size == null)
-            {
-                size = Size.Round(svg.GetDimensions());
-            }
+            face.SetPixelSizes(0, (uint)((emSize * 96) / 72));
 
-            Bitmap bitmap = svg.Draw((int)size.Value.Width, (int)size.Value.Height);
-
-            SaveAndManifest(bitmap, destFile);
-        }
-
-        Graphics measureGraphics = Graphics.FromImage(new Bitmap(1, 1, PixelFormat.Format32bppArgb));
-
-        void MeasureString(string str, Font font, out int width, out int height)
-        {
-            SizeF sizeWidth = measureGraphics.MeasureString(str, font);
-            SizeF size = measureGraphics.MeasureString(str, font, PointF.Empty, StringFormat.GenericTypographic);
-
-            size.Width = sizeWidth.Width;
-
-            width = (int)Math.Ceiling(size.Width);
-            height = (int)Math.Ceiling(size.Height);
-        }
-
-        public Bitmap CreateText(string name, string text, string fontFamily, float emSize)
-        {
-            return CreateText(text, new Font(fontFamily, emSize));
-        }
-
-        public Bitmap CreateText(string text, string fontFamily, FontStyle fontStyle, float emSize)
-        {
-            Font font = new Font(fontFamily, emSize, fontStyle);
-
-            return CreateText(text, font);
-        }
-
-        public Bitmap CreateText(string text, Font font)
-        {
-            return CreateText(text, font, antialias: true);
-        }
-
-        public Bitmap CreateText(string text, Font font, bool antialias)
-        {
-            int width;
-            int height;
-
-            MeasureString(text, font, out width, out height);
-
-            Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-
-            using (Graphics bitmapGraphics = Graphics.FromImage(bitmap))
-            {
-                if (antialias)
-                {
-                    bitmapGraphics.TextRenderingHint =
-                        TextRenderingHint.AntiAliasGridFit;
-                }
-                else
-                {
-                    bitmapGraphics.TextRenderingHint =
-                        TextRenderingHint.SingleBitPerPixelGridFit;
-                }
-
-                bitmapGraphics.Clear(Color.Transparent);
-
-                using (Brush brush = new SolidBrush(Color.White))
-                {
-                    using (StringFormat format = new StringFormat())
-                    {
-                        format.Alignment = StringAlignment.Near;
-                        format.LineAlignment = StringAlignment.Near;
-
-                        bitmapGraphics.DrawString(text, font, brush, 0, 0, format);
-                    }
-                }
-
-                bitmapGraphics.Flush();
-            }
-
-            return bitmap;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct KerningPair
-        {
-            public Int16 wFirst;
-            public Int16 wSecond;
-            public Int32 iKernAmount;
-        }
-
-        [DllImport("Gdi32.dll", EntryPoint = "GetKerningPairs", SetLastError = true)]
-        static extern int GetKerningPairs(int hdc, int nNumPairs, [In, Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] KerningPair[] kerningPairs);
-
-        [DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
-        static extern IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
-
-        [DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
-        static extern bool DeleteObject(IntPtr hdc);
-
-        [DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
-        static extern int SetMapMode(IntPtr hdc, int iMode);
-
-
-        public void AddFont(string name, string fontFamily, float emSize)
-        {
-            AddFont(name, fontFamily, FontStyle.Regular, emSize);
-        }
-
-        public void AddFont(string name, string fontFamily, FontStyle fontStyle, float emSize)
-        {
-            Font font = new Font(fontFamily, emSize, fontStyle);
-
-            AddFont(name, font, 0x20, 0xff, 16, antialias: true);
-        }
-
-        public void AddFont(string name, Font font, int minChar, int maxChar, int glphsPerLine, bool antialias)
-        {
             string destFile = Path.Combine(DestPath, name) + ".png";
-
-            IntPtr hdc = measureGraphics.GetHdc();
-            SetMapMode(hdc, 1); // MM_TEXT
-
-            Font fontClone = (Font)font.Clone();
-            IntPtr hFont = fontClone.ToHfont();
-            SelectObject(hdc, hFont);
-
-            int numKerningPairs = GetKerningPairs(hdc.ToInt32(), 0, null);
-
-            KerningPair[] kerningPairs = new KerningPair[numKerningPairs];
-
-            GetKerningPairs(hdc.ToInt32(), numKerningPairs, kerningPairs);
-
-            DeleteObject(hFont);
-            measureGraphics.ReleaseHdc();
-
-            Dictionary<(Int16, Int16), Int32> kernDict = new Dictionary<(short, short), int>();
-
-            foreach (KerningPair pair in kerningPairs)
-            {
-                if (pair.iKernAmount != 0)
-                {
-                    kernDict[(pair.wFirst, pair.wSecond)] = pair.iKernAmount;
-                }
-            }
 
             SpriteFontDefinition fontEntry = new SpriteFontDefinition();
 
             fontEntry.Name = name;
             fontEntry.KernPairs = new List<SpriteFontKernPair>();
 
-            for (char ch = (char)minChar; ch < maxChar; ch++)
+            for (UInt16 kern1 = minChar; kern1 <= maxChar; kern1++)
             {
-                for (char ch2 = (char)minChar; ch2 < maxChar; ch2++)
+                for (UInt16 kern2 = 0; kern2 <= maxChar; kern2++)
                 {
-                    int kern;
+                    float kern = (float)face.GetKerning(kern1, kern2, KerningMode.Default).X;
 
-                    if (kernDict.TryGetValue(((Int16)ch, (Int16)ch2), out kern))
+                    if (kern != 0)
                     {
-                        fontEntry.KernPairs.Add(new SpriteFontKernPair { Ch1 = ch, Ch2 = ch2, Kern = kern });
+                        fontEntry.KernPairs.Add(new SpriteFontKernPair { Ch1 = kern1, Ch2 = kern2, Kern = kern });
                     }
                 }
             }
 
-            List<Bitmap> bitmaps = new List<Bitmap>();
+            List<ProcImage> bitmaps = new List<ProcImage>();
             List<Rectangle> cropRects = new List<Rectangle>();
             List<int> xPositions = new List<int>();
             List<int> yPositions = new List<int>();
@@ -824,9 +583,9 @@ namespace ImageSheetProcessor
 
             for (char ch = (char)minChar; ch < maxChar; ch++)
             {
-                Bitmap charBitmap = RasterizeCharacter(ch, font, antialias);
+                ProcImage charBitmap = RasterizeCharacter(ch, face, antialias);
 
-                Rectangle cropRect = CropCharacter(charBitmap);
+                Rectangle cropRect = new Rectangle(0, 0, charBitmap.ImageWidth, charBitmap.ImageHeight); // CropCharacter(charBitmap);
 
                 bitmaps.Add(charBitmap);
 
@@ -862,19 +621,11 @@ namespace ImageSheetProcessor
 
             imageSheet.Fonts.Add(fontEntry);
 
-            //Bitmap shadowed = null;            
-            Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            ProcImage bitmap = new (width, height);
 
-            using (Graphics outputGraphics = Graphics.FromImage(bitmap))
+            for (int i = 0; i < bitmaps.Count; i++)
             {
-                outputGraphics.CompositingMode = CompositingMode.SourceCopy;
-
-                for (int i = 0; i < bitmaps.Count; i++)
-                {
-                    outputGraphics.DrawImage(bitmaps[i], new Rectangle(xPositions[i], yPositions[i], cropRects[i].Width, cropRects[i].Height), cropRects[i], GraphicsUnit.Pixel);
-                }
-
-                outputGraphics.Flush();
+                bitmap.Draw(bitmaps[i], new Rectangle(xPositions[i], yPositions[i], cropRects[i].Width, cropRects[i].Height), cropRects[i]);
             }
 
             //shadowed = new Bitmap(width, height, PixelFormat.Format32bppArgb);
@@ -882,57 +633,47 @@ namespace ImageSheetProcessor
             //AddShadow(bitmap, shadowed, new Rectangle(0, 0, width, height), new Point(0, 0));
 
             SaveAndManifest(bitmap, destFile);
-
-            // Clean up temporary objects.
-            foreach (Bitmap glyph in bitmaps)
-                glyph.Dispose();
         }
 
-        private Bitmap RasterizeCharacter(char ch, Font font, bool antialias)
+        private ProcImage RasterizeCharacter(char ch, Face face, bool antialias)
         {
-            int width;
-            int height;
+            uint glyphIndex = face.GetCharIndex(ch);
 
-            string text = ch.ToString();
+            face.LoadGlyph(glyphIndex, LoadFlags.Default, LoadTarget.Normal);
+            face.Glyph.RenderGlyph(RenderMode.Normal);
 
-            MeasureString(text, font, out width, out height);
+            int width = (int)face.Glyph.Metrics.Width;
+            int height = (int)face.Glyph.Metrics.Height;
 
-            Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            ProcImage bitmap = new (width, (int)face.Size.Metrics.NominalHeight);
 
-            using (Graphics bitmapGraphics = Graphics.FromImage(bitmap))
+            if (face.Glyph.Bitmap.PixelMode == PixelMode.Mono)
             {
-                if (antialias)
+                throw new InvalidDataException("Mono fonts not supported");
+            }
+
+            if ((width > 0) && (height > 0))
+            {
+                byte[] buffer = face.Glyph.Bitmap.BufferData;
+
+                int bufPos = 0;
+
+                for (int y = 0; y < height; y++)
                 {
-                    bitmapGraphics.TextRenderingHint =
-                        TextRenderingHint.AntiAliasGridFit;
+                    for (int x = 0; x < width; x++)
+                    {
+                        bitmap.SetPixel(x, y + (int)face.Glyph.Metrics.VerticalAdvance - face.Glyph.BitmapTop, new UIColor((byte)255, (byte)255, (byte)255, buffer[bufPos++]));
+                    }
                 }
-                else
-                {
-                    bitmapGraphics.TextRenderingHint =
-                        TextRenderingHint.SingleBitPerPixelGridFit;
-                }
-
-                bitmapGraphics.Clear(Color.Transparent);
-
-                using (Brush brush = new SolidBrush(Color.White))
-                using (StringFormat format = new StringFormat())
-                {
-                    format.Alignment = StringAlignment.Near;
-                    format.LineAlignment = StringAlignment.Near;
-
-                    bitmapGraphics.DrawString(text, font, brush, 0, 0, format);
-                }
-
-                bitmapGraphics.Flush();
             }
 
             return bitmap;
         }
 
-        private static Rectangle CropCharacter(Bitmap bitmap)
+        private static Rectangle CropCharacter(ProcImage bitmap)
         {
             int cropLeft = 0;
-            int cropRight = bitmap.Width - 1;
+            int cropRight = bitmap.ImageWidth - 1;
 
             // Remove unused space from the left.
             while ((cropLeft < cropRight) && (BitmapIsEmpty(bitmap, cropLeft)))
@@ -944,20 +685,20 @@ namespace ImageSheetProcessor
 
             // Don't crop if that would reduce the glyph down to nothing at all!
             if (cropLeft == cropRight)
-                return new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+                return new Rectangle(0, 0, bitmap.ImageWidth, bitmap.ImageHeight);
 
             // Add some padding back in.
             cropLeft = Math.Max(cropLeft - 1, 0);
-            cropRight = Math.Min(cropRight + 1, bitmap.Width - 1);
+            cropRight = Math.Min(cropRight + 1, bitmap.ImageWidth - 1);
 
             int width = cropRight - cropLeft + 1;
 
-            return new Rectangle(cropLeft, 0, width, bitmap.Height);
+            return new Rectangle(cropLeft, 0, width, bitmap.ImageHeight);
         }
 
-        private static bool BitmapIsEmpty(Bitmap bitmap, int x)
+        private static bool BitmapIsEmpty(ProcImage bitmap, int x)
         {
-            for (int y = 0; y < bitmap.Height; y++)
+            for (int y = 0; y < bitmap.ImageHeight; y++)
             {
                 if (bitmap.GetPixel(x, y).A != 0)
                     return false;
@@ -966,42 +707,50 @@ namespace ImageSheetProcessor
             return true;
         }
 
-        public void SaveAndManifest(Bitmap bitmap, string destFile)
+        public void SaveAndManifest(ProcImage bitmap, string destFile)
         {
             if (imageSheetGroupName != null)
             {
-                imageSheetGroupImages[destFile] = new ImageSheetEntry { Bitmap = bitmap, NamePrefix = ImageNamePrefix };
+                imageSheetGroupImages[destFile] = new ImageSheetEntry { Image = bitmap, NamePrefix = ImageNamePrefix };
 
                 string tmpFile = Path.Combine(tmpDir, Path.GetFileName(destFile));
 
-                bitmap.Save(tmpFile);
+                SaveImage(bitmap, tmpFile);
 
                 return;
             }
 
-            int usedWidth = bitmap.Width;
-            int usedHeight = bitmap.Height;
+            int usedWidth = bitmap.ImageWidth;
+            int usedHeight = bitmap.ImageHeight;
 
             if (PadToPowerOfTwo)
             {
-                int newWidth = UpperPowerOfTwo(bitmap.Width);
-                int newHeight = UpperPowerOfTwo(bitmap.Height);
+                int newWidth = UpperPowerOfTwo(bitmap.ImageWidth);
+                int newHeight = UpperPowerOfTwo(bitmap.ImageHeight);
 
-                if ((newWidth != bitmap.Width) || (newHeight != bitmap.Height))
+                if ((newWidth != bitmap.ImageWidth) || (newHeight != bitmap.ImageHeight))
                 {
-                    Bitmap padded = new Bitmap(newWidth, newHeight);
-                    Graphics paddedImageRenderer = Graphics.FromImage(padded);
+                    ProcImage padded = new (newWidth, newHeight);
 
-                    paddedImageRenderer.DrawImage(bitmap, 0, 0, usedWidth, usedHeight);
+                    Rectangle rect = new Rectangle(0, 0, usedWidth, usedHeight);
 
-                    bitmap.Dispose();
+                    padded.Draw(bitmap, rect, rect);
+
                     bitmap = padded;
                 }
             }
 
             SaveImage(bitmap, destFile);
+        }
 
-            bitmap.Dispose();
+        public void SaveImage(ProcImage image, string destFile)
+        {
+            using (Stream stream = File.OpenWrite(destFile))
+            {
+                StbImageWriteSharp.ImageWriter writer = new ();
+
+                writer.WritePng(image.GetByteData().ToArray(), image.ImageWidth, image.ImageHeight, StbImageWriteSharp.ColorComponents.RedGreenBlueAlpha, stream);
+            }
         }
 
         public void DeleteFile(string textureName)
@@ -1022,11 +771,6 @@ namespace ImageSheetProcessor
             v++;
 
             return v;
-        }
-
-        public void SaveImage(Bitmap image, string filename)
-        {
-            image.Save(filename, ImageFormat.Png);
         }
 
         public bool IsNewer(string file1, string file2)

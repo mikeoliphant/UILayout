@@ -36,7 +36,7 @@ namespace UILayout
         {
             get
             {
-                throw new NotImplementedException();
+                return new Rectangle(0, 0, ImageWidth, ImageHeight);
             }
         }
 
@@ -535,6 +535,17 @@ namespace UILayout
             lastColor = GetPixel(p.X, p.Y);
 
             SetPixel(p.X, p.Y, color);
+        }
+
+        public void Draw(UICanvas2D<T> srcCanvas, Rectangle destRect, Rectangle srcRect)
+        {
+            for (int y = 0; y < srcRect.Height ; y++)
+            {
+                for (int x = 0; x < srcRect.Width; x++)
+                {
+                    SetPixel(destRect.X + x, destRect.Y + y, srcCanvas.GetPixel(srcRect.X + x, srcRect.Y + y));
+                }
+            }
         }
     }
 
