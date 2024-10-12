@@ -321,7 +321,7 @@ namespace ImageSheetProcessor
             outRect.Width -= (ImageGutterSize * 2);
             outRect.Height -= (ImageGutterSize * 2);
 
-            outBitmap.Draw(imageBitmap, outRect, outRect);
+            outBitmap.Draw(imageBitmap, outRect, new Rectangle(0, 0, imageBitmap.ImageWidth, imageBitmap.ImageHeight));
         }
 
         ProcImage AttemptShrink(ImageManifestSheet imageSheet, ProcImage sourceBitmap)
