@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace UILayout
 {
@@ -627,126 +628,119 @@ namespace UILayout
         }
     }
 
-    //public class ImageFilter
-    //{
-    //    protected float[,] convolution;
+    public class ImageFilter
+    {
+        protected float[,] convolution;
 
-    //    protected float[,] Calculate1DSampleKernel(float deviation, int size)
-    //    {
-    //        float[,] ret = new float[size, 1];
-    //        float sum = 0;
-    //        int half = size / 2;
+        protected float[,] Calculate1DSampleKernel(float deviation, int size)
+        {
+            float[,] ret = new float[size, 1];
+            float sum = 0;
+            int half = size / 2;
 
-    //        for (int i = 0; i < size; i++)
-    //        {
-    //            ret[i, 0] = (float)(1 / (Math.Sqrt(2 * Math.PI) * deviation) * Math.Exp(-(i - half) * (i - half) / (2 * deviation * deviation)));
-    //            sum += ret[i, 0];
-    //        }
+            for (int i = 0; i < size; i++)
+            {
+                ret[i, 0] = (float)(1 / (Math.Sqrt(2 * Math.PI) * deviation) * Math.Exp(-(i - half) * (i - half) / (2 * deviation * deviation)));
+                sum += ret[i, 0];
+            }
 
-    //        return ret;
-    //    }
+            return ret;
+        }
 
 
-    //    public void Apply(SimpleCanvas<UIColor> sourceImage, SimpleCanvas<UIColor> destImage)
-    //    {
-    //        int size = convolution.GetLength(0) / 2;
-    //        float weight = 0;
-    //        float r = 0;
-    //        float g = 0;
-    //        float b = 0;
-    //        float a = 0;
+        public void Apply(SimpleCanvas<UIColor> sourceImage, SimpleCanvas<UIColor> destImage)
+        {
+            int size = convolution.GetLength(0) / 2;
+            float weight = 0;
+            float r = 0;
+            float g = 0;
+            float b = 0;
+            float a = 0;
 
-    //        unsafe
-    //        {
-    //            fixed (byte* srcPixels = MemoryMarshal.Cast<UIColor, byte>(sourceImage.canvasData))
-    //            {
-    //                fixed (byte* destPixels = MemoryMarshal.Cast<UIColor, byte>(destImage.canvasData))
-    //                {
-    //                    for (int y = 0; y < sourceImage.ImageHeight; y++)
-    //                    {
-    //                        for (int x = 0; x < sourceImage.ImageWidth; x++)
-    //                        {
-    //                            weight = 0;
-    //                            b = 0;
-    //                            g = 0;
-    //                            r = 0;
-    //                            a = 0;
+            ReadOnlySpan<byte> srcPixels = MemoryMarshal.Cast<UIColor, byte>(sourceImage.canvasData);
+            Span<byte> destPixels = MemoryMarshal.Cast<UIColor, byte>(destImage.canvasData);
 
-    //                            for (int convY = Math.Max(0, y - size); convY <= Math.Min(sourceImage.ImageHeight - 1, y + size); convY++)
-    //                            {
-    //                                for (int convX = Math.Max(0, x - size); convX <= Math.Min(sourceImage.ImageWidth - 1, x + size); convX++)
-    //                                {
+            for (int y = 0; y < sourceImage.ImageHeight; y++)
+            {
+                for (int x = 0; x < sourceImage.ImageWidth; x++)
+                {
+                    weight = 0;
+                    b = 0;
+                    g = 0;
+                    r = 0;
+                    a = 0;
 
-    //                                    //float aWeight = (float)c.A / 255.0f;
-    //                                    byte* offset = srcPixels + (convY * sourceImage.ImageWidth) + (convX * 4);
+                    for (int convY = Math.Max(0, y - size); convY <= Math.Min(sourceImage.ImageHeight - 1, y + size); convY++)
+                    {
+                        for (int convX = Math.Max(0, x - size); convX <= Math.Min(sourceImage.ImageWidth - 1, x + size); convX++)
+                        {
+                            //float aWeight = (float)c.A / 255.0f;
+                            int offset = (convY * sourceImage.ImageWidth) + (convX * 4);
 
-    //                                    float convWeight = convolution[convX - x + size, convY - y + size];
+                            float convWeight = convolution[convX - x + size, convY - y + size];
 
-    //                                    b += (float)*offset++ * convWeight;
+                            b += (float)srcPixels[offset++] * convWeight;
 
-    //                                    g += (float)*offset++ * convWeight;// *aWeight;
-    //                                    r += (float)*offset++ * convWeight;// *aWeight;
-    //                                    a += (float)*offset++ * convWeight;// *aWeight;
+                            g += (float)srcPixels[offset++] * convWeight;// *aWeight;
+                            r += (float)srcPixels[offset++] * convWeight;// *aWeight;
+                            a += (float)srcPixels[offset++] * convWeight;// *aWeight;
 
-    //                                    weight += convWeight;
-    //                                }
-    //                            }
+                            weight += convWeight;
+                        }
+                    }
 
-    //                            byte* destOffset = destPixels + (y * sourceImage.ImageWidth) + (x * 4);
+                    int destOffset = (y * sourceImage.ImageWidth) + (x * 4);
 
-    //                            *destOffset++ = (byte)(b / weight);
-    //                            *destOffset++ = (byte)(g / weight);
-    //                            *destOffset++ = (byte)(r / weight);
-    //                            *destOffset++ = (byte)(a / weight);
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
+                    destPixels[destOffset++] = (byte)(b / weight);
+                    destPixels[destOffset++] = (byte)(g / weight);
+                    destPixels[destOffset++] = (byte)(r / weight);
+                    destPixels[destOffset++] = (byte)(a / weight);
+                }
+            }
+        }
+    }
 
-    //public class GaussianBlur : ImageFilter
-    //{
-    //    float sigma;
-    //    float sqrSigma;
+    public class GaussianBlur : ImageFilter
+    {
+        float sigma;
+        float sqrSigma;
 
-    //    public GaussianBlur(int size, float deviation)
-    //    {
-    //        sigma = deviation;
-    //        sqrSigma = sigma * sigma;
+        public GaussianBlur(int size, float deviation)
+        {
+            sigma = deviation;
+            sqrSigma = sigma * sigma;
 
-    //        convolution = GaussianKernel2D(size);
-    //    }
+            convolution = GaussianKernel2D(size);
+        }
 
-    //    private float Gaussian2D(float x, float y)
-    //    {
-    //        return (float)(Math.Exp((x * x + y * y) / (-2 * sqrSigma)) / (2 * Math.PI * sqrSigma));
-    //    }
+        private float Gaussian2D(float x, float y)
+        {
+            return (float)(Math.Exp((x * x + y * y) / (-2 * sqrSigma)) / (2 * Math.PI * sqrSigma));
+        }
 
-    //    private float[,] GaussianKernel2D(int size)
-    //    {
-    //        // check for evem size and for out of range
-    //        if (((size % 2) == 0) || (size < 3) || (size > 101))
-    //        {
-    //            throw new ArgumentException();
-    //        }
+        private float[,] GaussianKernel2D(int size)
+        {
+            // check for evem size and for out of range
+            if (((size % 2) == 0) || (size < 3) || (size > 101))
+            {
+                throw new ArgumentException();
+            }
 
-    //        // radius
-    //        int r = size / 2;
-    //        // kernel
-    //        float[,] kernel = new float[size, size];
+            // radius
+            int r = size / 2;
+            // kernel
+            float[,] kernel = new float[size, size];
 
-    //        // compute kernel
-    //        for (int y = -r, i = 0; i < size; y++, i++)
-    //        {
-    //            for (int x = -r, j = 0; j < size; x++, j++)
-    //            {
-    //                kernel[i, j] = Gaussian2D(x, y);
-    //            }
-    //        }
+            // compute kernel
+            for (int y = -r, i = 0; i < size; y++, i++)
+            {
+                for (int x = -r, j = 0; j < size; x++, j++)
+                {
+                    kernel[i, j] = Gaussian2D(x, y);
+                }
+            }
 
-    //        return kernel;
-    //    }
-    //}
+            return kernel;
+        }
+    }
 }
