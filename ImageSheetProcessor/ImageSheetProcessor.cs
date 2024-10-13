@@ -489,8 +489,6 @@ namespace ImageSheetProcessor
 
             blur.Apply(destBitmap, blurredImage);
 
-            SaveImage(blurredImage, @"c:\tmp\blah.png");
-
             destBitmap.Draw(blurredImage, new Rectangle(destOffset.X, destOffset.Y, srcRect.Width, srcRect.Height), new Rectangle(0, 0, srcRect.Width, srcRect.Height));
             destBitmap.DrawBlend(srcBitmap, new Rectangle(destOffset.X, destOffset.Y, srcRect.Width, srcRect.Height), new Rectangle(0, 0, srcRect.Width, srcRect.Height));
         }
@@ -555,22 +553,26 @@ namespace ImageSheetProcessor
             SpriteFontDefinition fontEntry = new SpriteFontDefinition();
 
             fontEntry.Name = name;
-            fontEntry.KernPairs = new List<SpriteFontKernPair>();
             fontEntry.LineHeight = (int)face.Size.Metrics.Height;
 
             var ascentDescent = GetMaxDescent(face, minChar, maxChar);
 
             fontEntry.GlyphHeight = ascentDescent.MaxAscent + ascentDescent.MaxDescent;
 
-            for (UInt16 kern1 = minChar; kern1 <= maxChar; kern1++)
+            if (face.HasKerning)
             {
-                for (UInt16 kern2 = 0; kern2 <= maxChar; kern2++)
-                {
-                    int kern = (int)face.GetKerning(kern1, kern2, KerningMode.Default).X;
+                fontEntry.KernPairs = new List<SpriteFontKernPair>();
 
-                    if (kern != 0)
+                for (UInt16 kern1 = minChar; kern1 <= maxChar; kern1++)
+                {
+                    for (UInt16 kern2 = 0; kern2 <= maxChar; kern2++)
                     {
-                        fontEntry.KernPairs.Add(new SpriteFontKernPair { Ch1 = kern1, Ch2 = kern2, Kern = kern });
+                        float kern = (float)face.GetKerning(kern1, kern2, KerningMode.Default).X;
+
+                        if (kern != 0)
+                        {
+                            fontEntry.KernPairs.Add(new SpriteFontKernPair { Ch1 = kern1, Ch2 = kern2, Kern = (int)kern });
+                        }
                     }
                 }
             }
