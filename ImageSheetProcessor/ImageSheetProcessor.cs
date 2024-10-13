@@ -585,7 +585,7 @@ namespace ImageSheetProcessor
             {
                 ProcImage charBitmap = RasterizeCharacter(ch, face, antialias);
 
-                Rectangle cropRect = new Rectangle(0, 0, charBitmap.ImageWidth, charBitmap.ImageHeight); // CropCharacter(charBitmap);
+                Rectangle cropRect = new Rectangle(0, 0, charBitmap.ImageWidth, charBitmap.ImageHeight);
 
                 bitmaps.Add(charBitmap);
 
@@ -645,8 +645,6 @@ namespace ImageSheetProcessor
             int width = (int)face.Glyph.Metrics.Width;
             int height = (int)face.Glyph.Metrics.Height;
 
-            ProcImage bitmap = new (width, (int)face.Size.Metrics.NominalHeight);
-
             if (face.Glyph.Bitmap.PixelMode == PixelMode.Mono)
             {
                 throw new InvalidDataException("Mono fonts not supported");
@@ -654,8 +652,12 @@ namespace ImageSheetProcessor
 
             int yOffset = (int)face.Size.Metrics.NominalHeight + (int)face.Size.Metrics.Descender;
 
+            ProcImage bitmap = null;
+
             if ((width > 0) && (height > 0))
             {
+                bitmap = new(width, (int)face.Size.Metrics.NominalHeight);
+
                 byte[] buffer = face.Glyph.Bitmap.BufferData;
 
                 int bufPos = 0;
@@ -668,34 +670,12 @@ namespace ImageSheetProcessor
                     }
                 }
             }
+            else
+            {
+                bitmap = new((int)face.Glyph.Metrics.HorizontalAdvance, (int)face.Size.Metrics.NominalHeight);
+            }
 
             return bitmap;
-        }
-
-        private static Rectangle CropCharacter(ProcImage bitmap)
-        {
-            int cropLeft = 0;
-            int cropRight = bitmap.ImageWidth - 1;
-
-            // Remove unused space from the left.
-            while ((cropLeft < cropRight) && (BitmapIsEmpty(bitmap, cropLeft)))
-                cropLeft++;
-
-            // Remove unused space from the right.
-            while ((cropRight > cropLeft) && (BitmapIsEmpty(bitmap, cropRight)))
-                cropRight--;
-
-            // Don't crop if that would reduce the glyph down to nothing at all!
-            if (cropLeft == cropRight)
-                return new Rectangle(0, 0, bitmap.ImageWidth, bitmap.ImageHeight);
-
-            // Add some padding back in.
-            cropLeft = Math.Max(cropLeft - 1, 0);
-            cropRight = Math.Min(cropRight + 1, bitmap.ImageWidth - 1);
-
-            int width = cropRight - cropLeft + 1;
-
-            return new Rectangle(cropLeft, 0, width, bitmap.ImageHeight);
         }
 
         private static bool BitmapIsEmpty(ProcImage bitmap, int x)
