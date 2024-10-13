@@ -652,6 +652,8 @@ namespace ImageSheetProcessor
                 throw new InvalidDataException("Mono fonts not supported");
             }
 
+            int yOffset = (int)face.Size.Metrics.NominalHeight + (int)face.Size.Metrics.Descender;
+
             if ((width > 0) && (height > 0))
             {
                 byte[] buffer = face.Glyph.Bitmap.BufferData;
@@ -662,7 +664,7 @@ namespace ImageSheetProcessor
                 {
                     for (int x = 0; x < width; x++)
                     {
-                        bitmap.SetPixel(x, y + (int)face.Glyph.Metrics.VerticalAdvance - face.Glyph.BitmapTop, new UIColor((byte)255, (byte)255, (byte)255, buffer[bufPos++]));
+                        bitmap.SetPixel(x, y + yOffset - face.Glyph.BitmapTop , new UIColor((byte)255, (byte)255, (byte)255, buffer[bufPos++]));
                     }
                 }
             }
