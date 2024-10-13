@@ -18,7 +18,7 @@ namespace UILayout
     {
         public UInt16 Ch1;
         public UInt16 Ch2;
-        public float Kern;
+        public int Kern;
     }
 
     public class SpriteFontDefinition
@@ -28,6 +28,7 @@ namespace UILayout
         public int GlyphWidth { get; set; }
         public int GlyphHeight { get; set; }
         public int GlyphsPerRow { get; set; }
+        public int LineHeight { get; set; }
         public string GlyphString { get; set; }
         public SpriteFontGlyph[] Glyphs { get; set; }
         public List<SpriteFontKernPair> KernPairs { get; set; }
@@ -37,18 +38,16 @@ namespace UILayout
     {
         public float Spacing { get; set; }
         public float LineSpacing { get; set; }
-        public float TextHeight { get; protected set; }
+        public float LineHeight { get; set; }
 
         int numGlyphs = (127 - 32);
 
         protected UIImage fontImage;
         protected Dictionary<int, SpriteFontGlyph> glyphs = new Dictionary<int, SpriteFontGlyph>();
-        protected int rowHeight;
         protected int width;
         protected int height;
-        protected float emptyRowHeight;
 
-        Dictionary<(int, int), float> KernDict;
+        Dictionary<(int, int), int> KernDict;
 
         [XmlIgnore]
         public UIImage FontImage
@@ -56,16 +55,12 @@ namespace UILayout
             get { return fontImage; }
         }
 
-        public int RowHeight
+        public float EmptyLinePercent { get; set; } = 1.0f;
+        public float EmptyLineHeight
         {
-            get { return rowHeight; }
-        }
-
-        public float EmptyLinePercent
-        {
-            set
+            get
             {
-                emptyRowHeight = rowHeight * value;
+                return LineHeight * EmptyLinePercent;
             }
         }
 
@@ -111,11 +106,11 @@ namespace UILayout
 
             SpriteFont font = new SpriteFont(Layout.Current.GetImage(name), fontDefinition.Glyphs);
 
-            font.Spacing = -1;
-            font.LineSpacing = -1;
+            font.Spacing = 0;
+            font.LineSpacing = 0;
             font.EmptyLinePercent = 0.5f;
 
-            font.KernDict = new Dictionary<(int, int), float>();
+            font.KernDict = new Dictionary<(int, int), int>();
 
             if ((fontDefinition.KernPairs != null) && (fontDefinition.KernPairs.Count > 0))
             {
@@ -137,7 +132,7 @@ namespace UILayout
                 this.glyphs[glyph.Character] = glyph;
             }
 
-            emptyRowHeight = TextHeight = rowHeight = glyphs[0].Height;
+            LineHeight = glyphs[0].Height;
         }
 
         public SpriteFontGlyph GetGlyph(char c)
@@ -220,7 +215,7 @@ namespace UILayout
                 {
                     width = Math.Max(width, rowWidth);
 
-                    height += (((rowWidth == 0) ? emptyRowHeight : rowHeight) + LineSpacing) * scale;
+                    height += (((rowWidth == 0) ? EmptyLineHeight : LineHeight) + LineSpacing) * scale;
 
                     rowWidth = 0;
 
@@ -234,7 +229,7 @@ namespace UILayout
                     {
                         float spacing = Spacing;
 
-                        float kern;
+                        int kern;
 
                         if ((KernDict != null) && KernDict.TryGetValue((lastChar, c), out kern))
                         {
@@ -251,7 +246,7 @@ namespace UILayout
             }
 
             width = Math.Max(width, rowWidth);
-            height += rowHeight * scale;
+            height += LineHeight * scale;
 
             return (width, height, rowWidth, lastChar);
         }
@@ -287,7 +282,7 @@ namespace UILayout
 
                 if (c == '\n')
                 {
-                    yOffset += (((x == xOffset) ? emptyRowHeight : rowHeight) + LineSpacing) * scale;
+                    yOffset += (((x == xOffset) ? EmptyLineHeight : LineHeight) + LineSpacing) * scale;
                     xOffset = x;
 
                     lastChar = '\0';
@@ -305,7 +300,7 @@ namespace UILayout
                     {
                         float spacing = Spacing;
 
-                        float kern;
+                        int kern;
 
                         if ((KernDict != null) && KernDict.TryGetValue((lastChar, c), out kern))
                         {
@@ -339,14 +334,14 @@ namespace UILayout
 
             InitializeFixedWidth();
 
-            TextHeight = emptyRowHeight = rowHeight;
+            LineHeight = height;
         }
 
         void InitializeFixedWidth()
         {
             IsFixedWidth = true;
 
-            rowHeight = 8;
+            LineHeight = 8;
 
             for (int i = 0; i < 26; i++)
             {

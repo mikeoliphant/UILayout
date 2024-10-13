@@ -546,7 +546,7 @@ namespace ImageSheetProcessor
 
             //face.SetCharSize(0, 62, 96, 96);
 
-            face.SetPixelSizes(0, (uint)((emSize * 96) / 72));
+            face.SetPixelSizes(0, (uint)Math.Round((emSize * 96.0f) / 72.0f));
 
             string destFile = Path.Combine(DestPath, name) + ".png";
 
@@ -554,12 +554,13 @@ namespace ImageSheetProcessor
 
             fontEntry.Name = name;
             fontEntry.KernPairs = new List<SpriteFontKernPair>();
+            fontEntry.LineHeight = (int)face.Size.Metrics.Height;
 
             for (UInt16 kern1 = minChar; kern1 <= maxChar; kern1++)
             {
                 for (UInt16 kern2 = 0; kern2 <= maxChar; kern2++)
                 {
-                    float kern = (float)face.GetKerning(kern1, kern2, KerningMode.Default).X;
+                    int kern = (int)face.GetKerning(kern1, kern2, KerningMode.Default).X;
 
                     if (kern != 0)
                     {
@@ -573,7 +574,7 @@ namespace ImageSheetProcessor
             List<int> xPositions = new List<int>();
             List<int> yPositions = new List<int>();
 
-            const int padding = 8;
+            const int padding = 1;
 
             int width = padding;
             int height = padding;
@@ -652,12 +653,10 @@ namespace ImageSheetProcessor
 
             int yOffset = (int)face.Size.Metrics.NominalHeight + (int)face.Size.Metrics.Descender;
 
-            ProcImage bitmap = null;
+            ProcImage bitmap = new((int)face.Glyph.Metrics.HorizontalAdvance, (int)face.Size.Metrics.NominalHeight);
 
             if ((width > 0) && (height > 0))
             {
-                bitmap = new(width, (int)face.Size.Metrics.NominalHeight);
-
                 byte[] buffer = face.Glyph.Bitmap.BufferData;
 
                 int bufPos = 0;
@@ -666,13 +665,9 @@ namespace ImageSheetProcessor
                 {
                     for (int x = 0; x < width; x++)
                     {
-                        bitmap.SetPixel(x, y + yOffset - face.Glyph.BitmapTop , new UIColor((byte)255, (byte)255, (byte)255, buffer[bufPos++]));
+                        bitmap.SetPixel(x + face.Glyph.BitmapLeft, y + yOffset - face.Glyph.BitmapTop , new UIColor((byte)255, (byte)255, (byte)255, buffer[bufPos++]));
                     }
                 }
-            }
-            else
-            {
-                bitmap = new((int)face.Glyph.Metrics.HorizontalAdvance, (int)face.Size.Metrics.NominalHeight);
             }
 
             return bitmap;
