@@ -9,7 +9,7 @@ using UILayout;
 
 namespace ImageSheetProcessor
 {
-    public class ProcImage : SimpleCanvas<UIColor>
+    public class ProcImage : UIColorCanvas
     {
         public override int ImageWidth { get { return imageWidth; } }
         public override int ImageHeight { get { return imageHeight; } }
@@ -489,8 +489,10 @@ namespace ImageSheetProcessor
 
             blur.Apply(destBitmap, blurredImage);
 
+            SaveImage(blurredImage, @"c:\tmp\blah.png");
+
             destBitmap.Draw(blurredImage, new Rectangle(destOffset.X, destOffset.Y, srcRect.Width, srcRect.Height), new Rectangle(0, 0, srcRect.Width, srcRect.Height));
-            destBitmap.Draw(srcBitmap, new Rectangle(destOffset.X, destOffset.Y, srcRect.Width, srcRect.Height), new Rectangle(0, 0, srcRect.Width, srcRect.Height));
+            destBitmap.DrawBlend(srcBitmap, new Rectangle(destOffset.X, destOffset.Y, srcRect.Width, srcRect.Height), new Rectangle(0, 0, srcRect.Width, srcRect.Height));
         }
 
         public void FillVertical(ProcImage bitmap, int padding)
@@ -535,10 +537,10 @@ namespace ImageSheetProcessor
 
         public void AddFont(string name, string fontPath, float emSize)
         {
-            AddFont(name, fontPath, emSize, 0x20, 0xff, 16, antialias: true);
+            AddFont(name, fontPath, emSize, 0x20, 0xff, 16);
         }
 
-        public void AddFont(string name, string fontPath, float emSize, UInt16 minChar, UInt16 maxChar, int glphsPerLine, bool antialias)
+        public void AddFont(string name, string fontPath, float emSize, UInt16 minChar, UInt16 maxChar, int glphsPerLine)
         {
             Library library = new();
 
@@ -584,7 +586,7 @@ namespace ImageSheetProcessor
 
             for (char ch = (char)minChar; ch < maxChar; ch++)
             {
-                ProcImage charBitmap = RasterizeCharacter(ch, face, antialias);
+                ProcImage charBitmap = RasterizeCharacter(ch, face);
 
                 Rectangle cropRect = new Rectangle(0, 0, charBitmap.ImageWidth, charBitmap.ImageHeight);
 
@@ -629,14 +631,10 @@ namespace ImageSheetProcessor
                 bitmap.Draw(bitmaps[i], new Rectangle(xPositions[i], yPositions[i], cropRects[i].Width, cropRects[i].Height), cropRects[i]);
             }
 
-            //shadowed = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-
-            //AddShadow(bitmap, shadowed, new Rectangle(0, 0, width, height), new Point(0, 0));
-
             SaveAndManifest(bitmap, destFile);
         }
 
-        private ProcImage RasterizeCharacter(char ch, Face face, bool antialias)
+        private ProcImage RasterizeCharacter(char ch, Face face)
         {
             uint glyphIndex = face.GetCharIndex(ch);
 

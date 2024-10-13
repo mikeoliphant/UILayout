@@ -537,7 +537,7 @@ namespace UILayout
             SetPixel(p.X, p.Y, color);
         }
 
-        public void Draw(UICanvas2D<T> srcCanvas, Rectangle destRect, Rectangle srcRect)
+        public virtual void Draw(UICanvas2D<T> srcCanvas, Rectangle destRect, Rectangle srcRect)
         {
             for (int y = 0; y < srcRect.Height ; y++)
             {
@@ -582,7 +582,26 @@ namespace UILayout
         }
     }
 
-    public class EditableImage : SimpleCanvas<UIColor>
+    public class UIColorCanvas : SimpleCanvas<UIColor>
+    {
+        public void DrawBlend(UICanvas2D<UIColor> srcCanvas, Rectangle destRect, Rectangle srcRect)
+        {
+            for (int y = 0; y < srcRect.Height; y++)
+            {
+                for (int x = 0; x < srcRect.Width; x++)
+                {
+                    UIColor srcColor = srcCanvas.GetPixel(srcRect.X + x, srcRect.Y + y);
+
+                    if (srcColor.A > 0)
+                    {
+                        SetPixel(destRect.X + x, destRect.Y + y, UIColor.Blend(srcColor, GetPixel(destRect.X + x, destRect.Y + y)));
+                    }
+                }
+            }
+        }
+    }
+
+    public class EditableImage : UIColorCanvas
     {
         public UIImage Image { get; private set; }
 
@@ -671,6 +690,9 @@ namespace UILayout
             ReadOnlySpan<byte> srcPixels = MemoryMarshal.Cast<UIColor, byte>(sourceImage.canvasData);
             Span<byte> destPixels = MemoryMarshal.Cast<UIColor, byte>(destImage.canvasData);
 
+            int srcStride = sourceImage.ImageWidth * 4;
+            int destStride = destImage.ImageWidth * 4;
+
             for (int y = 0; y < sourceImage.ImageHeight; y++)
             {
                 for (int x = 0; x < sourceImage.ImageWidth; x++)
@@ -685,26 +707,24 @@ namespace UILayout
                     {
                         for (int convX = Math.Max(0, x - size); convX <= Math.Min(sourceImage.ImageWidth - 1, x + size); convX++)
                         {
-                            //float aWeight = (float)c.A / 255.0f;
-                            int offset = (convY * sourceImage.ImageWidth) + (convX * 4);
+                            int offset = (convY * srcStride) + (convX * 4);
 
                             float convWeight = convolution[convX - x + size, convY - y + size];
 
+                            r += (float)srcPixels[offset++] * convWeight;
+                            g += (float)srcPixels[offset++] * convWeight;
                             b += (float)srcPixels[offset++] * convWeight;
-
-                            g += (float)srcPixels[offset++] * convWeight;// *aWeight;
-                            r += (float)srcPixels[offset++] * convWeight;// *aWeight;
-                            a += (float)srcPixels[offset++] * convWeight;// *aWeight;
+                            a += (float)srcPixels[offset++] * convWeight;
 
                             weight += convWeight;
                         }
                     }
 
-                    int destOffset = (y * sourceImage.ImageWidth) + (x * 4);
+                    int destOffset = (y * destStride) + (x * 4);
 
-                    destPixels[destOffset++] = (byte)(b / weight);
-                    destPixels[destOffset++] = (byte)(g / weight);
                     destPixels[destOffset++] = (byte)(r / weight);
+                    destPixels[destOffset++] = (byte)(g / weight);
+                    destPixels[destOffset++] = (byte)(b / weight);
                     destPixels[destOffset++] = (byte)(a / weight);
                 }
             }
