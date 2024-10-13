@@ -556,8 +556,11 @@ namespace ImageSheetProcessor
 
             fontEntry.Name = name;
             fontEntry.KernPairs = new List<SpriteFontKernPair>();
-            fontEntry.GlyphHeight = (int)face.Size.Metrics.NominalHeight;
             fontEntry.LineHeight = (int)face.Size.Metrics.Height;
+
+            var ascentDescent = GetMaxDescent(face, minChar, maxChar);
+
+            fontEntry.GlyphHeight = ascentDescent.MaxAscent + ascentDescent.MaxDescent;
 
             for (UInt16 kern1 = minChar; kern1 <= maxChar; kern1++)
             {
@@ -587,7 +590,7 @@ namespace ImageSheetProcessor
 
             for (char ch = (char)minChar; ch < maxChar; ch++)
             {
-                ProcImage charBitmap = RasterizeCharacter(ch, face);
+                ProcImage charBitmap = RasterizeCharacter(ch, face, fontEntry.GlyphHeight, ascentDescent.MaxDescent);
 
                 if (charBitmap == null)
                     continue;
@@ -638,7 +641,35 @@ namespace ImageSheetProcessor
             SaveAndManifest(bitmap, destFile);
         }
 
-        private ProcImage RasterizeCharacter(char ch, Face face)
+        (int MaxAscent, int MaxDescent) GetMaxDescent(Face face, UInt16 minChar, UInt16 maxChar)
+        {
+            int maxDescent = 0;
+            int maxAscent = 0;
+
+            for (char ch = (char)minChar; ch < maxChar; ch++)
+            {
+                uint glyphIndex = face.GetCharIndex(ch);
+
+                if (glyphIndex == 0)
+                    continue;    // no glyph
+
+                face.LoadGlyph(glyphIndex, LoadFlags.Default, LoadTarget.Normal);
+
+                int descent = (int)face.Glyph.Metrics.Height - (int)face.Glyph.Metrics.HorizontalBearingY;
+
+                if (descent > maxDescent)
+                    maxDescent = descent;
+
+                int ascent = (int)face.Glyph.Metrics.HorizontalBearingY;
+
+                if (ascent > maxAscent)
+                    maxAscent = ascent;
+            }
+
+            return (maxAscent, maxDescent);
+        }
+
+        ProcImage RasterizeCharacter(char ch, Face face, int maxHeight, int maxDescent)
         {
             uint glyphIndex = face.GetCharIndex(ch);
 
@@ -656,9 +687,9 @@ namespace ImageSheetProcessor
                 throw new InvalidDataException("Mono fonts not supported");
             }
 
-            int yOffset = (int)face.Size.Metrics.NominalHeight + (int)face.Size.Metrics.Descender;
+            int yOffset = maxHeight - maxDescent - face.Glyph.BitmapTop;
 
-            ProcImage bitmap = new((int)face.Glyph.Metrics.HorizontalAdvance, (int)face.Size.Metrics.NominalHeight);
+            ProcImage bitmap = new((int)face.Glyph.Metrics.HorizontalAdvance, maxHeight);
 
             if ((width > 0) && (height > 0))
             {
@@ -670,7 +701,7 @@ namespace ImageSheetProcessor
                 {
                     for (int x = 0; x < width; x++)
                     {
-                        bitmap.SetPixel(x + face.Glyph.BitmapLeft, y + yOffset - face.Glyph.BitmapTop , new UIColor((byte)255, (byte)255, (byte)255, buffer[bufPos++]));
+                        bitmap.SetPixel(x + face.Glyph.BitmapLeft, y + yOffset, new UIColor((byte)255, (byte)255, (byte)255, buffer[bufPos++]));
                     }
                 }
             }
