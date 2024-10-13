@@ -556,6 +556,7 @@ namespace ImageSheetProcessor
 
             fontEntry.Name = name;
             fontEntry.KernPairs = new List<SpriteFontKernPair>();
+            fontEntry.GlyphHeight = (int)face.Size.Metrics.NominalHeight;
             fontEntry.LineHeight = (int)face.Size.Metrics.Height;
 
             for (UInt16 kern1 = minChar; kern1 <= maxChar; kern1++)
@@ -587,6 +588,9 @@ namespace ImageSheetProcessor
             for (char ch = (char)minChar; ch < maxChar; ch++)
             {
                 ProcImage charBitmap = RasterizeCharacter(ch, face);
+
+                if (charBitmap == null)
+                    continue;
 
                 Rectangle cropRect = new Rectangle(0, 0, charBitmap.ImageWidth, charBitmap.ImageHeight);
 
@@ -637,6 +641,9 @@ namespace ImageSheetProcessor
         private ProcImage RasterizeCharacter(char ch, Face face)
         {
             uint glyphIndex = face.GetCharIndex(ch);
+
+            if (glyphIndex == 0)
+                return null;    // no glyph
 
             face.LoadGlyph(glyphIndex, LoadFlags.Default, LoadTarget.Normal);
             face.Glyph.RenderGlyph(RenderMode.Normal);

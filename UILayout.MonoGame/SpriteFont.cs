@@ -39,6 +39,7 @@ namespace UILayout
         public float Spacing { get; set; }
         public float LineSpacing { get; set; }
         public float LineHeight { get; set; }
+        public float GlyphHeight { get; set; }
 
         int numGlyphs = (127 - 32);
 
@@ -106,6 +107,8 @@ namespace UILayout
 
             SpriteFont font = new SpriteFont(Layout.Current.GetImage(name), fontDefinition.Glyphs);
 
+            font.LineHeight = fontDefinition.LineHeight;
+            font.GlyphHeight = fontDefinition.GlyphHeight;
             font.Spacing = 0;
             font.LineSpacing = 0;
             font.EmptyLinePercent = 0.5f;
@@ -132,7 +135,7 @@ namespace UILayout
                 this.glyphs[glyph.Character] = glyph;
             }
 
-            LineHeight = glyphs[0].Height;
+            LineHeight = GlyphHeight = glyphs[0].Height;
         }
 
         public SpriteFontGlyph GetGlyph(char c)
@@ -223,6 +226,9 @@ namespace UILayout
                 }
                 else
                 {
+                    if (height == 0)
+                        height = GlyphHeight * scale;
+
                     SpriteFontGlyph glyph = GetGlyph(c);
 
                     if (lastChar != '\0')
@@ -246,7 +252,6 @@ namespace UILayout
             }
 
             width = Math.Max(width, rowWidth);
-            height += LineHeight * scale;
 
             return (width, height, rowWidth, lastChar);
         }
