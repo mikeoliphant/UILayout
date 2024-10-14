@@ -11,7 +11,7 @@ namespace UILayout
         public virtual int ActualHeight { get { return Texture.Height; } }
 
         public UIImage(string resourceName)
-            : this(MonoGameLayout.Current.Host.Content.Load<Texture2D>(Path.Combine("Textures", resourceName)))
+            : this(MonoGameLayout.Current.Host.LoadTexture(resourceName))
         {
         }
 

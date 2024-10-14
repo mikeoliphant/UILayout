@@ -9,14 +9,14 @@
     <Import_RootNamespace>MonoGameTestShared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Content\" />
-  </ItemGroup>
-  <ItemGroup>
     <MonoGameContentReference Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
-    <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Program.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestGameHost.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\Font.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\Font.xml" />
   </ItemGroup>
 </Project>

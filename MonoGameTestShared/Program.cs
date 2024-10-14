@@ -1,5 +1,10 @@
 ﻿using System;
+using UILayout;
 
-using var game = new MonoGameTest.TestGameHost(800, 600, isFullscreen: false);
+using var host = new MonoGameTest.TestGameHost(800, 600, isFullscreen: false);
 
-game.StartGame(new UILayout.MonoGameLayout());
+host.UseEmbeddedResources = true;
+
+MonoGameLayout layout = new MonoGameLayout();
+
+host.StartGame(layout);
