@@ -12,7 +12,7 @@ namespace UILayout
 
         public float TextHeight
         {
-            get { return SpriteFont.TextHeight; }
+            get { return SpriteFont.LineHeight; }
         }
 
         public void MeasureString(string text, out float width, out float height)

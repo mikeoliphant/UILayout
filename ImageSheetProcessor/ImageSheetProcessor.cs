@@ -9,7 +9,7 @@ using UILayout;
 
 namespace ImageSheetProcessor
 {
-    public class ProcImage : SimpleCanvas<UIColor>
+    public class ProcImage : UIColorCanvas
     {
         public override int ImageWidth { get { return imageWidth; } }
         public override int ImageHeight { get { return imageHeight; } }
@@ -490,7 +490,7 @@ namespace ImageSheetProcessor
             blur.Apply(destBitmap, blurredImage);
 
             destBitmap.Draw(blurredImage, new Rectangle(destOffset.X, destOffset.Y, srcRect.Width, srcRect.Height), new Rectangle(0, 0, srcRect.Width, srcRect.Height));
-            destBitmap.Draw(srcBitmap, new Rectangle(destOffset.X, destOffset.Y, srcRect.Width, srcRect.Height), new Rectangle(0, 0, srcRect.Width, srcRect.Height));
+            destBitmap.DrawBlend(srcBitmap, new Rectangle(destOffset.X, destOffset.Y, srcRect.Width, srcRect.Height), new Rectangle(0, 0, srcRect.Width, srcRect.Height));
         }
 
         public void FillVertical(ProcImage bitmap, int padding)
@@ -535,10 +535,10 @@ namespace ImageSheetProcessor
 
         public void AddFont(string name, string fontPath, float emSize)
         {
-            AddFont(name, fontPath, emSize, 0x20, 0xff, 16, antialias: true);
+            AddFont(name, fontPath, emSize, 0x20, 0xff, 16);
         }
 
-        public void AddFont(string name, string fontPath, float emSize, UInt16 minChar, UInt16 maxChar, int glphsPerLine, bool antialias)
+        public void AddFont(string name, string fontPath, float emSize, UInt16 minChar, UInt16 maxChar, int glphsPerLine)
         {
             Library library = new();
 
@@ -546,24 +546,33 @@ namespace ImageSheetProcessor
 
             //face.SetCharSize(0, 62, 96, 96);
 
-            face.SetPixelSizes(0, (uint)((emSize * 96) / 72));
+            face.SetPixelSizes(0, (uint)Math.Round((emSize * 96.0f) / 72.0f));
 
             string destFile = Path.Combine(DestPath, name) + ".png";
 
             SpriteFontDefinition fontEntry = new SpriteFontDefinition();
 
             fontEntry.Name = name;
-            fontEntry.KernPairs = new List<SpriteFontKernPair>();
+            fontEntry.LineHeight = (int)face.Size.Metrics.Height;
 
-            for (UInt16 kern1 = minChar; kern1 <= maxChar; kern1++)
+            var ascentDescent = GetMaxDescent(face, minChar, maxChar);
+
+            fontEntry.GlyphHeight = ascentDescent.MaxAscent + ascentDescent.MaxDescent;
+
+            if (face.HasKerning)
             {
-                for (UInt16 kern2 = 0; kern2 <= maxChar; kern2++)
-                {
-                    float kern = (float)face.GetKerning(kern1, kern2, KerningMode.Default).X;
+                fontEntry.KernPairs = new List<SpriteFontKernPair>();
 
-                    if (kern != 0)
+                for (UInt16 kern1 = minChar; kern1 <= maxChar; kern1++)
+                {
+                    for (UInt16 kern2 = 0; kern2 <= maxChar; kern2++)
                     {
-                        fontEntry.KernPairs.Add(new SpriteFontKernPair { Ch1 = kern1, Ch2 = kern2, Kern = kern });
+                        float kern = (float)face.GetKerning(kern1, kern2, KerningMode.Default).X;
+
+                        if (kern != 0)
+                        {
+                            fontEntry.KernPairs.Add(new SpriteFontKernPair { Ch1 = kern1, Ch2 = kern2, Kern = (int)kern });
+                        }
                     }
                 }
             }
@@ -573,7 +582,7 @@ namespace ImageSheetProcessor
             List<int> xPositions = new List<int>();
             List<int> yPositions = new List<int>();
 
-            const int padding = 8;
+            const int padding = 1;
 
             int width = padding;
             int height = padding;
@@ -583,9 +592,12 @@ namespace ImageSheetProcessor
 
             for (char ch = (char)minChar; ch < maxChar; ch++)
             {
-                ProcImage charBitmap = RasterizeCharacter(ch, face, antialias);
+                ProcImage charBitmap = RasterizeCharacter(ch, face, fontEntry.GlyphHeight, ascentDescent.MaxDescent);
 
-                Rectangle cropRect = new Rectangle(0, 0, charBitmap.ImageWidth, charBitmap.ImageHeight); // CropCharacter(charBitmap);
+                if (charBitmap == null)
+                    continue;
+
+                Rectangle cropRect = new Rectangle(0, 0, charBitmap.ImageWidth, charBitmap.ImageHeight);
 
                 bitmaps.Add(charBitmap);
 
@@ -628,16 +640,43 @@ namespace ImageSheetProcessor
                 bitmap.Draw(bitmaps[i], new Rectangle(xPositions[i], yPositions[i], cropRects[i].Width, cropRects[i].Height), cropRects[i]);
             }
 
-            //shadowed = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-
-            //AddShadow(bitmap, shadowed, new Rectangle(0, 0, width, height), new Point(0, 0));
-
             SaveAndManifest(bitmap, destFile);
         }
 
-        private ProcImage RasterizeCharacter(char ch, Face face, bool antialias)
+        (int MaxAscent, int MaxDescent) GetMaxDescent(Face face, UInt16 minChar, UInt16 maxChar)
+        {
+            int maxDescent = 0;
+            int maxAscent = 0;
+
+            for (char ch = (char)minChar; ch < maxChar; ch++)
+            {
+                uint glyphIndex = face.GetCharIndex(ch);
+
+                if (glyphIndex == 0)
+                    continue;    // no glyph
+
+                face.LoadGlyph(glyphIndex, LoadFlags.Default, LoadTarget.Normal);
+
+                int descent = (int)face.Glyph.Metrics.Height - (int)face.Glyph.Metrics.HorizontalBearingY;
+
+                if (descent > maxDescent)
+                    maxDescent = descent;
+
+                int ascent = (int)face.Glyph.Metrics.HorizontalBearingY;
+
+                if (ascent > maxAscent)
+                    maxAscent = ascent;
+            }
+
+            return (maxAscent, maxDescent);
+        }
+
+        ProcImage RasterizeCharacter(char ch, Face face, int maxHeight, int maxDescent)
         {
             uint glyphIndex = face.GetCharIndex(ch);
+
+            if (glyphIndex == 0)
+                return null;    // no glyph
 
             face.LoadGlyph(glyphIndex, LoadFlags.Default, LoadTarget.Normal);
             face.Glyph.RenderGlyph(RenderMode.Normal);
@@ -645,14 +684,14 @@ namespace ImageSheetProcessor
             int width = (int)face.Glyph.Metrics.Width;
             int height = (int)face.Glyph.Metrics.Height;
 
-            ProcImage bitmap = new (width, (int)face.Size.Metrics.NominalHeight);
-
             if (face.Glyph.Bitmap.PixelMode == PixelMode.Mono)
             {
                 throw new InvalidDataException("Mono fonts not supported");
             }
 
-            int yOffset = (int)face.Size.Metrics.NominalHeight + (int)face.Size.Metrics.Descender;
+            int yOffset = maxHeight - maxDescent - face.Glyph.BitmapTop;
+
+            ProcImage bitmap = new((int)face.Glyph.Metrics.HorizontalAdvance, maxHeight);
 
             if ((width > 0) && (height > 0))
             {
@@ -664,38 +703,12 @@ namespace ImageSheetProcessor
                 {
                     for (int x = 0; x < width; x++)
                     {
-                        bitmap.SetPixel(x, y + yOffset - face.Glyph.BitmapTop , new UIColor((byte)255, (byte)255, (byte)255, buffer[bufPos++]));
+                        bitmap.SetPixel(x + face.Glyph.BitmapLeft, y + yOffset, new UIColor((byte)255, (byte)255, (byte)255, buffer[bufPos++]));
                     }
                 }
             }
 
             return bitmap;
-        }
-
-        private static Rectangle CropCharacter(ProcImage bitmap)
-        {
-            int cropLeft = 0;
-            int cropRight = bitmap.ImageWidth - 1;
-
-            // Remove unused space from the left.
-            while ((cropLeft < cropRight) && (BitmapIsEmpty(bitmap, cropLeft)))
-                cropLeft++;
-
-            // Remove unused space from the right.
-            while ((cropRight > cropLeft) && (BitmapIsEmpty(bitmap, cropRight)))
-                cropRight--;
-
-            // Don't crop if that would reduce the glyph down to nothing at all!
-            if (cropLeft == cropRight)
-                return new Rectangle(0, 0, bitmap.ImageWidth, bitmap.ImageHeight);
-
-            // Add some padding back in.
-            cropLeft = Math.Max(cropLeft - 1, 0);
-            cropRight = Math.Min(cropRight + 1, bitmap.ImageWidth - 1);
-
-            int width = cropRight - cropLeft + 1;
-
-            return new Rectangle(cropLeft, 0, width, bitmap.ImageHeight);
         }
 
         private static bool BitmapIsEmpty(ProcImage bitmap, int x)

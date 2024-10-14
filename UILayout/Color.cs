@@ -128,5 +128,21 @@ namespace UILayout
                 (int)MathUtil.Lerp(color1.B, color2.B, lerp),
                 (int)MathUtil.Lerp(color1.A, color2.A, lerp));
         }
+
+        public UIColor MultiplyAlpha(float alpha)
+        {
+            return new UIColor(R, G, B, (byte)(A * alpha));
+        }
+
+        public static UIColor Blend(UIColor srcColor, UIColor destColor)
+        {
+            float srcA = (float)srcColor.A / 255.0f;
+            float oneMinusSrcA = 1 - srcA;
+
+            return new UIColor((byte)(((float)srcColor.R * srcA) + ((float)destColor.R * oneMinusSrcA)),
+                 (byte)(((float)srcColor.G * srcA) + ((float)destColor.G * oneMinusSrcA)),
+                 (byte)(((float)srcColor.B * srcA) + ((float)destColor.B * oneMinusSrcA)),
+                 (byte)(((float)srcColor.A) + ((float)destColor.A * oneMinusSrcA)));
+        }
     }
 }
