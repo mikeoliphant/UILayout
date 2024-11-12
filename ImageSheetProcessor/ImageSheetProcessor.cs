@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml.Serialization;
@@ -506,32 +507,32 @@ namespace ImageSheetProcessor
             }
         }
 
-        //public void AddSvg(string svgName)
-        //{
-        //    AddSvg(svgName, null);
-        //}
+        public void AddSvg(string svgName)
+        {
+            AddSvg(svgName, null);
+        }
 
-        //public void AddSvg(string svgName, float size)
-        //{
-        //    AddSvg(svgName, new SizeF(size, size));
-        //}
+        public void AddSvg(string svgName, float size)
+        {
+            AddSvg(svgName, new SizeF(size, size));
+        }
 
-        //public void AddSvg(string svgName, SizeF? size)
-        //{
-        //    string srcFile = Path.Combine(GetSourcePath(), svgName) + ".svg";
-        //    string destFile = Path.Combine(DestPath, svgName) + ".png";
+        public void AddSvg(string svgName, SizeF? size)
+        {
+            string srcFile = Path.Combine(GetSourcePath(), svgName) + ".svg";
+            string destFile = Path.Combine(DestPath, svgName) + ".png";
 
-        //    var svg = Svg.SvgDocument.Open(srcFile);
+            var svg = Svg.SvgDocument.Open(srcFile);
 
-        //    if (size == null)
-        //    {
-        //        size = Size.Round(svg.GetDimensions());
-        //    }
+            if (size == null)
+            {
+                size = Size.Round(svg.GetDimensions());
+            }
 
-        //    Bitmap bitmap = svg.Draw((int)size.Value.Width, (int)size.Value.Height);
+            Bitmap bitmap = svg.Draw((int)size.Value.Width, (int)size.Value.Height);
 
-        //    SaveAndManifest(bitmap, destFile);
-        //}
+            SaveAndManifest(ImageFromBitmap(bitmap), destFile);
+        }
 
         public void AddFont(string name, string fontPath, float emSize)
         {
@@ -720,6 +721,36 @@ namespace ImageSheetProcessor
             }
 
             return true;
+        }
+
+        ProcImage ImageFromBitmap(Bitmap bitmap)
+        {
+            BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            ProcImage image = new ProcImage(bitmap.Width, bitmap.Height);
+
+            unsafe
+            {
+                byte* srcPixels = (byte*)bitmapData.Scan0;
+                {
+                    for (int y = 0; y < bitmap.Height; y++)
+                    {
+                        for (int x = 0; x < bitmap.Width; x++)
+                        {
+                            byte* offset = srcPixels + (y * bitmapData.Stride) + (x * 4);
+
+                            byte b = *(offset++);
+                            byte g = *(offset++);
+                            byte r = *(offset++);
+                            byte a = *(offset++);
+
+                            image.SetPixel(x, y, new UIColor(r, g, b, a));
+                        }
+                    }
+                }
+            }
+
+            return image;
         }
 
         public void SaveAndManifest(ProcImage bitmap, string destFile)

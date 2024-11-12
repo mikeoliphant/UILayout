@@ -29,7 +29,7 @@ namespace UILayout
 
         public UIImage(string resourceName)
         {
-            using (Stream stream = ResourceAssembly.GetManifestResourceStream(ResourceAssembly.GetName().Name + ".Resources." + resourceName + ".png"))
+            using (Stream stream = ResourceAssembly.GetManifestResourceStream(ResourceAssembly.GetName().Name + ".Textures." + resourceName + ".png"))
             {
                 Bitmap = SKBitmap.Decode(stream);
             }

@@ -13,10 +13,14 @@ namespace UILayout
 {
     public class MonoGameHost : Game
     {
+        public static Assembly ResourceAssembly { get; set; } = Assembly.GetEntryAssembly();
+
         public int ScreenWidth { get; private set; }
         public int ScreenHeight { get; private set; }
 
         public MonoGameLayout Layout { get; private set; }
+
+        public bool UseEmbeddedResources { get; set; } = false;
 
 #if WINDOWS
         [DllImport("user32.dll", SetLastError = true)]
@@ -92,7 +96,9 @@ namespace UILayout
 
             Window.AllowUserResizing = true;
 
+#if WINDOWS
             Window.TextInput += Window_TextInput;
+#endif
         }
 
         private void Window_TextInput(object sender, TextInputEventArgs e)
@@ -128,11 +134,29 @@ namespace UILayout
 
         public Stream OpenContentStream(string contentPath)
         {
+            if (UseEmbeddedResources)
+            {
+                return ResourceAssembly.GetManifestResourceStream(ResourceAssembly.GetName().Name + "." + contentPath.Replace('\\', '.'));
+            }
+
 #if WINDOWS
             return AssemblyRelativeContentManager.OpenAseemblyRelativeStream(Path.Combine(Content.RootDirectory, contentPath));
 #else
             return TitleContainer.OpenStream(Path.Combine(Content.RootDirectory, contentPath));
 #endif
+        }
+
+        public Texture2D LoadTexture(string resourceName)
+        {
+            if (UseEmbeddedResources)
+            {
+                using (Stream stream = ResourceAssembly.GetManifestResourceStream(ResourceAssembly.GetName().Name + ".Textures." + resourceName + ".png"))
+                {
+                    return Texture2D.FromStream(MonoGameLayout.Current.Host.GraphicsDevice, stream);
+                }
+            }
+
+            return MonoGameLayout.Current.Host.Content.Load<Texture2D>(Path.Combine("Textures", resourceName));
         }
 
         protected override void Update(GameTime gameTime)

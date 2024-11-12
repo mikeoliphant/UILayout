@@ -34,13 +34,6 @@ namespace UILayout.Skia.WPF
         public LayoutWindow()
         {
             Content = SkiaCanvas = new LayoutControl();
-
-            var m = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
-
-            float scaleX = (float)m.M11;
-            float scaleY = (float)m.M22;
-
-            ScreenDPI = Math.Max(scaleX, scaleY);
         }
 
         public void SetSize(uint width, uint height)
@@ -74,6 +67,13 @@ namespace UILayout.Skia.WPF
                 IntPtr hWnd = windowHwnd.Handle;
                 SetParent(hWnd, parentWindow);
             }
+
+            var m = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
+
+            float scaleX = (float)m.M11;
+            float scaleY = (float)m.M22;
+
+            ScreenDPI = Math.Max(scaleX, scaleY);
         }
     }
 }

@@ -11,4 +11,14 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)LayoutTest.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ButtonPressed.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ButtonUnpressed.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\OutlineNinePatch.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollBar.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollBarGutter.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollDownArrow.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollUpArrow.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\SingleWhitePixel.png" />
+  </ItemGroup>
 </Project>
