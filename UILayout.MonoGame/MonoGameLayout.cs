@@ -2,6 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+#if WINDOWS
+using System.Windows.Forms;
+#endif
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -66,7 +69,7 @@ namespace UILayout
 
         public override Task<string> GetKeyboardInputAsync(string title, string defaultText)
         {
-#if WINDOWS || ANDROID
+#if (WINDOWS && !MONOGL) || ANDROID 
             return KeyboardInput.Show(title, null, defaultText);
 #else
             Process process = new Process();
@@ -77,6 +80,22 @@ namespace UILayout
             process.Start();
             return process.StandardOutput.ReadToEndAsync();
 #endif
+        }
+
+        public override string GetFolder(string initialPath)
+        {
+#if WINDOWS
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
+
+            dialog.SelectedPath = initialPath;
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                return dialog.SelectedPath;
+            }
+#endif
+
+            return null;
         }
 
         public override void SetBounds(in RectF bounds)

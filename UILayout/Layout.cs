@@ -402,6 +402,11 @@ namespace UILayout
         {
             throw new NotImplementedException();
         }
+
+        public virtual string GetFolder(string initialPath)
+        {
+            return null;
+        }
     }
 
     public class ContextUIElementWrapper : UIElementWrapper
