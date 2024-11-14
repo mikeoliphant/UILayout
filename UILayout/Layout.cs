@@ -403,7 +403,7 @@ namespace UILayout
             throw new NotImplementedException();
         }
 
-        public virtual string GetFolder(string initialPath)
+        public virtual string GetFolder(string title, string initialPath)
         {
             return null;
         }

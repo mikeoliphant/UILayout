@@ -72,17 +72,23 @@ namespace UILayout
 #if (WINDOWS && !MONOGL) || ANDROID 
             return KeyboardInput.Show(title, null, defaultText);
 #else
-            Process process = new Process();
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.FileName = "zenity";
-            process.StartInfo.Arguments = "--entry --title=\"" + title + "\" --entry-text=\"" + defaultText + "\"";
+            try
+            {
+                Process process = new Process();
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.FileName = "zenity";
+                process.StartInfo.Arguments = "--entry --title=\"" + title + "\" --entry-text=\"" + defaultText + "\"";
 
-            process.Start();
-            return process.StandardOutput.ReadToEndAsync();
+                process.Start();
+                return process.StandardOutput.ReadToEndAsync();
+            }
+            catch { }
 #endif
+
+            return null;
         }
 
-        public override string GetFolder(string initialPath)
+        public override string GetFolder(string title, string initialPath)
         {
 #if WINDOWS
             FolderBrowserDialog dialog = new FolderBrowserDialog();
@@ -93,6 +99,18 @@ namespace UILayout
             {
                 return dialog.SelectedPath;
             }
+#else
+            try
+            {
+                Process process = new Process();
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.FileName = "zenity";
+                process.StartInfo.Arguments = "--file-selection --filename=" + initialPath + " --directory";
+
+                process.Start();
+                return process.StandardOutput.ReadToEnd().Trim();
+            }
+            catch { }
 #endif
 
             return null;
