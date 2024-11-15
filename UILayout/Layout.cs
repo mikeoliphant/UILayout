@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Threading.Tasks;
+#if WINDOWS
+using System.Windows.Forms;
+#endif
 
 namespace UILayout
 {

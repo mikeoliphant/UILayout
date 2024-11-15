@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout", "UILayout\UILayout.shproj", "{7DA2B397-A39F-4E5B-96ED-F206329982C9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.Skia", "UILayout.Skia\UILayout.Skia.csproj", "{8C8CD599-CF81-4789-8AA3-E3882EB3655F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkiaTest", "SkiaTest\SkiaTest.csproj", "{91DEC317-23AC-42A0-8A09-6B719B3F8444}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.Test", "UILayout.Test\UILayout.Test.shproj", "{66D9F9C2-FAED-4C0C-B0A1-EA402D54ACB1}"
@@ -31,16 +29,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.Skia.SDL", "UILayo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkiaTestSDL", "SkiaTestSDL\SkiaTestSDL.csproj", "{C43339E8-FA61-4DC3-B1A6-7A7D6343BC1E}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.Skia", "UILayout.Skia\UILayout.Skia.shproj", "{43920506-574A-4227-9759-5C55C3D54A9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8C8CD599-CF81-4789-8AA3-E3882EB3655F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C8CD599-CF81-4789-8AA3-E3882EB3655F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C8CD599-CF81-4789-8AA3-E3882EB3655F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C8CD599-CF81-4789-8AA3-E3882EB3655F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{91DEC317-23AC-42A0-8A09-6B719B3F8444}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{91DEC317-23AC-42A0-8A09-6B719B3F8444}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91DEC317-23AC-42A0-8A09-6B719B3F8444}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -85,6 +81,9 @@ Global
 		SolutionGuid = {B3DE844C-79C2-4FC9-9C96-5457339160C3}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		UILayout.Skia\UILayout.Skia.projitems*{31ff4ced-7404-4dda-bebc-d168cbea6a3c}*SharedItemsImports = 5
+		UILayout\UILayout.projitems*{31ff4ced-7404-4dda-bebc-d168cbea6a3c}*SharedItemsImports = 5
+		UILayout.Skia\UILayout.Skia.projitems*{43920506-574a-4227-9759-5c55c3d54a9a}*SharedItemsImports = 13
 		MonoGameTestShared\MonoGameTestShared.projitems*{47f7b7a0-5f63-4900-bf71-c2834ea876ba}*SharedItemsImports = 5
 		UILayout.Test\UILayout.Test.projitems*{47f7b7a0-5f63-4900-bf71-c2834ea876ba}*SharedItemsImports = 5
 		UILayout.MonoGame\UILayout.MonoGame.projitems*{4b3bbc27-e023-4626-baed-441e62b59fbb}*SharedItemsImports = 5
@@ -93,13 +92,14 @@ Global
 		UILayout\UILayout.projitems*{7da2b397-a39f-4e5b-96ed-f206329982c9}*SharedItemsImports = 13
 		UILayout.MonoGame\UILayout.MonoGame.projitems*{867a9020-0073-427a-a29f-275863f6fd94}*SharedItemsImports = 5
 		UILayout\UILayout.projitems*{867a9020-0073-427a-a29f-275863f6fd94}*SharedItemsImports = 5
-		UILayout\UILayout.projitems*{8c8cd599-cf81-4789-8aa3-e3882eb3655f}*SharedItemsImports = 5
 		UILayout.Test\UILayout.Test.projitems*{91dec317-23ac-42a0-8a09-6b719b3f8444}*SharedItemsImports = 5
 		MonoGameTestShared\MonoGameTestShared.projitems*{a0cdbd0e-3a41-42b7-9425-a838bc2c7383}*SharedItemsImports = 13
 		UILayout.MonoGame\UILayout.MonoGame.projitems*{be080217-1cbb-4e87-92d8-88368763cea3}*SharedItemsImports = 5
 		UILayout\UILayout.projitems*{be080217-1cbb-4e87-92d8-88368763cea3}*SharedItemsImports = 5
 		UILayout.Test\UILayout.Test.projitems*{c43339e8-fa61-4dc3-b1a6-7a7d6343bc1e}*SharedItemsImports = 5
 		UILayout.MonoGame\UILayout.MonoGame.projitems*{d7307594-237f-43da-bd6b-d0bc2bd9b276}*SharedItemsImports = 13
+		UILayout.Skia\UILayout.Skia.projitems*{dae5dfb4-d8aa-4d0f-84cd-95098d69cc2d}*SharedItemsImports = 5
+		UILayout\UILayout.projitems*{dae5dfb4-d8aa-4d0f-84cd-95098d69cc2d}*SharedItemsImports = 5
 		MonoGameTestShared\MonoGameTestShared.projitems*{e291a301-7ddd-45a5-b631-dec5c3a01cc5}*SharedItemsImports = 5
 		UILayout.Test\UILayout.Test.projitems*{e291a301-7ddd-45a5-b631-dec5c3a01cc5}*SharedItemsImports = 5
 	EndGlobalSection
