@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using System.Threading.Tasks;
 
@@ -405,13 +406,63 @@ namespace UILayout
 
         public virtual string GetFolder(string title, string initialPath)
         {
+#if WINDOWS
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
+
+            dialog.Description = title;
+            dialog.SelectedPath = initialPath;
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                return dialog.SelectedPath;
+            }
+#else
+            try
+            {
+                Process process = new Process();
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.FileName = "zenity";
+                process.StartInfo.Arguments = "--file-selection --filename=" + initialPath + " --directory";
+
+                process.Start();
+                return process.StandardOutput.ReadToEnd().Trim();
+            }
+            catch { }
+#endif
+
             return null;
         }
 
         public virtual string GetFile(string title, string initialPath, string filePattern)
         {
+#if WINDOWS
+            OpenFileDialog dialog = new OpenFileDialog();
+
+            dialog.Title = title;
+            dialog.Filter = filePattern;
+            dialog.InitialDirectory = initialPath;
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                return dialog.FileName;
+            }
+#else
+            try
+            {
+                Process process = new Process();
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.FileName = "zenity";
+                process.StartInfo.Arguments = "--file-selection --filename=" + initialPath;
+
+                process.Start();
+                return process.StandardOutput.ReadToEnd().Trim();
+            }
+            catch { }
+#endif
+
             return null;
         }
+
     }
 
     public class ContextUIElementWrapper : UIElementWrapper
