@@ -407,6 +407,11 @@ namespace UILayout
         {
             return null;
         }
+
+        public virtual string GetFile(string title, string initialPath, string filePattern)
+        {
+            return null;
+        }
     }
 
     public class ContextUIElementWrapper : UIElementWrapper
