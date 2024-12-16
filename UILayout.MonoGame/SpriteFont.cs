@@ -138,7 +138,17 @@ namespace UILayout
             LineHeight = GlyphHeight = glyphs[0].Height;
         }
 
+        public bool HasGlyph(char c)
+        {
+            return GetGlyphInternal(c) != null;
+        }
+
         public SpriteFontGlyph GetGlyph(char c)
+        {
+            return GetGlyphInternal(c) ?? GetGlyphInternal('_') ?? glyphs[0xFF3F];
+        }
+
+        SpriteFontGlyph? GetGlyphInternal(char c)
         {
             if (!glyphs.ContainsKey(c))
             {
@@ -166,16 +176,12 @@ namespace UILayout
 
                 if (!glyphs.ContainsKey(c))
                 {
-                    // If not found, use underscore
-
-                    if (glyphs.ContainsKey('_'))
-                        return glyphs['_'];
-
-                    return glyphs[0xFF3F];
+                    return null;
                 }
             }
 
             return glyphs[c];
+
         }
 
         public void MeasureString(String str, out float width, out float height)

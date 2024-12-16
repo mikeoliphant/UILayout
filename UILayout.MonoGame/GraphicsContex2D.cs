@@ -12,6 +12,7 @@ namespace UILayout
         public UIImage SingleWhitePixelImage { get; set; }
         public float Scale { get; set; } = 1.0f;
         public SamplerState SamplerState { get; set; } = SamplerState.PointClamp;
+        public BlendState BlendState { get; set; } = BlendState.AlphaBlend;
 
         public GraphicsContext2D(SpriteBatch spriteBatch)
         {
@@ -20,7 +21,7 @@ namespace UILayout
 
         public void BeginDraw()
         {
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState, null, null, null, Matrix.CreateScale(Scale));
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState, SamplerState, null, null, null, Matrix.CreateScale(Scale));
         }
 
         public void EndDraw()

@@ -73,60 +73,24 @@ namespace UILayout.Test
             };
             Children.Add(bottomStack);
 
-            HorizontalStack dragDropStack = new HorizontalStack()
-            {
-                HorizontalAlignment = EHorizontalAlignment.Center,
-                ChildSpacing = 2
-            };
-            bottomStack.Children.Add(dragDropStack);
-
-            ListUIDragDropHandler dragDropHander = new ListUIDragDropHandler()
-            {
-                ListElement = dragDropStack,
-                DragType = typeof(NinePatchWrapper),
-                InternalOnly = true
-            };
-
-            dragDropStack.DragDropHandler = dragDropHander;
-
-            for (int i = 0; i < 5; i++)
-            {
-                dragDropStack.Children.Add(new NinePatchWrapper(Layout.Current.GetImage("ButtonPressed"))
-                {
-                    Child = new TextBlock("Drag " + (i + 1).ToString())
-                });
-            }
-
-            bottomStack.Children.Add(dragDropStack);
-
-            Layout.Current.InputManager.AddMapping("SpacePressed", new KeyMapping(InputKey.Space));
-
-            bottomStack.Children.Add(spaceText = new TextBlock
-            {
-                Text = "Press Space",
-                TextColor = UIColor.Black,
-                BackgroundColor = UIColor.Green,
+            TextBox textBox = new TextBox()
+            {                
+                DesiredWidth = 200,
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center,
-                Padding = new LayoutPadding(20, 10)
-            });
+                BackgroundColor = UIColor.Black
+            };
 
-            bottomStack.Children.Add(new TextBlock
-            {
-                Text = "Descendery Text",
-                TextColor = UIColor.Black,
-                BackgroundColor = UIColor.Green,
-                HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Center,
-                Margin = new LayoutPadding(20)
-            });
+            textBox.Text.TextColor = UIColor.White;
+
+            bottomStack.Children.Add(textBox);
 
             HorizontalStack buttonStack = new HorizontalStack()
             {
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center
             };
-            Children.Add(buttonStack);
+            bottomStack.Children.Add(buttonStack);
 
             InputDialog dialog = new InputDialog(Layout.Current.DefaultOutlineNinePatch, new TextBlock { Text = "Do you want to?", TextColor = UIColor.Black });
 
@@ -227,6 +191,55 @@ namespace UILayout.Test
                     Layout.Current.GetKeyboardInputAsync("Type Something", "Default Text").ContinueWith(input => Layout.Current.ShowContinuePopup("You entered: " + input.Result));
                 }
             });
+
+            HorizontalStack dragDropStack = new HorizontalStack()
+            {
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                ChildSpacing = 2
+            };
+            bottomStack.Children.Add(dragDropStack);
+
+            ListUIDragDropHandler dragDropHander = new ListUIDragDropHandler()
+            {
+                ListElement = dragDropStack,
+                DragType = typeof(NinePatchWrapper),
+                InternalOnly = true
+            };
+
+            dragDropStack.DragDropHandler = dragDropHander;
+
+            for (int i = 0; i < 5; i++)
+            {
+                dragDropStack.Children.Add(new NinePatchWrapper(Layout.Current.GetImage("ButtonPressed"))
+                {
+                    Child = new TextBlock("Drag " + (i + 1).ToString())
+                });
+            }
+
+            bottomStack.Children.Add(dragDropStack);
+
+            Layout.Current.InputManager.AddMapping("SpacePressed", new KeyMapping(InputKey.Space));
+
+            bottomStack.Children.Add(spaceText = new TextBlock
+            {
+                Text = "Press Space",
+                TextColor = UIColor.Black,
+                BackgroundColor = UIColor.Green,
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+                Padding = new LayoutPadding(20, 10)
+            });
+
+            bottomStack.Children.Add(new TextBlock
+            {
+                Text = "Descendery Text",
+                TextColor = UIColor.Black,
+                BackgroundColor = UIColor.Green,
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+                Margin = new LayoutPadding(20)
+            });
+
         }
 
         public override void HandleInput(InputManager inputManager)

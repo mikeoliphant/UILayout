@@ -21,6 +21,7 @@ namespace UILayout
         public MonoGameLayout Layout { get; private set; }
 
         public bool UseEmbeddedResources { get; set; } = false;
+        public bool UsePremultipliedAlpha { get; set; } = true;
 
 #if WINDOWS
         [DllImport("user32.dll", SetLastError = true)]

@@ -15,6 +15,11 @@ namespace UILayout
             get { return SpriteFont.LineHeight; }
         }
 
+        public bool HasGlyph(char c)
+        {
+            return SpriteFont.HasGlyph(c);
+        }
+
         public void MeasureString(string text, out float width, out float height)
         {
             SpriteFont.MeasureString(text, out width, out height);

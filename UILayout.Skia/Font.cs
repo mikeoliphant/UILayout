@@ -25,6 +25,11 @@ namespace UILayout
         {
         }
 
+        public bool HasGlyph(char c)
+        {
+            return true;
+        }
+
         public void MeasureString(string text, out float width, out float height)
         {
             measurePaint.Typeface = Typeface;

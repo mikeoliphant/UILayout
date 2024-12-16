@@ -52,11 +52,11 @@ namespace UILayout
         {
         }
 
-        public virtual void SetHost(Game host)
+        public virtual void SetHost(MonoGameHost host)
         {
-            this.Host = host as MonoGameHost;
+            this.Host = host;
 
-            GraphicsContext = new GraphicsContext2D(new SpriteBatch(Host.GraphicsDevice)) { Scale = Scale };
+            GraphicsContext = new GraphicsContext2D(new SpriteBatch(Host.GraphicsDevice)) { Scale = Scale, BlendState = host.UsePremultipliedAlpha ? BlendState.AlphaBlend : BlendState.NonPremultiplied };
         }
 
         public void LoadImageManifest(string manifestName)
