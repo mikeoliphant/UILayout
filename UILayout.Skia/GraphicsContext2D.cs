@@ -20,6 +20,11 @@ namespace UILayout
             Style = SKPaintStyle.StrokeAndFill,            
         };
 
+        SKFont textFont = new SKFont()
+        {
+            
+        };
+
         public void BeginDraw()
         {
         }
@@ -98,6 +103,25 @@ namespace UILayout
             textPaint.TextSize = font.TextSize;
 
             Canvas.DrawText(text, x, y + font.TextHeight, textPaint);
+        }
+
+        public void DrawText(ReadOnlySpan<char> text, UIFont font, float x, float y, in UIColor color)
+        {
+            textFont.Typeface = font.Typeface;
+            textPaint.Color = color.NativeColor;
+            textPaint.Typeface = font.Typeface;
+            textPaint.TextSize = font.TextSize;
+
+            Canvas.DrawText(SKTextBlob.Create(text, textFont), x, y + font.TextHeight, textPaint);
+        }
+
+        public void DrawText(ReadOnlySpan<char> text, UIFont font, float x, float y, in UIColor color, float scale)
+        {
+            textPaint.Color = color.NativeColor;
+            textPaint.Typeface = font.Typeface;
+            textPaint.TextSize = font.TextSize;
+
+            Canvas.DrawText(SKTextBlob.Create(text, textFont), x, y + font.TextHeight, textPaint);
         }
 
         public void DrawText(StringBuilder text, UIFont font, float x, float y, in UIColor color)

@@ -82,6 +82,16 @@ namespace UILayout
                 new Rectangle(SingleWhitePixelImage.XOffset, SingleWhitePixelImage.YOffset, SingleWhitePixelImage.Width, SingleWhitePixelImage.Height), color.NativeColor);
         }
 
+        public void DrawText(ReadOnlySpan<char> text, UIFont font, float x, float y, in UIColor color)
+        {
+            font.SpriteFont.DrawString(text, this, x, y, color, 1.0f);
+        }
+
+        public void DrawText(ReadOnlySpan<char> text, UIFont font, float x, float y, in UIColor color, float scale)
+        {
+            font.SpriteFont.DrawString(text, this, x, y, color, scale);
+        }
+
         public void DrawText(String text, UIFont font, float x, float y, in UIColor color)
         {
             font.SpriteFont.DrawString(text, this, x, y, color, 1.0f);
@@ -90,6 +100,7 @@ namespace UILayout
         {
             font.SpriteFont.DrawString(text, this, x, y, color, scale);
         }
+
         public void DrawText(StringBuilder text, UIFont font, float x, float y, in UIColor color)
         {
             font.SpriteFont.DrawString(text, this, x, y, color, 1.0f);

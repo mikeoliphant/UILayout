@@ -194,6 +194,16 @@ namespace UILayout
             (width, height, float xOffset, char lastChar) = MeasureString(str.AsSpan(), scale);
         }
 
+        public void MeasureString(ReadOnlySpan<char> str, out float width, out float height)
+        {
+            MeasureString(str, 1, out width, out height);
+        }
+
+        public void MeasureString(ReadOnlySpan<char> str, float scale, out float width, out float height)
+        {
+            (width, height, float xOffset, char lastChar) = MeasureString(str, scale);
+        }
+
         public void MeasureString(StringBuilder stringBuilder, out float width, out float height)
         {
             MeasureString(stringBuilder, 1, out width, out height);
@@ -268,6 +278,14 @@ namespace UILayout
                 return;
 
             DrawString(str.AsSpan(), graphicsContext, x, y, '\0', color, scale);
+        }
+
+        public void DrawString(ReadOnlySpan<char> str, GraphicsContext2D graphicsContext, float x, float y, UIColor color, float scale)
+        {
+            if (str.IsEmpty)
+                return;
+
+            DrawString(str, graphicsContext, x, y, '\0', color, scale);
         }
 
         public void DrawString(StringBuilder stringBuilder, GraphicsContext2D graphicsContext, float x, float y, UIColor color, float scale)

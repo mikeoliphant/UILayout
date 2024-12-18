@@ -25,6 +25,11 @@ namespace UILayout
             SpriteFont.MeasureString(text, out width, out height);
         }
 
+        public void MeasureString(ReadOnlySpan<char> text, out float width, out float height)
+        {
+            SpriteFont.MeasureString(text, 1.0f, out width, out height);
+        }
+
         public void MeasureString(StringBuilder sb, out float width, out float height)
         {
             SpriteFont.MeasureString(sb, out width, out height);

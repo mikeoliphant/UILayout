@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using System;
+using SkiaSharp;
 using System.Text;
 
 namespace UILayout
@@ -41,15 +42,30 @@ namespace UILayout
             height = bounds.Height;
         }
 
-        public void MeasureString(StringBuilder sb, out float width, out float height)
+        public void MeasureString(ReadOnlySpan<char> text, out float width, out float height)
         {
             measurePaint.Typeface = Typeface;
             measurePaint.TextSize = TextSize;
 
-            measurePaint.MeasureText(sb.ToString(), ref bounds);
+            measurePaint.MeasureText(text, ref bounds);
 
             width = bounds.Width;
             height = bounds.Height;
+        }
+
+
+        public void MeasureString(StringBuilder sb, out float width, out float height)
+        {
+            // Beter not to implement StringBuilder if it has to do a string copy
+            throw new NotImplementedException();
+
+            //measurePaint.Typeface = Typeface;
+            //measurePaint.TextSize = TextSize;
+
+            //measurePaint.MeasureText(sb.ToString(), ref bounds);
+
+            //width = bounds.Width;
+            //height = bounds.Height;
         }
     }
 }

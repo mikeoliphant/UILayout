@@ -82,6 +82,13 @@ namespace UILayout
             Layout.Current = this;
 
             InputManager = new InputManager();
+
+            InputManager.AddMapping("LeftArrow", new KeyMapping(InputKey.Left) { DoRepeat = true });
+            InputManager.AddMapping("RightArrow", new KeyMapping(InputKey.Right) { DoRepeat = true });
+            InputManager.AddMapping("UpArrow", new KeyMapping(InputKey.Up) { DoRepeat = true });
+            InputManager.AddMapping("DownArrow", new KeyMapping(InputKey.Down) { DoRepeat = true });
+            InputManager.AddMapping("Backspace", new KeyMapping(InputKey.Back) { DoRepeat = true });
+            InputManager.AddMapping("Enter", new KeyMapping(InputKey.Enter) { DoRepeat = true });
         }
 
         public virtual void Exiting()

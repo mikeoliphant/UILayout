@@ -73,7 +73,7 @@ namespace UILayout.Test
             };
             Children.Add(bottomStack);
 
-            TextBox textBox = new TextBox()
+            TextBox textBox = new TextBox(100)
             {                
                 DesiredWidth = 200,
                 HorizontalAlignment = EHorizontalAlignment.Center,
@@ -81,7 +81,7 @@ namespace UILayout.Test
                 BackgroundColor = UIColor.Black
             };
 
-            textBox.Text.TextColor = UIColor.White;
+            textBox.TextColor = UIColor.White;
 
             bottomStack.Children.Add(textBox);
 
