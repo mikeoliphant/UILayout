@@ -97,9 +97,7 @@ namespace UILayout
 
             Window.AllowUserResizing = true;
 
-#if WINDOWS
             Window.TextInput += Window_TextInput;
-#endif
         }
 
         private void Window_TextInput(object sender, TextInputEventArgs e)
