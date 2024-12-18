@@ -398,17 +398,28 @@ namespace UILayout
             ShowPopup(new InputDialog(Layout.Current.DefaultOutlineNinePatch, contents, new DialogInput { Text = "Back", WaitForRelease = true, CloseOnInput = true }));
         }
 
-        public void ShowTextInputPopup(Action<string> confirmAction)
+        public void ShowTextInputPopup(string prompt, Action<string> confirmAction)
         {
+            ShowTextInputPopup(prompt, confirmAction, Layout.Current.DefaultForegroundColor, new UIColor(200, 200, 200));
+        }
+
+        public void ShowTextInputPopup(string prompt, Action<string> confirmAction, UIColor textColor, UIColor textBackgroundColor)
+        {
+            VerticalStack stack = new VerticalStack { HorizontalAlignment = EHorizontalAlignment.Stretch, VerticalAlignment = EVerticalAlignment.Stretch };
+
+            stack.Children.Add(new TextBlock(prompt));
+
             TextBox textBox = new TextBox(256)
             {
-                BackgroundColor = new UIColor(200, 200, 200),
+                TextColor = textColor,
+                BackgroundColor = textBackgroundColor,
                 HorizontalAlignment = EHorizontalAlignment.Stretch
             };
+            stack.Children.Add(textBox);
 
             textBox.Focus();
 
-            var dialog = new InputDialog(Layout.Current.DefaultOutlineNinePatch, textBox,
+            var dialog = new InputDialog(Layout.Current.DefaultOutlineNinePatch, stack,
                 new DialogInput
                 {
                     Text = "Ok",
