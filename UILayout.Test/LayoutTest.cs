@@ -73,18 +73,6 @@ namespace UILayout.Test
             };
             Children.Add(bottomStack);
 
-            TextBox textBox = new TextBox(100)
-            {                
-                DesiredWidth = 200,
-                HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Center,
-                BackgroundColor = UIColor.Black
-            };
-
-            textBox.TextColor = UIColor.White;
-
-            bottomStack.Children.Add(textBox);
-
             HorizontalStack buttonStack = new HorizontalStack()
             {
                 HorizontalAlignment = EHorizontalAlignment.Center,
@@ -188,7 +176,7 @@ namespace UILayout.Test
                 VerticalAlignment = EVerticalAlignment.Center,
                 ClickAction = delegate
                 {
-                    Layout.Current.GetKeyboardInputAsync("Type Something", "Default Text").ContinueWith(input => Layout.Current.ShowContinuePopup("You entered: " + input.Result));
+                    Layout.Current.ShowTextInputPopup(str => Layout.Current.ShowContinuePopup("You entered: " + str));
                 }
             });
 

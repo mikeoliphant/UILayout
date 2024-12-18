@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
@@ -395,6 +396,38 @@ namespace UILayout
         public void ShowBackPopup(UIElement contents)
         {
             ShowPopup(new InputDialog(Layout.Current.DefaultOutlineNinePatch, contents, new DialogInput { Text = "Back", WaitForRelease = true, CloseOnInput = true }));
+        }
+
+        public void ShowTextInputPopup(Action<string> confirmAction)
+        {
+            TextBox textBox = new TextBox(256)
+            {
+                BackgroundColor = new UIColor(200, 200, 200),
+                HorizontalAlignment = EHorizontalAlignment.Stretch
+            };
+
+            textBox.Focus();
+
+            var dialog = new InputDialog(Layout.Current.DefaultOutlineNinePatch, textBox,
+                new DialogInput
+                {
+                    Text = "Ok",
+                    Action = delegate
+                    {
+                        confirmAction(textBox.GetText());
+                    },
+                    WaitForRelease = true,
+                    CloseOnInput = true
+                },
+                new DialogInput { Text = "Cancel", WaitForRelease = true, CloseOnInput = true });
+
+            textBox.EnterAction = delegate
+            {
+                dialog.Exit();
+                confirmAction(textBox.GetText());
+            };
+
+            ShowPopup(dialog);
         }
 
         public void ClosePopup(UIElement popup)

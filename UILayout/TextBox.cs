@@ -13,6 +13,7 @@ namespace UILayout
         public UIFont TextFont { get; set; }
 
         public int InsertPosition { get; private set; } = 0;
+        public Action EnterAction { get; set; } = null;
 
         List<char> text = new();
         int startDrawChar = 0;
@@ -38,6 +39,12 @@ namespace UILayout
         public ReadOnlySpan<char> GetTextSpan()
         {
             return CollectionsMarshal.AsSpan<char>(text);
+        }
+
+        public void Focus()
+        {
+            haveFocus = true;
+            blinkSecs = 0;
         }
 
         protected override void GetContentSize(out float width, out float height)
@@ -219,6 +226,9 @@ namespace UILayout
             }
             else if (inputManager.WasPressed("Enter"))
             {
+                if (EnterAction != null)
+                    EnterAction();
+
                 haveFocus = false;
             }
         }
@@ -227,8 +237,7 @@ namespace UILayout
         {
             if (touch.TouchState == ETouchState.Pressed)
             {
-                haveFocus = true;
-                blinkSecs = 0;
+                Focus();
 
                 return true;
             }
