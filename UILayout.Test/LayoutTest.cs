@@ -176,7 +176,7 @@ namespace UILayout.Test
                 VerticalAlignment = EVerticalAlignment.Center,
                 ClickAction = delegate
                 {
-                    Layout.Current.ShowTextInputPopup(str => Layout.Current.ShowContinuePopup("You entered: " + str));
+                    Layout.Current.ShowTextInputPopup("Enter text:", str => Layout.Current.ShowContinuePopup("You entered: " + str));
                 }
             });
 

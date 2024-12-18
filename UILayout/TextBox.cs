@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -147,29 +148,41 @@ namespace UILayout
                 }
             }
 
-                //while (startDrawChar > 0)
-                //{
-                //    if 
-                //    {
-                //        startDrawChar++;
-                //        drawChars--;
-
-                //        break;
-                //    }
-
-                //    startDrawChar--;
-                //    drawChars++;
-                //}
-
             float width;
             float height;
 
             TextFont.MeasureString(CollectionsMarshal.AsSpan<char>(text).Slice(startDrawChar, InsertPosition - startDrawChar), out width, out height);
 
-            cursorRect.X = ContentBounds.X + width + 2;
+            cursorRect.X = ContentBounds.X + width + 1;
             cursorRect.Y = ContentBounds.Y + 2;
             cursorRect.Width = 1;
             cursorRect.Height = ContentBounds.Height - 4;
+        }
+
+        int FindInsertPosition(float relativeX)
+        {
+            float width;
+            float height;
+
+            InsertPosition = startDrawChar;
+
+            do
+            {
+                    
+                TextFont.MeasureString(CollectionsMarshal.AsSpan<char>(text).Slice(startDrawChar, InsertPosition - startDrawChar), out width, out height);
+
+                if (width > relativeX)
+                {
+                    break;
+                }
+
+                InsertPosition++;
+            }
+            while (InsertPosition < endDrawChar);
+
+            UpdateCursor();
+
+            return InsertPosition;
         }
 
         public override bool HandleTextInput(char c)
@@ -238,6 +251,8 @@ namespace UILayout
             if (touch.TouchState == ETouchState.Pressed)
             {
                 Focus();
+
+                InsertPosition = FindInsertPosition(touch.Position.X - ContentBounds.X);
 
                 return true;
             }
