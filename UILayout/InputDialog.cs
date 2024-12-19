@@ -38,7 +38,7 @@ namespace UILayout
         VerticalStack stack;
         UIElement contents;
         UIElementWrapper wrapper;
-        DialogInputStack inputStack;
+        protected DialogInputStack inputStack;
 
         public InputDialog(UIImage ninePatchImage)
             : this(ninePatchImage, null, null)

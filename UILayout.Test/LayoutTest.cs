@@ -180,6 +180,35 @@ namespace UILayout.Test
                 }
             });
 
+            HorizontalStack buttonStack2 = new HorizontalStack()
+            {
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center
+            };
+            bottomStack.Children.Add(buttonStack2);
+
+            FileSelector fileSelector = new FileSelector("File Selection:", canCreateFolders: false, Layout.Current.DefaultOutlineNinePatch)
+            {
+                HorizontalAlignment = EHorizontalAlignment.Stretch,
+                VerticalAlignment = EVerticalAlignment.Stretch
+            };
+
+            fileSelector.SetRootPath(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+            fileSelector.FileAction = delegate (string filePath)
+            {
+                Layout.Current.ShowContinuePopup("Path Selected:\n\n" + filePath);
+            };
+
+            buttonStack2.Children.Add(new TextButton()
+            {
+                Text = "File Selection",
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+                ClickAction = delegate
+                {
+                    Layout.Current.ShowPopup(fileSelector);
+                }});
+
             HorizontalStack dragDropStack = new HorizontalStack()
             {
                 HorizontalAlignment = EHorizontalAlignment.Center,

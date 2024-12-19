@@ -332,6 +332,8 @@ namespace UILayout
             if (popup is IPopup)
             {
                 (popup as IPopup).CloseAction = delegate { ClosePopup(popup); };
+
+                (popup as IPopup).Opened();
             }
 
             AddDirtyRect(popup.layoutBounds);
@@ -400,10 +402,15 @@ namespace UILayout
 
         public void ShowTextInputPopup(string prompt, Action<string> confirmAction)
         {
-            ShowTextInputPopup(prompt, confirmAction, Layout.Current.DefaultForegroundColor, new UIColor(200, 200, 200));
+            ShowTextInputPopup(prompt, null, confirmAction, Layout.Current.DefaultForegroundColor, new UIColor(200, 200, 200));
         }
 
-        public void ShowTextInputPopup(string prompt, Action<string> confirmAction, UIColor textColor, UIColor textBackgroundColor)
+        public void ShowTextInputPopup(string prompt, string defaultText, Action<string> confirmAction)
+        {
+            ShowTextInputPopup(prompt, defaultText, confirmAction, Layout.Current.DefaultForegroundColor, new UIColor(200, 200, 200));
+        }
+
+        public void ShowTextInputPopup(string prompt, string defaultText, Action<string> confirmAction, UIColor textColor, UIColor textBackgroundColor)
         {
             VerticalStack stack = new VerticalStack { HorizontalAlignment = EHorizontalAlignment.Stretch, VerticalAlignment = EVerticalAlignment.Stretch };
 

@@ -37,6 +37,17 @@ namespace UILayout
             return new string(CollectionsMarshal.AsSpan<char>(text));
         }
 
+        public void SetText(string text)
+        {
+            this.text = new List<char>(text);
+
+            startDrawChar = 0;
+            endDrawChar = this.text.Count - 1;
+            InsertPosition = endDrawChar + 1;
+
+            UpdateCursor();
+        }
+
         public ReadOnlySpan<char> GetTextSpan()
         {
             return CollectionsMarshal.AsSpan<char>(text);
@@ -161,6 +172,9 @@ namespace UILayout
 
         int FindInsertPosition(float relativeX)
         {
+            if (text.Count == 0)
+                return 0;
+
             float width;
             float height;
 
@@ -168,7 +182,6 @@ namespace UILayout
 
             do
             {
-                    
                 TextFont.MeasureString(CollectionsMarshal.AsSpan<char>(text).Slice(startDrawChar, InsertPosition - startDrawChar), out width, out height);
 
                 if (width > relativeX)
