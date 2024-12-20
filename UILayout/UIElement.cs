@@ -28,6 +28,21 @@ namespace UILayout
         public float Right { get; set; }
         public float Bottom { get; set; }
 
+        public static implicit operator LayoutPadding(float padding)
+        {
+            return new LayoutPadding(padding);
+        }
+
+        public static implicit operator LayoutPadding((float X, float Y) padding)
+        {
+            return new LayoutPadding(padding.X, padding.Y);
+        }
+
+        public static implicit operator LayoutPadding((float Left, float Top, float Right, float Bottom) padding)
+        {
+            return new LayoutPadding(padding.Left, padding.Top, padding.Right, padding.Bottom);
+        }
+
         public LayoutPadding(float padding)
         {
             Left = Top = Right = Bottom = padding;

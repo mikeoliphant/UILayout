@@ -10,7 +10,7 @@ namespace UILayout.Test
         public LayoutTest()
         {
             BackgroundColor = UIColor.Yellow;
-            Padding = new LayoutPadding(10);
+            Padding = 10;
 
             Layout.Current.AddImage("ScrollBar");
             Layout.Current.AddImage("ScrollBarGutter");
@@ -48,7 +48,7 @@ namespace UILayout.Test
                 BackgroundColor = new UIColor(0, 0, 255),
                 HorizontalAlignment = EHorizontalAlignment.Right,
                 VerticalAlignment = EVerticalAlignment.Top,
-                Padding = new LayoutPadding(10),
+                Padding = 10,
                 DesiredHeight = 100,
                 DesiredWidth = 100,
                 ChildSpacing = 10
@@ -244,7 +244,7 @@ namespace UILayout.Test
                 BackgroundColor = UIColor.Green,
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center,
-                Padding = new LayoutPadding(20, 10)
+                Padding = (20, 10)
             });
 
             bottomStack.Children.Add(new TextBlock
@@ -254,7 +254,7 @@ namespace UILayout.Test
                 BackgroundColor = UIColor.Green,
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center,
-                Margin = new LayoutPadding(20)
+                Margin = 20
             });
 
         }
