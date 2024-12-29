@@ -218,17 +218,6 @@ namespace UILayout.Test
                 VerticalAlignment = EVerticalAlignment.Center,
                 Padding = (20, 10)
             });
-
-            vStak.Children.Add(new TextBlock
-            {
-                Text = "Descendery Text",
-                TextColor = UIColor.Black,
-                BackgroundColor = UIColor.Green,
-                HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Center,
-                Margin = 20
-            });
-
         }
 
         public override void HandleInput(InputManager inputManager)
