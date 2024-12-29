@@ -21,4 +21,9 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollUpArrow.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\SingleWhitePixel.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\TabBackground.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\TabForeground.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\TabPanelBackground.png" />
+  </ItemGroup>
 </Project>

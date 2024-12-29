@@ -1,23 +1,65 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
+using System.Security;
 using System.Text;
 using UILayout;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace UILayout
 {
     public class TabPanelTab
     {
+        public TabPanelTab(string name, UIElement contents)
+        {
+            this.Name = name;
+            this.Contents = contents;
+        }
+
         public string Name { get; set; }
         public UIElement Contents { get; set; }
-        public TabPanelButton Button { get; set; }
+        public TabPanelButton Button { get; internal set; }
     }
 
-    public class TabPanelButton : TextButton
+    public class TabPanelButton : NinePatchButton
     {
+        public string Text
+        {
+            get => textBlock.Text;
+            set => textBlock.Text = value;
+        }
+
+        public UIColor TextColor
+        {
+            get { return textBlock.TextColor; }
+            set { textBlock.TextColor = value; }
+        }
+
+        public UIFont TextFont
+        {
+            get { return textBlock.TextFont; }
+            set { textBlock.TextFont = value; }
+        }
+
+        TextBlock textBlock;
+
         public TabPanelButton(string text)
-            : base(text)
+            : this()
+        {
+            Text = text;
+        }
+
+        public TabPanelButton()
         {
             VerticalAlignment = EVerticalAlignment.Bottom;
+
+            textBlock = new TextBlock
+            {
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+            };
+
+            SetElements(textBlock, textBlock);
         }
     }
 
@@ -28,14 +70,21 @@ namespace UILayout
 
         Dictionary<string, TabPanelTab> tabs = new Dictionary<string, TabPanelTab>();
 
+        UIColor textColor;
         HorizontalStack headerStack;
         NinePatchWrapper contentsPanel;
         UIElementWrapper contentsWrapper;
+        UIImage tabButtonPressed;
+        UIImage tabButtonUnpressed;
 
-        public TabPanel(UIColor backgroundColor, UIImage backroundImage, UIImage tabButtonPressed, UIImage tabButtonUnpressed, float tabStartOffsetX, float tabStartOfsetY)
+        public TabPanel(UIColor backgroundColor, UIColor textColor, UIImage backroundImage, UIImage tabButtonPressed, UIImage tabButtonUnpressed, float tabStartOffsetX, float tabStartOfsetY)
         {
             HorizontalAlignment = EHorizontalAlignment.Stretch;
             VerticalAlignment = EVerticalAlignment.Stretch;
+
+            this.textColor = textColor;
+            this.tabButtonPressed = tabButtonPressed;
+            this.tabButtonUnpressed = tabButtonUnpressed;
 
             Children.Add(new UIElement { DesiredHeight = tabStartOfsetY });
 
@@ -66,12 +115,15 @@ namespace UILayout
             contentsPanel.Child = contentsWrapper;
         }
 
-        public void AddTab(TabPanelTab tab)
+        public TabPanelTab AddTab(string text, UIElement contents)
         {
+            TabPanelTab tab = new TabPanelTab(text, contents);
+
             tabs[tab.Name] = tab;
 
             headerStack.Children.Add(tab.Button = new TabPanelButton(tab.Name)
             {
+                TextColor = textColor,
                 PressAction = delegate
                 {
                     SetTab(tab.Name);
@@ -83,12 +135,14 @@ namespace UILayout
                 ActiveTab = tab;
                 contentsWrapper.Child = tab.Contents;
 
-                //tab.Button.PressedNinePatch = tab.Button.UnpressedNinePatch = PixGame.Instance.GetImage("TabForeground");
+                tab.Button.PressedNinePatch.Image = tab.Button.UnpressedNinePatch.Image = tabButtonPressed;
             }
             else
             {
-                //tab.Button.PressedNinePatch = tab.Button.UnpressedNinePatch = PixGame.Instance.GetImage("TabBackground");
+                tab.Button.PressedNinePatch.Image = tab.Button.UnpressedNinePatch.Image = tabButtonUnpressed;
             }
+
+            return tab;
         }
 
         public void SetTab(string tabName)
@@ -101,11 +155,11 @@ namespace UILayout
 
                     contentsWrapper.Child = tab.Contents;
 
-                    //tab.Button.PressedNinePatch = tab.Button.UnpressedNinePatch = PixGame.Instance.GetImage("TabForeground");
+                    tab.Button.PressedNinePatch.Image = tab.Button.UnpressedNinePatch.Image = tabButtonPressed;
                 }
                 else
                 {
-                    //tab.Button.PressedNinePatch = tab.Button.UnpressedNinePatch = PixGame.Instance.GetImage("TabBackground");
+                    tab.Button.PressedNinePatch.Image = tab.Button.UnpressedNinePatch.Image = tabButtonUnpressed;
                 }
             }
 

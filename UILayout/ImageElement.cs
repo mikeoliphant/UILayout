@@ -102,7 +102,7 @@ namespace UILayout
             {
                 image = value;
 
-                Padding = new LayoutPadding(image.Width / 2, image.Height / 2);
+                Padding = new LayoutPadding((image.Width / 2) - 1, (image.Height / 2) - 1);
                 UpdateNintePatch();
             }
         }

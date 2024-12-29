@@ -128,6 +128,16 @@ namespace UILayout
         UIImage pressedNinePatchImage;
         UIImage unpressedNinePatchImage;
 
+        public NinePatchWrapper PressedNinePatch
+        {
+            get { return PressedElement as NinePatchWrapper; }
+        }
+
+        public NinePatchWrapper UnpressedNinePatch
+        {
+            get { return UnpressedElement as NinePatchWrapper; }
+        }
+
         public NinePatchButton()
             : this(Layout.Current.DefaultPressedNinePatch, Layout.Current.DefaultUnpressedNinePatch)
         {

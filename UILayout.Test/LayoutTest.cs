@@ -17,6 +17,10 @@ namespace UILayout.Test
             Layout.Current.AddImage("ScrollUpArrow");
             Layout.Current.AddImage("ScrollDownArrow");
 
+            Layout.Current.AddImage("TabPanelBackground");
+            Layout.Current.AddImage("TabBackground");
+            Layout.Current.AddImage("TabForeground");
+
             Layout.Current.DefaultOutlineNinePatch = Layout.Current.AddImage("OutlineNinePatch");
 
             Layout.Current.DefaultPressedNinePatch = Layout.Current.AddImage("ButtonPressed");
@@ -26,59 +30,20 @@ namespace UILayout.Test
 
             Layout.Current.DefaultForegroundColor = UIColor.Black;
 
-            VerticalSlider verticalSlider = new VerticalSlider("ButtonPressed")
-            {
-                DesiredHeight = 100
-            };
-            Children.Add(verticalSlider);
-
-            //EditableImage editImage = new EditableImage(new UIImage(100, 100));
-            //editImage.DrawCircle(50, 50, 40, UIColor.Black, fill: false);
-            //editImage.Fill(50, 50, UIColor.Red);
-            //editImage.UpdateImageData();
-
-            //Children.Add(new ImageElement(editImage.Image)
-            //{
-            //    HorizontalAlignment = EHorizontalAlignment.Center,
-            //    VerticalAlignment = EVerticalAlignment.Top
-            //});
-
-            HorizontalStack stack = new HorizontalStack
-            {
-                BackgroundColor = new UIColor(0, 0, 255),
-                HorizontalAlignment = EHorizontalAlignment.Right,
-                VerticalAlignment = EVerticalAlignment.Top,
-                Padding = 10,
-                DesiredHeight = 100,
-                DesiredWidth = 100,
-                ChildSpacing = 10
-            };
-            Children.Add(stack);
-
-            for (int i = 0; i < 4; i++)
-            {
-                stack.Children.Add(new UIElement
-                {
-                    BackgroundColor = new UIColor(0, 0, 0, (32 * (i + 1))),
-                    HorizontalAlignment = EHorizontalAlignment.Stretch,
-                    VerticalAlignment = EVerticalAlignment.Stretch,
-                });
-            }
-
-            VerticalStack bottomStack = new VerticalStack()
+            VerticalStack vStak = new VerticalStack()
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
-                VerticalAlignment = EVerticalAlignment.Bottom,
+                VerticalAlignment = EVerticalAlignment.Stretch,
                 ChildSpacing = 20
             };
-            Children.Add(bottomStack);
+            Children.Add(vStak);
 
             HorizontalStack buttonStack = new HorizontalStack()
             {
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center
             };
-            bottomStack.Children.Add(buttonStack);
+            vStak.Children.Add(buttonStack);
 
             InputDialog dialog = new InputDialog(Layout.Current.DefaultOutlineNinePatch, new TextBlock { Text = "Do you want to?", TextColor = UIColor.Black });
 
@@ -185,7 +150,7 @@ namespace UILayout.Test
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center
             };
-            bottomStack.Children.Add(buttonStack2);
+            vStak.Children.Add(buttonStack2);
 
             FileSelector fileSelector = new FileSelector("File Selection:", canCreateFolders: false, Layout.Current.DefaultOutlineNinePatch)
             {
@@ -209,12 +174,19 @@ namespace UILayout.Test
                     Layout.Current.ShowPopup(fileSelector);
                 }});
 
+            TabPanel tabPanel = new TabPanel(new UIColor(200, 200, 200), UIColor.White, Layout.Current.GetImage("TabPanelBackground"), Layout.Current.GetImage("TabForeground"), Layout.Current.GetImage("TabBackground"), 5, 5);
+            vStak.Children.Add(tabPanel);
+
+            tabPanel.AddTab("Tab 1", new TextBlock("This is tab 1"));
+            tabPanel.AddTab("Tab 2", new TextBlock("This is tab 2"));
+            tabPanel.AddTab("Tab 3", new TextBlock("This is tab 3"));
+
             HorizontalStack dragDropStack = new HorizontalStack()
             {
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 ChildSpacing = 2
             };
-            bottomStack.Children.Add(dragDropStack);
+            vStak.Children.Add(dragDropStack);
 
             ListUIDragDropHandler dragDropHander = new ListUIDragDropHandler()
             {
@@ -233,11 +205,11 @@ namespace UILayout.Test
                 });
             }
 
-            bottomStack.Children.Add(dragDropStack);
+            vStak.Children.Add(dragDropStack);
 
             Layout.Current.InputManager.AddMapping("SpacePressed", new KeyMapping(InputKey.Space));
 
-            bottomStack.Children.Add(spaceText = new TextBlock
+            vStak.Children.Add(spaceText = new TextBlock
             {
                 Text = "Press Space",
                 TextColor = UIColor.Black,
@@ -247,7 +219,7 @@ namespace UILayout.Test
                 Padding = (20, 10)
             });
 
-            bottomStack.Children.Add(new TextBlock
+            vStak.Children.Add(new TextBlock
             {
                 Text = "Descendery Text",
                 TextColor = UIColor.Black,
