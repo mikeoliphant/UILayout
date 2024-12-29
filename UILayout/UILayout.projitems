@@ -26,6 +26,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ScrollBar.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Slider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SwipeList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TabPanel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TextBlock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TextBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Touch.cs" />

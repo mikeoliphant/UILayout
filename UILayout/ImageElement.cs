@@ -107,6 +107,8 @@ namespace UILayout
             }
         }
 
+        public bool DrawCenter { get; set; } = true;
+
         public UIColor Color { get; set; } = UIColor.White;
 
         int[] imageWidths = new int[3];
@@ -164,7 +166,8 @@ namespace UILayout
 
                     for (int x = 0; x < 3; x++)
                     {
-                        Layout.Current.GraphicsContext.DrawImage(Image, new System.Drawing.Rectangle(srcOffsetX, srcOffsetY, imageWidths[x], imageHeights[y]), new RectF(destOffsetX, destOffsetY, destWidths[x], destHeights[y]), Color);
+                        if (DrawCenter || (x != 1) || (y != 1))
+                            Layout.Current.GraphicsContext.DrawImage(Image, new System.Drawing.Rectangle(srcOffsetX, srcOffsetY, imageWidths[x], imageHeights[y]), new RectF(destOffsetX, destOffsetY, destWidths[x], destHeights[y]), Color);
 
                         srcOffsetX += imageWidths[x];
                         destOffsetX += destWidths[x];
