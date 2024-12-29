@@ -115,6 +115,29 @@ namespace UILayout
             contentsPanel.Child = contentsWrapper;
         }
 
+        protected override void GetContentSize(out float width, out float height)
+        {
+            width = 0;
+            height = 0;
+
+            UIElement currentContents = contentsWrapper.Child;
+
+            foreach (var tab in tabs.Values)
+            {
+                float tabWidth;
+                float tabHeight;
+
+                contentsWrapper.Child = tab.Contents;
+
+                base.GetContentSize(out tabWidth, out tabHeight);
+
+                width = Math.Max(width, tabWidth);
+                height = Math.Max(height, tabHeight);
+            }
+
+            contentsWrapper.Child = currentContents;
+        }
+
         public TabPanelTab AddTab(string text, UIElement contents)
         {
             TabPanelTab tab = new TabPanelTab(text, contents);
