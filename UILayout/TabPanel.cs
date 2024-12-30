@@ -1,10 +1,7 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Security;
 using System.Text;
 using UILayout;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace UILayout
 {
