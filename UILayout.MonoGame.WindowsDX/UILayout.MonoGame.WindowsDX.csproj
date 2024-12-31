@@ -5,6 +5,7 @@
     <RollForward>Major</RollForward>
     <TieredCompilation>false</TieredCompilation>
     <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>UILayout</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.2.1105" />
@@ -16,4 +17,5 @@
   </Target>
   <Import Project="..\UILayout.MonoGame\UILayout.MonoGame.projitems" Label="Shared" />
   <Import Project="..\UILayout\UILayout.projitems" Label="Shared" />
+  <Import Project="..\UILayout.WindowsNative\UILayout.WindowsNative.projitems" Label="Shared" />
 </Project>

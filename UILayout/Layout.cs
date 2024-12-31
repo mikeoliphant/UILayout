@@ -16,7 +16,7 @@ namespace UILayout
         void Opened();
     }
 
-    public class Layout
+    public partial class Layout
     {
         public static Layout Current { get; private set; }
 
@@ -464,66 +464,6 @@ namespace UILayout
         {
             throw new NotImplementedException();
         }
-
-        public virtual string GetFolder(string title, string initialPath)
-        {
-#if WINDOWS
-            FolderBrowserDialog dialog = new FolderBrowserDialog();
-
-            dialog.Description = title;
-            dialog.SelectedPath = initialPath;
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                return dialog.SelectedPath;
-            }
-#else
-            try
-            {
-                Process process = new Process();
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.FileName = "zenity";
-                process.StartInfo.Arguments = "--file-selection --filename=" + initialPath + " --directory";
-
-                process.Start();
-                return process.StandardOutput.ReadToEnd().Trim();
-            }
-            catch { }
-#endif
-
-            return null;
-        }
-
-        public virtual string GetFile(string title, string initialPath, string filePattern)
-        {
-#if WINDOWS
-            OpenFileDialog dialog = new OpenFileDialog();
-
-            dialog.Title = title;
-            dialog.Filter = filePattern;
-            dialog.InitialDirectory = initialPath;
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                return dialog.FileName;
-            }
-#else
-            try
-            {
-                Process process = new Process();
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.FileName = "zenity";
-                process.StartInfo.Arguments = "--file-selection --filename=" + initialPath;
-
-                process.Start();
-                return process.StandardOutput.ReadToEnd().Trim();
-            }
-            catch { }
-#endif
-
-            return null;
-        }
-
     }
 
     public class ContextUIElementWrapper : UIElementWrapper

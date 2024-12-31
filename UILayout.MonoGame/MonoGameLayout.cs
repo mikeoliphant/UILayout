@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace UILayout
 {
-    public class MonoGameLayout : Layout
+    public partial class MonoGameLayout : Layout
     {        
         public static new MonoGameLayout Current { get { return Layout.Current as MonoGameLayout; } }
 
@@ -69,7 +69,7 @@ namespace UILayout
 
         public override Task<string> GetKeyboardInputAsync(string title, string defaultText)
         {
-#if (WINDOWS && !MONOGL) || ANDROID 
+#if (WINDOWS && !MONOGL) || ANDROID
             return KeyboardInput.Show(title, null, defaultText);
 #else
             try

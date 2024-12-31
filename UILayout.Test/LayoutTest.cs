@@ -174,6 +174,17 @@ namespace UILayout.Test
                     Layout.Current.ShowPopup(fileSelector);
                 }});
 
+            buttonStack2.Children.Add(new TextButton()
+            {
+                Text = "Native File Selection",
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+                ClickAction = delegate
+                {
+                    Layout.Current.GetFile(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+                }
+            });
+
             TabPanel tabPanel = new TabPanel(new UIColor(200, 200, 200), UIColor.White, Layout.Current.GetImage("TabPanelBackground"), Layout.Current.GetImage("TabForeground"), Layout.Current.GetImage("TabBackground"), 5, 5);
             vStak.Children.Add(tabPanel);
 

@@ -11,10 +11,6 @@
 	  <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="3.118.0-preview.2.3" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\UILayout.Skia.SDL\UILayout.Skia.SDL.csproj" />
-	</ItemGroup>
-
 	<Import Project="..\UILayout.Test\UILayout.Test.projitems" Label="Shared" />
 
 </Project>
