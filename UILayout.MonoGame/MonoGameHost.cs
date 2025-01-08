@@ -19,6 +19,7 @@ namespace UILayout
         public int ScreenHeight { get; private set; }
 
         public MonoGameLayout Layout { get; private set; }
+        public GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
 
         public bool UseEmbeddedResources { get; set; } = false;
         public bool UsePremultipliedAlpha { get; set; } = true;
@@ -39,7 +40,6 @@ namespace UILayout
         }
 #endif
 
-        GraphicsDeviceManager graphics;
         IntPtr parentWindow = IntPtr.Zero;
 
         public MonoGameHost(int screenWidth, int screenHeight, bool fullscreen)
@@ -54,21 +54,21 @@ namespace UILayout
 
             this.parentWindow = parentWindow;
 
-            graphics = new GraphicsDeviceManager(this);
+            GraphicsDeviceManager = new GraphicsDeviceManager(this);
 
-            graphics.IsFullScreen = fullscreen;
-            graphics.SynchronizeWithVerticalRetrace = true;
+            GraphicsDeviceManager.IsFullScreen = fullscreen;
+            GraphicsDeviceManager.SynchronizeWithVerticalRetrace = true;
             IsFixedTimeStep = false;
 
             if (screenWidth == 0)
             {
-                ScreenWidth = graphics.PreferredBackBufferWidth;
-                ScreenHeight = graphics.PreferredBackBufferHeight;
+                ScreenWidth = GraphicsDeviceManager.PreferredBackBufferWidth;
+                ScreenHeight = GraphicsDeviceManager.PreferredBackBufferHeight;
             }
             else
             {
-                graphics.PreferredBackBufferWidth = ScreenWidth;
-                graphics.PreferredBackBufferHeight = ScreenHeight;
+                GraphicsDeviceManager.PreferredBackBufferWidth = ScreenWidth;
+                GraphicsDeviceManager.PreferredBackBufferHeight = ScreenHeight;
             }
 
 #if WINDOWS
@@ -162,9 +162,9 @@ namespace UILayout
         {
             if (requestResize)
             {
-                graphics.PreferredBackBufferWidth = requestResizeWidth;
-                graphics.PreferredBackBufferHeight = requestResizeHeight;
-                graphics.ApplyChanges();
+                GraphicsDeviceManager.PreferredBackBufferWidth = requestResizeWidth;
+                GraphicsDeviceManager.PreferredBackBufferHeight = requestResizeHeight;
+                GraphicsDeviceManager.ApplyChanges();
 
                 requestResize = false;
             }
