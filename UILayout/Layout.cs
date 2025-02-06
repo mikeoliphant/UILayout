@@ -424,6 +424,7 @@ namespace UILayout
             };
             stack.Children.Add(textBox);
 
+            textBox.SetText(defaultText);
             textBox.Focus();
 
             var dialog = new InputDialog(Layout.Current.DefaultOutlineNinePatch, stack,

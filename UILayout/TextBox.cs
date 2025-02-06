@@ -45,7 +45,8 @@ namespace UILayout
             endDrawChar = this.text.Count - 1;
             InsertPosition = endDrawChar + 1;
 
-            UpdateCursor();
+            if (LayoutBounds.Width > 0)
+                UpdateCursor();
         }
 
         public ReadOnlySpan<char> GetTextSpan()
