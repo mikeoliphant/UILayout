@@ -39,11 +39,22 @@ namespace UILayout
 
         public void SetText(string text)
         {
-            this.text = new List<char>(text);
+            if (string.IsNullOrEmpty(text))
+            {
+                this.text.Clear();
 
-            startDrawChar = 0;
-            endDrawChar = this.text.Count - 1;
-            InsertPosition = endDrawChar + 1;
+                startDrawChar = 0;
+                endDrawChar = 0;
+                InsertPosition = 0;
+            }
+            else
+            {
+                this.text = new List<char>(text);
+
+                startDrawChar = 0;
+                endDrawChar = this.text.Count - 1;
+                InsertPosition = endDrawChar + 1;
+            }
 
             if (LayoutBounds.Width > 0)
                 UpdateCursor();
@@ -167,7 +178,7 @@ namespace UILayout
 
             cursorRect.X = ContentBounds.X + width + 1;
             cursorRect.Y = ContentBounds.Y + 2;
-            cursorRect.Width = 1;
+            cursorRect.Width = Math.Max(1, TextFont.TextHeight / 12.0f);
             cursorRect.Height = ContentBounds.Height - 4;
         }
 
