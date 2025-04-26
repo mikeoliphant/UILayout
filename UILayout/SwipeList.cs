@@ -272,7 +272,7 @@ namespace UILayout
                 UpdateContentLayout();
             }
 
-            if (IsTap(touch))
+            if (IsTap(touch, this))
             {
                 if (itemPos < items.Count)
                 {

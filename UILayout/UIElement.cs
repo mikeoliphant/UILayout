@@ -97,6 +97,7 @@ namespace UILayout
 
         float lastDragY = 0;
         float totDrag = 0;
+        UIElement tapElement;
         DateTime lastTapTime = DateTime.MinValue;
 
         public UIElement()
@@ -296,35 +297,45 @@ namespace UILayout
             Layout.Current.ReleaseTouch(touchID, this);
         }
 
-        protected bool IsTap(in Touch touch)
+        protected bool IsTap(in Touch touch, UIElement element)
         {
-            if (touch.TouchState == ETouchState.Pressed)
+            switch (touch.TouchState)
             {
-                lastDragY = touch.Position.Y;
-                totDrag = 0;
-            }
+                case ETouchState.Pressed:
+                    lastDragY = touch.Position.Y;
+                    totDrag = 0;
+                    tapElement = element;
+                    break;
+                case ETouchState.Moved:
+                    if (element == tapElement)
+                    {
+                        totDrag += Math.Abs(touch.Position.Y - lastDragY);
 
-            if (touch.TouchState == ETouchState.Moved)
-            {
-                totDrag += Math.Abs(touch.Position.Y - lastDragY);
+                        lastDragY = touch.Position.Y;
+                    }
+                    break;
+                case ETouchState.Released:
+                    if (element == tapElement)
+                    {
+                        tapElement = null;
 
-                lastDragY = touch.Position.Y;
-            }
-
-            if (touch.TouchState == ETouchState.Released)
-            {
-                if (totDrag < 5)
-                {
-                    return true;
-                }
+                        if (totDrag < 5)
+                        {
+                            return true;
+                        }
+                    }
+                    break;
+                case ETouchState.Invalid:
+                    tapElement = null;
+                    break;
             }
 
             return false;
         }
 
-        public bool IsDoubleTap(in Touch touch)
+        public bool IsDoubleTap(in Touch touch, UIElement element)
         {
-            if (IsTap(touch))
+            if (IsTap(touch, element))
             {
                 DateTime now = DateTime.Now;
 
