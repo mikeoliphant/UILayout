@@ -68,6 +68,19 @@ namespace UILayout
         int lastVisibleItem;
         VerticalScrollBar scrollBar;
 
+        public int ItemCount
+        {
+            get
+            {
+                if (items != null)
+                {
+                    return items.Count;
+                }
+
+                return 0;
+            }
+        }
+
         public IList Items
         {
             get { return items; }
@@ -78,7 +91,7 @@ namespace UILayout
 
                 if (scrollBar != null)
                 {
-                    scrollBar.SetVisiblePercent((ContentBounds.Height / ItemHeight) / (float)Items.Count);
+                    scrollBar.SetVisiblePercent((ContentBounds.Height / ItemHeight) / (float)ItemCount);
                 }
             }
         }
@@ -98,7 +111,7 @@ namespace UILayout
 
             if (items != null)
             {
-                scrollBar.SetVisiblePercent((ContentBounds.Height / ItemHeight) / (float)Items.Count);
+                scrollBar.SetVisiblePercent((ContentBounds.Height / ItemHeight) / (float)ItemCount);
             }
             else
             {
@@ -122,7 +135,7 @@ namespace UILayout
         {
             if (Items != null)
             {
-                SetOffset((float)Items.Count * scrollPercent * ItemHeight);
+                SetOffset((float)ItemCount * scrollPercent * ItemHeight);
             }
         }
 
@@ -133,7 +146,7 @@ namespace UILayout
             if (offset < 0)
                 offset = 0;
 
-            float maxOffset = (items.Count * ItemHeight) - ContentBounds.Height;
+            float maxOffset = (ItemCount * ItemHeight) - ContentBounds.Height;
 
             if (maxOffset < 0)
             {
@@ -147,7 +160,7 @@ namespace UILayout
 
             if (scrollBar != null)
             {
-                scrollBar.SetScrollPercent((offset / ItemHeight) / (float)Items.Count);
+                scrollBar.SetScrollPercent((offset / ItemHeight) / (float)ItemCount);
             }
 
             UpdateContentLayout();
@@ -170,7 +183,7 @@ namespace UILayout
 
             if (scrollBar != null)
             {
-                scrollBar.SetVisiblePercent((ContentBounds.Height / ItemHeight) / (float)Items.Count);
+                scrollBar.SetVisiblePercent((ContentBounds.Height / ItemHeight) / (float)ItemCount);
             }
         }
 
@@ -191,7 +204,7 @@ namespace UILayout
 
             while ((y + itemOffset) < ContentBounds.Bottom)
             {
-                if (item > (items.Count - 1))
+                if (item > (ItemCount - 1))
                     break;
 
                 if (item >= 0)
@@ -274,7 +287,7 @@ namespace UILayout
 
             if (IsTap(touch, this))
             {
-                if (itemPos < items.Count)
+                if (itemPos < ItemCount)
                 {
                     SelectItem(itemPos);
                 }
@@ -319,7 +332,7 @@ namespace UILayout
                 }
                 else
                 {
-                    if (LastSelectedItem < (Items.Count - 1))
+                    if (LastSelectedItem < (ItemCount - 1))
                     {
                         SelectItem(LastSelectedItem + 1);
                     }
@@ -388,7 +401,7 @@ namespace UILayout
         {
             if (Items != null)
             {
-                SetOffset((Items.Count * (ItemHeight + 1)) - ContentBounds.Height);
+                SetOffset((ItemCount * (ItemHeight + 1)) - ContentBounds.Height);
 
                 EnforceEvenItemBounds();
             }
@@ -426,9 +439,9 @@ namespace UILayout
 
                 int itemsDisplayed = (int)(ContentBounds.Height / ItemHeight);
 
-                if ((int)(offset / ItemHeight) > (Items.Count - itemsDisplayed))
+                if ((int)(offset / ItemHeight) > (ItemCount - itemsDisplayed))
                 {
-                    SetOffset((Items.Count - itemsDisplayed) * ItemHeight);
+                    SetOffset((ItemCount - itemsDisplayed) * ItemHeight);
                 }
             }
         }
