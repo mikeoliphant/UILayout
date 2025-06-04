@@ -578,10 +578,11 @@ namespace ImageSheetProcessor
                 }
             }
 
-            List<ProcImage> bitmaps = new List<ProcImage>();
-            List<Rectangle> cropRects = new List<Rectangle>();
-            List<int> xPositions = new List<int>();
-            List<int> yPositions = new List<int>();
+            List<int> charVals = new();
+            List<ProcImage> bitmaps = new();
+            List<Rectangle> cropRects = new();
+            List<int> xPositions = new();
+            List<int> yPositions = new();
 
             const int padding = 1;
 
@@ -600,8 +601,8 @@ namespace ImageSheetProcessor
 
                 Rectangle cropRect = new Rectangle(0, 0, charBitmap.ImageWidth, charBitmap.ImageHeight);
 
+                charVals.Add(ch);
                 bitmaps.Add(charBitmap);
-
                 xPositions.Add(lineWidth);
                 yPositions.Add(height);
                 cropRects.Add(cropRect);
@@ -625,7 +626,7 @@ namespace ImageSheetProcessor
 
             for (int i = 0; i < cropRects.Count; i++)
             {
-                fontEntry.Glyphs[i].Character = (ushort)(minChar + i);
+                fontEntry.Glyphs[i].Character = (ushort)(charVals[i]);
                 fontEntry.Glyphs[i].X = xPositions[i];
                 fontEntry.Glyphs[i].Y = yPositions[i];
                 fontEntry.Glyphs[i].Width = cropRects[i].Width;
