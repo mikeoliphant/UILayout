@@ -2,9 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-#if WINDOWS
-using System.Windows.Forms;
-#endif
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -40,11 +37,7 @@ namespace UILayout
         {
             get
             {
-#if WINDOWS
-                return System.Windows.Forms.Form.ActiveForm == (System.Windows.Forms.Control.FromHandle(Host.Window.Handle) as System.Windows.Forms.Form);
-#else
-                return true;
-#endif
+                return Host.IsActive;
             }
         }
 
