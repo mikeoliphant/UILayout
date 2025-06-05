@@ -181,7 +181,6 @@ namespace UILayout
             }
 
             return glyphs[c];
-
         }
 
         public void MeasureString(String str, out float width, out float height)
