@@ -6,6 +6,7 @@ namespace UILayout
     {
         public Action PressAction { get; set; }
         public Action ClickAction { get; set; }
+        public Action DoubleClickAction { get; set; }
         public bool IsToggleButton { get; set; }
         public bool IsPressed { get; private set; }
 
@@ -117,6 +118,11 @@ namespace UILayout
                         }
                     }
                     break;
+            }
+
+            if ((DoubleClickAction != null) && (IsDoubleTap(touch, this)))
+            {
+                DoubleClickAction();
             }
 
             return true;
