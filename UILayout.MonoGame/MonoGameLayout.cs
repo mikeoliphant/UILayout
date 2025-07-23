@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using System.Xml.Serialization;
 
 namespace UILayout
 {
@@ -61,6 +62,18 @@ namespace UILayout
             GraphicsContext.SingleWhitePixelImage = singleWhitePixelImage;
 
             UILayout.DefaultTextures.TextureLoader.LoadDefaultTextures();
+
+            // This should really be done in DefaultTextures, but it can't access the Host...
+            using (Stream fontStream = Host.OpenContentStream("Textures.Font.xml"))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(SpriteFontDefinition));
+
+                SpriteFontDefinition fontDef = serializer.Deserialize(fontStream) as SpriteFontDefinition;
+
+                AddImage(fontDef.Name);
+
+                DefaultFont = new UIFont { SpriteFont = UILayout.SpriteFont.CreateFromDefinition(fontDef) };
+            }
         }
 
         public void LoadImageManifest(string manifestName)

@@ -1,4 +1,6 @@
-﻿using UILayout;
+﻿using System.IO;
+using System.Xml.Serialization;
+using UILayout;
 
 namespace UILayout.DefaultTextures
 {

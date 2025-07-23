@@ -15,17 +15,6 @@ namespace MonoGameTest
 
         protected override void LoadContent()
         {
-            using (Stream fontStream = OpenContentStream("Textures.Font.xml"))
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(SpriteFontDefinition));
-
-                SpriteFontDefinition fontDef = serializer.Deserialize(fontStream) as SpriteFontDefinition;
-
-                Layout.AddImage(fontDef.Name);
-
-                Layout.DefaultFont = new UIFont { SpriteFont = UILayout.SpriteFont.CreateFromDefinition(fontDef) };
-            }
-
             Layout.RootUIElement = new UILayout.Test.LayoutTest();
         }
     }
