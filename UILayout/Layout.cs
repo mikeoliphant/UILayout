@@ -139,6 +139,9 @@ namespace UILayout
 
         public void AddDirtyRect(in RectF dirty)
         {
+            if (float.IsNaN(dirty.Width) || float.IsNaN(dirty.Height))
+                return;
+
             if (!haveDirty)
             {
                 dirtyRect.Copy(dirty);
