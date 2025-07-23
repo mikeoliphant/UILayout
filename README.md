@@ -12,14 +12,23 @@ Tested platforms:
 
 # Functionality
 
+<img width="626" height="458" alt="Image" src="https://github.com/user-attachments/assets/f4e99b70-37ac-4496-9bfc-d6a92c869cde" />
+
 UILayout provides the following:
 
 - Layout structure (dock, horizontal/vertical stacks, etc.)
-- UI controls (buttons, text blocks, sliders, menus, dialogs, etc.) 
+- UI controls (buttons, text blocks, sliders, menus, dialogs, scrollbars, etc.) 
 - Image rendering (images, ninepatch images, batching, image atlases)
 - Font rendering (skia text rendering, bitmap fonts)
 - Mouse/Keyboard input handling
-  
+- File dialog support
+
+# Getting Started
+
+Have a look at the included test UI for examples of how to use it:
+
+https://github.com/mikeoliphant/UILayout/blob/master/UILayout.Test/LayoutTest.cs
+
 # Current Status
 
 UILayout is currently under active development and everything is very much subject to change.
