@@ -10,11 +10,6 @@ namespace UILayout
         public virtual int ActualWidth { get { return Texture.Width; } }
         public virtual int ActualHeight { get { return Texture.Height; } }
 
-        public UIImage(string resourceName)
-            : this(MonoGameLayout.Current.Host.LoadTexture(resourceName))
-        {
-        }
-
         public UIImage(int width, int height)
             : this(new Texture2D(MonoGameLayout.Current.Host.GraphicsDevice, width, height, false, SurfaceFormat.Color))
         {

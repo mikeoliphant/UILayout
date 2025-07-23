@@ -22,8 +22,6 @@ namespace UILayout
         public static Layout Current { get; private set; }
 
         public bool UseEmbeddedResources { get; set; } = true;
-        public Assembly ResourceAssembly { get; set; } = Assembly.GetEntryAssembly();
-        public string ResourceNamespace { get; set; } = Assembly.GetEntryAssembly().GetName().Name;
 
         public UIFont DefaultFont { get; set; }
         public UIColor DefaultForegroundColor { get; set; } = UIColor.Black;
@@ -101,9 +99,9 @@ namespace UILayout
         {
         }
 
-        public UIImage AddImage(string name)
+        public UIImage AddImage(ContentLoader loader, string name)
         {
-            images[name] = new UIImage(name);
+            images[name] = loader.LoadImage(name);
 
             return images[name];
         }

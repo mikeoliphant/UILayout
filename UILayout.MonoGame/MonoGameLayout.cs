@@ -61,26 +61,28 @@ namespace UILayout
 
             GraphicsContext.SingleWhitePixelImage = singleWhitePixelImage;
 
-            UILayout.DefaultTextures.TextureLoader.LoadDefaultTextures();
+            var loader = new AssemblyResourceContentLoader(typeof(UILayout.DefaultTextures.TextureLoader).Assembly, "UILayout");
+
+            UILayout.DefaultTextures.TextureLoader.LoadDefaultTextures(loader);
 
             // This should really be done in DefaultTextures, but it can't access the Host...
-            using (Stream fontStream = Host.OpenContentStream("Textures.Font.xml"))
+            using (Stream fontStream = loader.OpenContentStream("Textures.Font.xml"))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(SpriteFontDefinition));
 
                 SpriteFontDefinition fontDef = serializer.Deserialize(fontStream) as SpriteFontDefinition;
 
-                AddImage(fontDef.Name);
+                AddImage(loader, fontDef.Name);
 
                 DefaultFont = new UIFont { SpriteFont = UILayout.SpriteFont.CreateFromDefinition(fontDef) };
             }
         }
 
-        public void LoadImageManifest(string manifestName)
+        public void LoadImageManifest(ContentLoader loader, string manifestName)
         {
-            using (Stream manifestStream = Host.OpenContentStream(Path.Combine("Textures", manifestName)))
+            using (Stream manifestStream = loader.OpenContentStream(Path.Combine("Textures", manifestName)))
             {
-                ImageManifest.Load(manifestStream, this);
+                ImageManifest.Load(loader, manifestStream, this);
             }
         }
 

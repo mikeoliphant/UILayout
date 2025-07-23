@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImageManifest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InputManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MonoGameContentLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MonoGameHost.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MonoGameLayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SpriteFont.cs" />

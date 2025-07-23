@@ -29,7 +29,7 @@ namespace UILayout
     {
         public List<ImageManifestSheet> SpriteSheets { get; set; } = new List<ImageManifestSheet>();
 
-        public static void Load(Stream manifestStream, Layout layout)
+        public static void Load(ContentLoader loader, Stream manifestStream, Layout layout)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(ImageManifest));
 
@@ -39,7 +39,7 @@ namespace UILayout
             {
                 UIImage sheetImage = null;
 
-                sheetImage = layout.AddImage(sheet.SheetName);
+                sheetImage = loader.LoadImage(sheet.SheetName);
 
                 foreach (ImageManifestSheetImage image in sheet.Images)
                 {

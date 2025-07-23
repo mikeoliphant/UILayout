@@ -25,12 +25,9 @@ namespace UILayout
             }
         }
 
-        public UIImage(string resourceName)
+        public UIImage(Stream stream)
         {
-            using (Stream stream = Layout.Current.ResourceAssembly.GetManifestResourceStream(Layout.Current.ResourceAssembly.GetName().Name + ".Textures." + resourceName + ".png"))
-            {
-                Bitmap = SKBitmap.Decode(stream);
-            }
+            Bitmap = SKBitmap.Decode(stream);
         }
 
         public UIImage(int width, int height)

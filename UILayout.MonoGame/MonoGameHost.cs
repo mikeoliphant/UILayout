@@ -130,33 +130,6 @@ namespace UILayout
             requestResizeHeight = newHeight;
         }
 
-        public Stream OpenContentStream(string contentPath)
-        {
-            if (Layout.UseEmbeddedResources)
-            {
-                return Layout.ResourceAssembly.GetManifestResourceStream(Layout.ResourceNamespace + "." + contentPath.Replace('\\', '.'));
-            }
-
-#if WINDOWS
-            return AssemblyRelativeContentManager.OpenAseemblyRelativeStream(Path.Combine(Content.RootDirectory, contentPath));
-#else
-            return TitleContainer.OpenStream(Path.Combine(Content.RootDirectory, contentPath));
-#endif
-        }
-
-        public Texture2D LoadTexture(string resourceName)
-        {
-            if (Layout.UseEmbeddedResources)
-            {
-                using (Stream stream = Layout.ResourceAssembly.GetManifestResourceStream(Layout.ResourceNamespace + ".Textures." + resourceName + ".png"))
-                {
-                    return Texture2D.FromStream(MonoGameLayout.Current.Host.GraphicsDevice, stream);
-                }
-            }
-
-            return MonoGameLayout.Current.Host.Content.Load<Texture2D>(Path.Combine("Textures", resourceName));
-        }
-
         protected override void Update(GameTime gameTime)
         {
             if (requestResize)

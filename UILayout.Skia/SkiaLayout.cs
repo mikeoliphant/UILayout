@@ -12,7 +12,9 @@ namespace UILayout
         {
             GraphicsContext = new GraphicsContext2D();
 
-            UILayout.DefaultTextures.TextureLoader.LoadDefaultTextures();
+            var loader = new AssemblyResourceContentLoader(typeof(UILayout.DefaultTextures.TextureLoader).Assembly, "UILayout");
+
+            UILayout.DefaultTextures.TextureLoader.LoadDefaultTextures(loader);
 
             DefaultFont = new UIFont { Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright), TextSize = 24 };
         }
