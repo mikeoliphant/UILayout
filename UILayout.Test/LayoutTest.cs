@@ -27,7 +27,7 @@ namespace UILayout.Test
             };
             vStack.Children.Add(buttonStack);
 
-            InputDialog dialog = new InputDialog(Layout.Current.DefaultOutlineNinePatch, new TextBlock { Text = "Do you want to?", TextColor = UIColor.Black });
+            InputDialog dialog = new InputDialog(Layout.Current.DefaultOutlineNinePatch, new TextBlock { Text = "Do you want to?" });
 
             dialog.AddInput(new DialogInput { Text = "Ok", CloseOnInput = true });
             dialog.AddInput(new DialogInput { Text = "Cancel", CloseOnInput = true });
