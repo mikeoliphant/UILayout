@@ -19,7 +19,6 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollBarGutter.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollDownArrow.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollUpArrow.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\SingleWhitePixel.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\TabBackground.png" />

@@ -50,6 +50,15 @@ namespace UILayout
             this.Host = host;
 
             GraphicsContext = new GraphicsContext2D(new SpriteBatch(Host.GraphicsDevice)) { Scale = Scale, BlendState = host.UsePremultipliedAlpha ? BlendState.AlphaBlend : BlendState.NonPremultiplied };
+
+            UIImage singleWhitePixelImage = new UIImage(1, 1);
+
+            UIColor[] data = new UIColor[1];
+            data[0] = UIColor.White;
+
+            singleWhitePixelImage.SetData(data);
+
+            GraphicsContext.SingleWhitePixelImage = singleWhitePixelImage;
         }
 
         public void LoadImageManifest(string manifestName)
