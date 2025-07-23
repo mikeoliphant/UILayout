@@ -59,6 +59,8 @@ namespace UILayout
             singleWhitePixelImage.SetData(data);
 
             GraphicsContext.SingleWhitePixelImage = singleWhitePixelImage;
+
+            UILayout.DefaultTextures.TextureLoader.LoadDefaultTextures();
         }
 
         public void LoadImageManifest(string manifestName)

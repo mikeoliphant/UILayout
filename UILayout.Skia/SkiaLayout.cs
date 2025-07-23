@@ -12,6 +12,8 @@ namespace UILayout
         {
             GraphicsContext = new GraphicsContext2D();
 
+            UILayout.DefaultTextures.TextureLoader.LoadDefaultTextures();
+
             DefaultFont = new UIFont { Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright), TextSize = 24 };
         }
     }

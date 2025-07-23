@@ -13,15 +13,12 @@ namespace UILayout
 {
     public class MonoGameHost : Game
     {
-        public static Assembly ResourceAssembly { get; set; } = Assembly.GetEntryAssembly();
-
         public int ScreenWidth { get; private set; }
         public int ScreenHeight { get; private set; }
 
         public MonoGameLayout Layout { get; private set; }
         public GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
 
-        public bool UseEmbeddedResources { get; set; } = false;
         public bool UsePremultipliedAlpha { get; set; } = true;
 
 #if WINDOWS
@@ -135,9 +132,9 @@ namespace UILayout
 
         public Stream OpenContentStream(string contentPath)
         {
-            if (UseEmbeddedResources)
+            if (Layout.UseEmbeddedResources)
             {
-                return ResourceAssembly.GetManifestResourceStream(ResourceAssembly.GetName().Name + "." + contentPath.Replace('\\', '.'));
+                return Layout.ResourceAssembly.GetManifestResourceStream(Layout.ResourceNamespace + "." + contentPath.Replace('\\', '.'));
             }
 
 #if WINDOWS
@@ -149,9 +146,9 @@ namespace UILayout
 
         public Texture2D LoadTexture(string resourceName)
         {
-            if (UseEmbeddedResources)
+            if (Layout.UseEmbeddedResources)
             {
-                using (Stream stream = ResourceAssembly.GetManifestResourceStream(ResourceAssembly.GetName().Name + ".Textures." + resourceName + ".png"))
+                using (Stream stream = Layout.ResourceAssembly.GetManifestResourceStream(Layout.ResourceNamespace + ".Textures." + resourceName + ".png"))
                 {
                     return Texture2D.FromStream(MonoGameLayout.Current.Host.GraphicsDevice, stream);
                 }

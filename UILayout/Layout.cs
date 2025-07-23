@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using System.Reflection;
 using System.Threading.Tasks;
 #if WINDOWS
 using System.Windows.Forms;
@@ -19,6 +20,10 @@ namespace UILayout
     public partial class Layout
     {
         public static Layout Current { get; private set; }
+
+        public bool UseEmbeddedResources { get; set; } = true;
+        public Assembly ResourceAssembly { get; set; } = Assembly.GetEntryAssembly();
+        public string ResourceNamespace { get; set; } = Assembly.GetEntryAssembly().GetName().Name;
 
         public UIFont DefaultFont { get; set; }
         public UIColor DefaultForegroundColor { get; set; } = UIColor.Black;

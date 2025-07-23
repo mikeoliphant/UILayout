@@ -18,4 +18,6 @@
 
   <Import Project="..\UILayout.MonoGame\UILayout.MonoGame.projitems" Label="Shared" />
 
+  <Import Project="..\UILayout.DefaultTextures\UILayout.DefaultTextures.projitems" Label="Shared" />
+
 </Project>

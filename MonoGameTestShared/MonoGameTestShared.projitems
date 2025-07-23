@@ -15,8 +15,4 @@
     <Compile Include="$(MSBuildThisFileDirectory)Program.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestGameHost.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\Font.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\Font.xml" />
-  </ItemGroup>
 </Project>

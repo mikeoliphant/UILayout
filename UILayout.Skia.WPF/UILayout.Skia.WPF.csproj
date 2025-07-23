@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net8.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -16,5 +16,7 @@
 	<Import Project="..\UILayout\UILayout.projitems" Label="Shared" />
 
 	<Import Project="..\UILayout.WindowsNative\UILayout.WindowsNative.projitems" Label="Shared" />
+
+	<Import Project="..\UILayout.DefaultTextures\UILayout.DefaultTextures.projitems" Label="Shared" />
 
 </Project>
