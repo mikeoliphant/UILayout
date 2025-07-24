@@ -37,8 +37,8 @@ That said, it already provides considerable functionality and is being used in s
 
 Projects using UILayout include:
 
-[ChartPlayer](https://github.com/mikeoliphant/ChartPlayer) - Visual player for song charts synchronized to music recordings.
-[ChartConverter](https://github.com/mikeoliphant/ChartConverter) - Convert Rocksmith PSARC and Rock Band files to OpenSongChart format.
-[StompboxUI](https://github.com/mikeoliphant/StompboxUI) - Remote GUI and VST3 plugin for Stompbox guitar simulation.
-[FaustVst](https://github.com/mikeoliphant/FaustVst) - Load/edit Faust dsp effects in a VST.
+- [ChartPlayer](https://github.com/mikeoliphant/ChartPlayer): Visual player for song charts synchronized to music recordings.
+- [ChartConverter](https://github.com/mikeoliphant/ChartConverter): Convert Rocksmith PSARC and Rock Band files to OpenSongChart format.
+- [StompboxUI](https://github.com/mikeoliphant/StompboxUI): Remote GUI and VST3 plugin for Stompbox guitar simulation.
+- [FaustVst](https://github.com/mikeoliphant/FaustVst): Load/edit Faust dsp effects in a VST.
 
