@@ -10,6 +10,11 @@ namespace UILayout
     {
         public SpriteFont SpriteFont { get; set; }
 
+        public static UIFont FromSpriteFont(SpriteFontDefinition spriteFont)
+        {
+            return new UIFont { SpriteFont = SpriteFont.CreateFromDefinition(spriteFont) };
+        }
+
         public float TextHeight
         {
             get { return SpriteFont.LineHeight; }

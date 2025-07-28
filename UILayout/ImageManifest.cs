@@ -57,9 +57,10 @@ namespace UILayout
             {
                 foreach (SpriteFontDefinition fontDefinition in sheet.Fonts)
                 {
-                    UIFont font = new UIFont { SpriteFont = SpriteFont.CreateFromDefinition(fontDefinition) };
+                    UIFont font = UIFont.FromSpriteFont(fontDefinition);
 
-                    layout.AddFont(fontDefinition.Name, font);
+                    if (font != null)
+                        layout.AddFont(fontDefinition.Name, font);
                 }
             }
         }

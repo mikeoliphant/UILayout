@@ -13,11 +13,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Font.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GraphicsContex2D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Image.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ImageManifest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InputManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MonoGameContentLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MonoGameHost.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MonoGameLayout.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SpriteFont.cs" />
   </ItemGroup>
 </Project>

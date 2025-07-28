@@ -26,6 +26,11 @@ namespace UILayout
         {
         }
 
+        public static UIFont FromSpriteFont(SpriteFontDefinition spriteFont)
+        {
+            return null;
+        }
+
         public bool HasGlyph(char c)
         {
             return true;
