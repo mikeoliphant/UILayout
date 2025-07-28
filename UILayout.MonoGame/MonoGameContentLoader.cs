@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 
-namespace UILayout.MonoGame
+namespace UILayout
 {
     public class MonoGameContentLoader : ContentLoader
     {
