@@ -26,6 +26,21 @@ namespace UILayout.DefaultTextures
 
             Layout.Current.DefaultForegroundColor = UIColor.White;
 
+            using (Stream fontStream = loader.OpenContentStream("Textures.Font.xml"))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(SpriteFontDefinition));
+
+                SpriteFontDefinition fontDef = serializer.Deserialize(fontStream) as SpriteFontDefinition;
+
+                Layout.Current.AddImage(loader, fontDef.Name);
+
+                UIFont font = UIFont.FromSpriteFont(fontDef);
+
+                if (font != null)
+                {
+                    Layout.Current.DefaultFont = Layout.Current.AddFont(fontDef.Name,  font);
+                }
+            }
         }
     }
 }
