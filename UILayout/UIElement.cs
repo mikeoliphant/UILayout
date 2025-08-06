@@ -90,6 +90,7 @@ namespace UILayout
         public RectF LayoutBounds { get => layoutBounds; }
         public float DesiredWidth { get; set; }
         public float DesiredHeight { get; set; }
+        public bool AbsorbAllInput { get; set; } = false;
         public bool HaveTouchCapture { get; private set; }
         public Vector2 TouchCaptureStartPosition { get; private set; }
         public int CapturedTouchID { get; private set; }
@@ -262,7 +263,7 @@ namespace UILayout
 
         public virtual bool HandleTextInput(char c)
         {
-            return false;
+            return AbsorbAllInput;
         }
 
         public virtual bool HandleTouch(in Touch touch)
@@ -272,7 +273,7 @@ namespace UILayout
                 return DragDropHandler.HandleTouch(touch);
             }
 
-            return false;
+            return AbsorbAllInput;
         }
 
         public void CaptureTouch(in Touch touch)
