@@ -177,20 +177,20 @@ namespace UILayout
         {
             SecondsElapsed = secondsElapsed;
 
-            InputManager.Update(secondsElapsed);
-
             if (InputIsActive)
             {
+                InputManager.Update(secondsElapsed);
+
                 foreach (Touch touch in InputManager.GetTouches())
                 {
                     HandleTouch(touch);
                 }
-
-                UIElement activeElement = ActiveUIElement;
-
-                if (activeElement != null)
-                    activeElement.HandleInput(InputManager);
             }
+
+            UIElement activeElement = ActiveUIElement;
+
+            if (activeElement != null)
+                activeElement.HandleInput(InputManager);
         }
 
         public virtual void Draw(UIElement startElement)
