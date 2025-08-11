@@ -11,8 +11,8 @@ namespace UILayout
         public static UIColor DefaultTextColor = UIColor.White;
         public static UIColor DefaultTextHighlightColor = new UIColor(255, 255, 100, 255);
 
-        public UIColor TextColor { get; set; }
-        public UIFont TextFont { get; set; }
+        public UIColor TextColor { get; set; } = DefaultTextColor;
+        public UIFont TextFont { get; set; } = DefaultFont;
         public UIColor TextHighlightColor { get; set; }
 
         VerticalStack menuStack;
