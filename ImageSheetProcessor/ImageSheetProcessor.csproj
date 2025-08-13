@@ -8,7 +8,7 @@
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.4" />
     <PackageReference Include="SharpFont.Dependencies" Version="2.6.0" />
-    <PackageReference Include="SharpFont.NetStandard" Version="1.0.5" />
+    <PackageReference Include="SpaceWizards.SharpFont" Version="1.0.2" />
     <PackageReference Include="StbImageSharp" Version="2.30.15" />
     <PackageReference Include="StbImageWriteSharp" Version="1.16.7" />
     <PackageReference Include="Svg" Version="3.4.7" />
