@@ -60,10 +60,18 @@ namespace UILayout
         }
     }
 
-
+    //             TabPanel tabPanel = new TabPanel(new UIColor(100, 100, 100), UIColor.White, Layout.Current.GetImage("TabPanelBackground"), Layout.Current.GetImage("TabForeground"), Layout.Current.GetImage("TabBackground"), 5, 5);
     public class TabPanel : VerticalStack
     {
         public TabPanelTab ActiveTab { get; private set; }
+
+        public static UIColor BackgroundColor = new UIColor(100, 100, 100);
+        public static UIColor TextColor = Layout.Current.DefaultForegroundColor;
+        public static UIImage BackgroundImage = Layout.Current.GetImage("TabPanelBackground");
+        public static UIImage TabButtonPressed = Layout.Current.GetImage("TabForeground");
+        public static UIImage TabButtonUnpressed = Layout.Current.GetImage("TabBackground");
+        public static float TabStartOffsetX = 5;
+        public static float TabStartOffsetY = 5;
 
         Dictionary<string, TabPanelTab> tabs = new Dictionary<string, TabPanelTab>();
 
@@ -73,6 +81,12 @@ namespace UILayout
         UIElementWrapper contentsWrapper;
         UIImage tabButtonPressed;
         UIImage tabButtonUnpressed;
+
+        public TabPanel()
+            : this(BackgroundColor, TextColor, BackgroundImage, TabButtonPressed, TabButtonUnpressed, TabStartOffsetX, TabStartOffsetY)
+        {
+
+        }
 
         public TabPanel(UIColor backgroundColor, UIColor textColor, UIImage backroundImage, UIImage tabButtonPressed, UIImage tabButtonUnpressed, float tabStartOffsetX, float tabStartOfsetY)
         {

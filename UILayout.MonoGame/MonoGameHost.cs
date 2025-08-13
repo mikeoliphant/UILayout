@@ -165,6 +165,13 @@ namespace UILayout
             Layout.AddDirtyRect(Layout.Bounds);
             Layout.Draw();
         }
+
+        protected override void OnExiting(object sender, ExitingEventArgs args)
+        {
+            Layout.Exiting();
+
+            base.OnExiting(sender, args);
+        }
     }
 
     public class AssemblyRelativeContentManager : ContentManager

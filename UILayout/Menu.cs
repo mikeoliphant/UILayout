@@ -7,10 +7,12 @@ namespace UILayout
     {
         public Action CloseAction { get; set; }
 
+        public static UIFont DefaultFont = Layout.Current.DefaultFont;
         public static UIColor DefaultTextColor = UIColor.White;
         public static UIColor DefaultTextHighlightColor = new UIColor(255, 255, 100, 255);
 
-        public UIColor TextColor { get; set; }
+        public UIColor TextColor { get; set; } = DefaultTextColor;
+        public UIFont TextFont { get; set; } = DefaultFont;
         public UIColor TextHighlightColor { get; set; }
 
         VerticalStack menuStack;
@@ -49,7 +51,12 @@ namespace UILayout
 
             foreach (MenuItem menuItem in menuItems)
             {
-                TextButton button = new TextButton(menuItem.Text) { HorizontalAlignment = EHorizontalAlignment.Stretch };
+                TextButton button = new TextButton(menuItem.Text)
+                {
+                    HorizontalAlignment = EHorizontalAlignment.Stretch,
+                    TextColor = TextColor,
+                    TextFont = TextFont
+                };
                 button.ClickAction = delegate { DoMenuItem(menuItem); };
 
                 menuStack.Children.Add(button);
