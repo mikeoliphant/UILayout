@@ -226,6 +226,9 @@ namespace UILayout
 
         public bool HandleTouch(in Touch touch)
         {
+            if (!Bounds.Contains(touch.Position))
+                return false;
+
             UIElement activeElement = ActiveUIElement;
 
             if ((dragObject != null) && (dragTouchID == touch.TouchID))
