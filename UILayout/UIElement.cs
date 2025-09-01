@@ -100,6 +100,7 @@ namespace UILayout
         float totDrag = 0;
         UIElement tapElement;
         DateTime lastTapTime = DateTime.MinValue;
+        Vector2 lastTapPosition;
 
         public UIElement()
         {
@@ -340,12 +341,13 @@ namespace UILayout
             {
                 DateTime now = DateTime.Now;
 
-                if ((now - lastTapTime).TotalSeconds < 0.5)
+                if (((now - lastTapTime).TotalSeconds < 0.5) && (Vector2.Distance(touch.Position, lastTapPosition) < 5))
                 {
                     return true;
                 }
 
                 lastTapTime = now;
+                lastTapPosition = touch.Position;
             }
 
             return false;
