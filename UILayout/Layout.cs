@@ -17,6 +17,30 @@ namespace UILayout
         void Opened();
     }
 
+    public class PopupWrapper : NinePatchWrapper, IPopup
+    {
+        public Action CloseAction { get; set; }
+
+        public PopupWrapper(UIElement child)
+            : this(child, Layout.Current.DefaultOutlineNinePatch)
+        {
+        }
+
+        public PopupWrapper(UIElement child, UIImage ninePatch)
+            : base(ninePatch)
+        {
+            this.Child = child;
+        }
+
+        public void Opened()
+        {
+            if (Child is IPopup)
+            {
+                (Child as IPopup).Opened();
+            }
+        }
+    }
+
     public partial class Layout
     {
         public static Layout Current { get; private set; }
@@ -292,7 +316,9 @@ namespace UILayout
             else
             {
                 if (activeElement != null)
+                {
                     return activeElement.HandleTouch(touch);
+                }
             }
 
             return false;
@@ -527,7 +553,10 @@ namespace UILayout
                 return true;
             }
 
-            return base.HandleTouch(touch);
+            if (Child.ContentBounds.Contains(touch.Position))
+                return base.HandleTouch(touch);
+
+            return false;
         }
     }
 }
