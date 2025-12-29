@@ -8,8 +8,8 @@ namespace UILayout
         public Action<float> ChangeAction { get; set; }
         public bool InvertLevel { get; set; }
 
-        public float Level { get; protected set; }
         protected UIImage levelImage;
+        protected float currentLevel;
         protected float captureStartLevel;
 
         bool isHorizontal;
@@ -35,14 +35,19 @@ namespace UILayout
         {
             if (isHorizontal)
             {
-                levelImageElement.Padding = new LayoutPadding((ContentBounds.Width * Level) - (float)Math.Ceiling((levelImage.Width) / 2f), 0);
+                levelImageElement.Padding = new LayoutPadding((ContentBounds.Width * currentLevel) - (float)Math.Ceiling((levelImage.Width) / 2f), 0);
             }
             else
             {
-                levelImageElement.Padding = new LayoutPadding(0, (ContentBounds.Height * Level) - (float)Math.Ceiling((levelImage.Height) / 2f));
+                levelImageElement.Padding = new LayoutPadding(0, (ContentBounds.Height * currentLevel) - (float)Math.Ceiling((levelImage.Height) / 2f));
             }
 
             base.UpdateContentLayout();
+        }
+
+        public float GetLevel()
+        {
+            return InvertLevel ? (1.0f - currentLevel) : currentLevel;
         }
 
         public void SetLevel(float level)
@@ -53,10 +58,10 @@ namespace UILayout
         void UpdateLevel(float level, bool sendChange)
         {
             level = MathUtil.Saturate(level);
-            this.Level = level;
+            this.currentLevel = level;
 
             if (sendChange && (ChangeAction != null))
-                ChangeAction(InvertLevel ? (1.0f - level) : level);
+                ChangeAction(GetLevel());
 
             UpdateContentLayout();
         }
@@ -66,7 +71,7 @@ namespace UILayout
             switch (touch.TouchState)
             {
                 case ETouchState.Pressed:
-                    captureStartLevel = Level;
+                    captureStartLevel = currentLevel;
                     CaptureTouch(touch);
                     break;
                 case ETouchState.Moved:
