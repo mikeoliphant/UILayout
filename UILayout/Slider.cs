@@ -116,7 +116,7 @@ namespace UILayout
     public class VerticalPointer : Slider
     {
         public VerticalPointer()
-            : base("VerticalPointer", isHorizontal: false)
+            : base("VerticalPointerRight", isHorizontal: false)
         {
         }
 

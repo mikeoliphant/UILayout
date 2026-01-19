@@ -25,4 +25,10 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)TextureLoader.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\HorizontalSlider.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\VerticalPointerRight.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\VerticalPointerLeft.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\VerticalSlider.png" />
+  </ItemGroup>
 </Project>
