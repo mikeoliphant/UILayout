@@ -447,6 +447,12 @@ namespace UILayout
 
         public void ShowTextInputPopup(string prompt, string defaultText, Action<string> confirmAction, UIColor textColor, UIColor textBackgroundColor)
         {
+#if ANDROID
+            Layout.Current.GetKeyboardInput(prompt, defaultText, delegate (string str, object obj)
+            {
+                confirmAction(str);
+            }, null);            
+#else
             VerticalStack stack = new VerticalStack { HorizontalAlignment = EHorizontalAlignment.Stretch, VerticalAlignment = EVerticalAlignment.Stretch };
 
             stack.Children.Add(new TextBlock(prompt));
@@ -482,6 +488,7 @@ namespace UILayout
             };
 
             ShowPopup(dialog);
+#endif
         }
 
         public void ClosePopup(UIElement popup)
