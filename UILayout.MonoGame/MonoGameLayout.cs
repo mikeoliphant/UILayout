@@ -12,6 +12,7 @@ namespace UILayout
     public partial class MonoGameLayout : Layout
     {        
         public static new MonoGameLayout Current { get { return Layout.Current as MonoGameLayout; } }
+        public static string DefaultTextureNamespace { get; set; } = "UILayout";
 
         public MonoGameHost Host { get; private set; }
         public float Scale
@@ -61,7 +62,7 @@ namespace UILayout
 
             GraphicsContext.SingleWhitePixelImage = singleWhitePixelImage;
 
-            var loader = new AssemblyResourceContentLoader(typeof(UILayout.DefaultTextures.TextureLoader).Assembly, "UILayout");
+            var loader = new AssemblyResourceContentLoader(typeof(UILayout.DefaultTextures.TextureLoader).Assembly, DefaultTextureNamespace);
 
             UILayout.DefaultTextures.TextureLoader.LoadDefaultTextures(loader);
         }

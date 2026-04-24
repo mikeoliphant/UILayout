@@ -13,6 +13,11 @@ namespace UILayout.DefaultTextures
             Layout.Current.AddImage(loader, "ScrollUpArrow");
             Layout.Current.AddImage(loader, "ScrollDownArrow");
 
+            Layout.Current.AddImage(loader, "HorizontalSlider");
+            Layout.Current.AddImage(loader, "VerticalSlider");
+            Layout.Current.AddImage(loader, "VerticalPointerRight");
+            Layout.Current.AddImage(loader, "VerticalPointerLeft");
+
             Layout.Current.AddImage(loader, "TabPanelBackground");
             Layout.Current.AddImage(loader, "TabBackground");
             Layout.Current.AddImage(loader, "TabForeground");
