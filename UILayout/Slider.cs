@@ -71,6 +71,8 @@ namespace UILayout
             switch (touch.TouchState)
             {
                 case ETouchState.Pressed:
+                    UpdateLevel((touch.Position.X - ContentBounds.X) / ContentBounds.Width, sendChange: true);
+
                     captureStartLevel = currentLevel;
                     CaptureTouch(touch);
                     break;
