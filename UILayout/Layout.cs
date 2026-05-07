@@ -164,7 +164,7 @@ namespace UILayout
             haveDirty = false;
         }
 
-        public void AddDirtyRect(in RectF dirty)
+        public virtual void AddDirtyRect(in RectF dirty)
         {
             if (float.IsNaN(dirty.Width) || float.IsNaN(dirty.Height))
                 return;

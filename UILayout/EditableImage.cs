@@ -688,7 +688,7 @@ namespace UILayout
             float a = 0;
 
             ReadOnlySpan<byte> srcPixels = MemoryMarshal.Cast<UIColor, byte>(sourceImage.canvasData);
-            Span<byte> destPixels = MemoryMarshal.Cast<UIColor, byte>(destImage.canvasData);
+            Span<byte> destPixels = MemoryMarshal.Cast<UIColor, byte>((Span<UIColor>)destImage.canvasData);
 
             int srcStride = sourceImage.ImageWidth * 4;
             int destStride = destImage.ImageWidth * 4;
