@@ -62,7 +62,6 @@ namespace UILayout
         float offset = 0;
         float velocity;
         protected StringBuilder sb = new StringBuilder();
-        bool haveTouch = false;
         int touchItem;
         int firstVisibleItem;
         int lastVisibleItem;
@@ -220,13 +219,11 @@ namespace UILayout
                 y += ItemHeight;
                 item++;
             }
-
-            haveTouch = false;
         }
 
         protected virtual void DrawItem(int item, float y)
         {
-            if (haveTouch && (item == touchItem))
+            if (HaveTouchCapture && (item == touchItem))
             {
                 Layout.Current.GraphicsContext.DrawRectangle(new RectF(ContentBounds.X, y, ContentBounds.Width, ItemHeight), HighlightColor);
             }
@@ -252,8 +249,6 @@ namespace UILayout
 
             Layout.Current.GraphicsContext.DrawText(sb, Font, (int)x, (int)y, TextColor, FontScale);
         }
-
-        float dragStartY = 0;
         float lastDragY = 0;
         float dragStartOffset = 0;
 
@@ -263,26 +258,31 @@ namespace UILayout
 
             if ((touch.TouchState == ETouchState.Pressed) || (touch.TouchState == ETouchState.Moved) || (touch.TouchState == ETouchState.Held))
             {
-                haveTouch = true;
-
                 touchItem = itemPos;
             }
 
             if (touch.TouchState == ETouchState.Pressed)
             {
-                dragStartY = lastDragY = touch.Position.Y;
+                CaptureTouch(touch);
+
+                lastDragY = touch.Position.Y;
                 dragStartOffset = offset;
             }
 
             if (touch.TouchState == ETouchState.Moved)
             {
-                float diff = touch.Position.Y - dragStartY;
+                float diff = touch.Position.Y - TouchCaptureStartPosition.Y;
 
                 SetOffset(dragStartOffset - diff);
 
                 lastDragY = touch.Position.Y;
 
                 UpdateContentLayout();
+            }
+
+            if ((touch.TouchState == ETouchState.Released) || (touch.TouchState == ETouchState.Invalid))
+            {
+                ReleaseTouch();
             }
 
             if (IsTap(touch, this))

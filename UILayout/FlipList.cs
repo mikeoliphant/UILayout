@@ -183,5 +183,22 @@ namespace UILayout
 
             return false;
         }
+
+        public override void HandleInput(InputManager inputManager)
+        {
+            base.HandleInput(inputManager);
+
+            int delta = inputManager.MouseWheelDelta;
+
+            if (delta > 0)
+            {
+                SwipeLeft();
+            }
+            else if (delta < 0)
+            {
+                SwipeRight();
+            }
+        }
+
     }
 }
