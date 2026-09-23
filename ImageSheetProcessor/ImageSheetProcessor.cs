@@ -41,7 +41,7 @@ namespace ImageSheetProcessor
 
         public Span<byte> GetByteData()
         {
-            return MemoryMarshal.Cast<UIColor, byte>(canvasData);
+            return MemoryMarshal.Cast<UIColor, byte>(canvasData.AsSpan());
         }
     }
 
