@@ -7,12 +7,12 @@ namespace UILayout
     {
         public Action CloseAction { get; set; }
 
-        public static UIFont DefaultFont = Layout.Current.DefaultFont;
+        public static UIFont DefaultFont = null;
         public static UIColor DefaultTextColor = UIColor.White;
         public static UIColor DefaultTextHighlightColor = new UIColor(255, 255, 100, 255);
 
         public UIColor TextColor { get; set; } = DefaultTextColor;
-        public UIFont TextFont { get; set; } = DefaultFont;
+        public UIFont TextFont { get; set; } = DefaultFont ?? Layout.Current.DefaultFont;
         public UIColor TextHighlightColor { get; set; }
 
         VerticalStack menuStack;

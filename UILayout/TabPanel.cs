@@ -66,10 +66,10 @@ namespace UILayout
         public TabPanelTab ActiveTab { get; private set; }
 
         public static UIColor BackgroundColor = new UIColor(100, 100, 100);
-        public static UIColor TextColor = Layout.Current.DefaultForegroundColor;
-        public static UIImage BackgroundImage = Layout.Current.GetImage("TabPanelBackground");
-        public static UIImage TabButtonPressed = Layout.Current.GetImage("TabForeground");
-        public static UIImage TabButtonUnpressed = Layout.Current.GetImage("TabBackground");
+        public static UIColor? TextColor = null;
+        public static UIImage BackgroundImage = null;
+        public static UIImage TabButtonPressed = null;
+        public static UIImage TabButtonUnpressed = null;
         public static float TabStartOffsetX = 5;
         public static float TabStartOffsetY = 5;
 
@@ -83,7 +83,11 @@ namespace UILayout
         UIImage tabButtonUnpressed;
 
         public TabPanel()
-            : this(BackgroundColor, TextColor, BackgroundImage, TabButtonPressed, TabButtonUnpressed, TabStartOffsetX, TabStartOffsetY)
+            : this(BackgroundColor, TextColor ?? Layout.Current.DefaultForegroundColor,
+                  BackgroundImage ?? Layout.Current.GetImage("TabPanelBackground"),
+                  TabButtonPressed ?? Layout.Current.GetImage("TabForeground"),
+                  TabButtonUnpressed ?? Layout.Current.GetImage("TabBackground"),
+                  TabStartOffsetX, TabStartOffsetY)
         {
 
         }
