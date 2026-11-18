@@ -217,8 +217,11 @@ namespace UILayout
         /// <summary>Typed text. Returns true if an element (for example a focused text box) used it.</summary>
         public bool TextInput(char c) => Layout != null && Layout.HandleTextInput(c);
 
-        /// <summary>Release all keys and mouse buttons (for example when the window loses focus).</summary>
-        public void ReleaseAllInput()
+        /// <summary>
+        /// Release all keys, for example when the window loses keyboard focus (key releases then go elsewhere).
+        /// Mouse buttons are not tied to keyboard focus: a drag continues until its button is released.
+        /// </summary>
+        public void ReleaseAllKeys()
         {
             for (int i = 0; i < keysDown.Length; i++)
             {
@@ -228,6 +231,12 @@ namespace UILayout
                     keyboardChanged = true;
                 }
             }
+        }
+
+        /// <summary>Release all keys and mouse buttons, for example when the owner loses track of the input altogether.</summary>
+        public void ReleaseAllInput()
+        {
+            ReleaseAllKeys();
             if (leftDown) MouseButton(0, false, mouseX, mouseY);
             rightDown = false;
             middleDown = false;
