@@ -250,7 +250,10 @@ namespace UILayout
 
         public bool HandleTouch(in Touch touch)
         {
-            if (!Bounds.Contains(touch.Position))
+            // Outside the layout only touches that something has captured (or is dragging) still count, so that
+            // a drag released outside the window still ends.
+            if (!Bounds.Contains(touch.Position) && !touchCapture.ContainsKey(touch.TouchID) &&
+                !((dragObject != null) && (dragTouchID == touch.TouchID)))
                 return false;
 
             UIElement activeElement = ActiveUIElement;
