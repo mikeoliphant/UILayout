@@ -33,6 +33,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.CrossPlatform", "U
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.DefaultTextures", "UILayout.DefaultTextures\UILayout.DefaultTextures.shproj", "{9F1A46C4-BC4C-46F7-B10A-1719D53A5FD3}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "UILayout.MonoGame.Game", "UILayout.MonoGame.Game\UILayout.MonoGame.Game.shproj", "{F341B5A1-17BC-49B7-881A-5E32619824A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		SolutionGuid = {B3DE844C-79C2-4FC9-9C96-5457339160C3}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		UILayout.MonoGame.Game\UILayout.MonoGame.Game.projitems*{f341b5a1-17bc-49b7-881a-5e32619824a3}*SharedItemsImports = 13
+		UILayout.MonoGame.Game\UILayout.MonoGame.Game.projitems*{be080217-1cbb-4e87-92d8-88368763cea3}*SharedItemsImports = 5
+		UILayout.MonoGame.Game\UILayout.MonoGame.Game.projitems*{4b3bbc27-e023-4626-baed-441e62b59fbb}*SharedItemsImports = 5
+		UILayout.MonoGame.Game\UILayout.MonoGame.Game.projitems*{867a9020-0073-427a-a29f-275863f6fd94}*SharedItemsImports = 5
 		UILayout.CrossPlatform\UILayout.CrossPlatform.projitems*{1c1b80df-0836-443f-9067-3276336b1ee5}*SharedItemsImports = 13
 		UILayout.Skia\UILayout.Skia.projitems*{43920506-574a-4227-9759-5c55c3d54a9a}*SharedItemsImports = 13
 		MonoGameTestShared\MonoGameTestShared.projitems*{47f7b7a0-5f63-4900-bf71-c2834ea876ba}*SharedItemsImports = 5

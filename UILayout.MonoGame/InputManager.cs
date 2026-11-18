@@ -14,6 +14,11 @@ namespace UILayout
         MouseState lastMouseState;
         Vector2 lastMousePosition;
 
+        // Supplied by the backend (for example UILayout.MonoGame.Game polls MonoGame's global input state).
+        private partial KeyboardState GetKeyboardState();
+        private partial MouseState GetMouseState();
+        private partial TouchCollection GetTouchState();
+
         public static Touch FromXNATouch(TouchLocation touchLocation)
         {
             ETouchState touchState = ETouchState.Invalid;
@@ -55,12 +60,12 @@ namespace UILayout
         protected void PlatformUpdate(float secondsElapsed)
         {
             lastState = currentState;
-            currentState = Keyboard.GetState();
+            currentState = GetKeyboardState();
         }
 
         public IEnumerable<Touch> GetTouches()
         {
-            TouchCollection touches = TouchPanel.GetState();
+            TouchCollection touches = GetTouchState();
 
             //TouchCount = touches.Count;
 
@@ -74,7 +79,7 @@ namespace UILayout
                 yield return FromXNATouch(touch);
             }
 
-            MouseState mouseState = Mouse.GetState();
+            MouseState mouseState = GetMouseState();
 
             Vector2 position = new Vector2(mouseState.X, mouseState.Y) / (Layout.Current as MonoGameLayout).Scale;
 

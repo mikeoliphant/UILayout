@@ -173,24 +173,4 @@ namespace UILayout
             base.OnExiting(sender, args);
         }
     }
-
-    public class AssemblyRelativeContentManager : ContentManager
-    {
-        public static String AssemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-
-        public static Stream OpenAseemblyRelativeStream(string relativePath)
-        {
-            return File.OpenRead(Path.Combine(AssemblyPath, relativePath));
-        }
-
-        public AssemblyRelativeContentManager(IServiceProvider serviceProvider)
-            : base(serviceProvider)
-        {
-        }
-
-        protected override Stream OpenStream(string assetName)
-        {
-            return OpenAseemblyRelativeStream(Path.Combine(RootDirectory, assetName) + ".xnb");
-        }
-    }
 }
