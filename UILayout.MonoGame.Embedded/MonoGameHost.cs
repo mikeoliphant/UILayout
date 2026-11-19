@@ -19,8 +19,12 @@ namespace UILayout
     /// - The native window is wrapped with SDL_CreateWindowFrom, and SdlGameWindow.Instance (where
     ///   GraphicsDevice looks for its window) is set to a minimal GameWindow. MonoGame keeps that state in
     ///   statics, so one host per copy of MonoGame (for plugins: per plugin instance load context).
-    /// - The owner calls Tick() regularly on the thread that created the host, and forwards input. Several
-    ///   hosts can share a thread: each makes its OpenGL context current before drawing.
+    /// - The owner calls Tick() regularly on the host's thread, and forwards input on that thread. Several hosts
+    ///   can share a thread: each makes its OpenGL context current before drawing.
+    /// - The host's thread is the one that created it, until the owner moves the host to another thread
+    ///   (ReleaseFromCurrentThread, then BindToCurrentThread on the new one), for example to render on a thread
+    ///   of its own with vsync. MonoGame has one "UI thread" per copy of MonoGame, where all graphics work must
+    ///   happen; binding makes the calling thread that thread.
     ///
     /// Positions are window pixels. Steady-state ticks do not allocate.
     /// </summary>
@@ -46,6 +50,11 @@ namespace UILayout
         // The platform's "current context" query (wglGetCurrentContext / glXGetCurrentContext), or null.
         static delegate* unmanaged<IntPtr> GetNativeCurrentContext;
 
+        // MonoGame's thread bookkeeping (internal class Microsoft.Xna.Framework.Threading): the id of its "UI
+        // thread", and Run, which executes graphics work other threads queued for that thread.
+        static FieldInfo monoGameThreadId;
+        static Action runQueuedGraphicsWork;
+
         IntPtr sdlWindow;
         IntPtr glContext;
         bool sizeChanged;
@@ -57,12 +66,20 @@ namespace UILayout
         KeyboardState keyboardState;
         bool keyboardChanged;
 
-        public MonoGameHost(IntPtr nativeWindow, int width, int height)
+        /// <param name="nativeWindow">The window to draw into (HWND, X11 Window).</param>
+        /// <param name="width">Its width in window pixels.</param>
+        /// <param name="height">Its height in window pixels.</param>
+        /// <param name="vsync">
+        /// Whether Present waits for the vertical retrace. Only for a host that has its thread to itself: hosts that
+        /// share a thread would wait for each other.
+        /// </param>
+        public MonoGameHost(IntPtr nativeWindow, int width, int height, bool vsync = false)
         {
             ScreenWidth = Math.Max(width, 1);
             ScreenHeight = Math.Max(height, 1);
 
             LoadSdl();
+            SetMonoGameThread();
             Check(SDL_InitSubSystem(SDL_INIT_VIDEO) == 0, "SDL_InitSubSystem(VIDEO)");
             SetHint("SDL_VIDEO_FOREIGN_WINDOW_OPENGL", "1");
             // The attributes MonoGame's GraphicsDeviceManager sets before creating its own window.
@@ -88,7 +105,7 @@ namespace UILayout
                 BackBufferFormat = SurfaceFormat.Color,
                 DepthStencilFormat = DepthFormat.Depth24Stencil8,
                 DeviceWindowHandle = sdlWindow,
-                PresentationInterval = PresentInterval.Immediate, // hosts share the owner's thread; no vsync waits
+                PresentationInterval = vsync ? PresentInterval.One : PresentInterval.Immediate,
                 IsFullScreen = false,
             };
             GraphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, GraphicsProfile.HiDef, pp);
@@ -126,11 +143,35 @@ namespace UILayout
             layout.UpdateLayout();
         }
 
-        /// <summary>Update, draw and present one frame. Call on the thread that created the host.</summary>
+        /// <summary>
+        /// Makes the calling thread this host's thread: MonoGame's graphics thread, with this host's OpenGL context
+        /// current. The previous thread must have called ReleaseFromCurrentThread (an OpenGL context can be
+        /// current on one thread only).
+        /// </summary>
+        public void BindToCurrentThread()
+        {
+            SetMonoGameThread();
+            MakeCurrent();
+        }
+
+        /// <summary>
+        /// Releases this host's OpenGL context from the calling thread (the host's thread), so that another thread
+        /// can bind the host.
+        /// </summary>
+        public void ReleaseFromCurrentThread()
+        {
+            if (sdlWindow != IntPtr.Zero) SDL_GL_MakeCurrent(sdlWindow, IntPtr.Zero);
+        }
+
+        /// <summary>Update, draw and present one frame. Call on the host's thread.</summary>
         public void Tick(float secondsElapsed)
         {
             if (GraphicsDevice == null) return;
             MakeCurrent();
+
+            // Graphics work other threads handed to MonoGame's graphics thread (for example textures created
+            // while loading in the background) waits for this; the Game backend runs it in its loop.
+            runQueuedGraphicsWork();
 
             if (sizeChanged)
             {
@@ -277,6 +318,7 @@ namespace UILayout
 
         // ---- lifetime -------------------------------------------------------------------
 
+        /// <summary>Call on the host's thread.</summary>
         public void Dispose()
         {
             if (GraphicsDevice == null) return;
@@ -308,6 +350,24 @@ namespace UILayout
         }
 
         // ---- SDL ------------------------------------------------------------------------
+
+        /// <summary>Makes the calling thread MonoGame's graphics ("UI") thread.</summary>
+        static void SetMonoGameThread()
+        {
+            if (monoGameThreadId == null)
+            {
+                Type threading = typeof(Game).Assembly.GetType("Microsoft.Xna.Framework.Threading", throwOnError: true);
+                monoGameThreadId = threading.GetField("_mainThreadId", BindingFlags.NonPublic | BindingFlags.Static)
+                    ?? throw new InvalidOperationException("MonoGame's Threading._mainThreadId not found");
+                MethodInfo run = threading.GetMethod("Run", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static, Type.EmptyTypes)
+                    ?? throw new InvalidOperationException("MonoGame's Threading.Run not found");
+                runQueuedGraphicsWork = (Action)Delegate.CreateDelegate(typeof(Action), run);
+            }
+
+            // Otherwise MonoGame's graphics thread is whichever thread used MonoGame first (its static
+            // constructor), and drawing on any other thread throws.
+            monoGameThreadId.SetValue(null, Environment.CurrentManagedThreadId);
+        }
 
         static void SetSdlGameWindowInstance(GameWindow window)
         {
