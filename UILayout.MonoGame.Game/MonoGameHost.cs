@@ -39,6 +39,54 @@ namespace UILayout
 
         IntPtr parentWindow = IntPtr.Zero;
 
+        // ---- DPI (Windows) ----
+        //
+        // The process is made per-monitor DPI aware before MonoGame creates its window (a static constructor runs
+        // before the Game constructor), so Windows does not stretch (blur) the window; the layout's DisplayScale then
+        // follows the window's DPI. An app manifest that declares a DPI awareness takes precedence (the call then
+        // fails, harmlessly); a DPI-unaware app gets DisplayScale 1 and Windows stretches it as before. Other
+        // platforms: DisplayScale 1 for now.
+
+        [DllImport("user32.dll", EntryPoint = "SetProcessDpiAwarenessContext")]
+        static extern bool SetProcessDpiAwarenessContextNative(IntPtr value);
+
+        [DllImport("user32.dll", EntryPoint = "GetDpiForWindow")]
+        static extern uint GetDpiForWindowNative(IntPtr hwnd);
+
+        static readonly IntPtr DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = new IntPtr(-4);
+
+        static MonoGameHost()
+        {
+            // Only in a standalone app: inside another process (a plugin in a DAW, which has no managed entry
+            // assembly) the DPI awareness is the host's to decide
+            if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 15063) && (Assembly.GetEntryAssembly() != null))
+            {
+                try
+                {
+                    SetProcessDpiAwarenessContextNative(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+                }
+                catch (EntryPointNotFoundException)
+                {
+                }
+            }
+        }
+
+        /// <summary>
+        /// The window's display scale (its DPI; 1 = 96 DPI), or 1 where it is not known.
+        /// </summary>
+        public float WindowDisplayScale
+        {
+            get
+            {
+                if (!OperatingSystem.IsWindowsVersionAtLeast(10, 0, 14393) || (Window == null) || (Window.Handle == IntPtr.Zero))
+                    return 1.0f;
+
+                uint dpi = GetDpiForWindowNative(Window.Handle);
+
+                return (dpi > 0) ? (dpi / 96.0f) : 1.0f;
+            }
+        }
+
         public MonoGameHost(int screenWidth, int screenHeight, bool fullscreen)
             : this(IntPtr.Zero, screenWidth, screenHeight, fullscreen)
         {
@@ -78,9 +126,18 @@ namespace UILayout
 
         protected override void Initialize()
         {
+            Layout.DisplayScale = WindowDisplayScale;
+
             Layout.SetHost(this);
 
             base.Initialize();
+
+            // The requested size is in layout units at DisplayScale 1: keep the window's apparent size on a scaled
+            // display
+            if ((Layout.DisplayScale != 1) && !GraphicsDeviceManager.IsFullScreen && (parentWindow == IntPtr.Zero))
+            {
+                RequestResize((int)Math.Round(ScreenWidth * Layout.DisplayScale), (int)Math.Round(ScreenHeight * Layout.DisplayScale));
+            }
 
 #if WINDOWS
             if (parentWindow != IntPtr.Zero)
@@ -141,6 +198,15 @@ namespace UILayout
                 requestResize = false;
             }
 
+            // The window moved to a monitor with another DPI: the layout follows (the window keeps its pixel size)
+            float displayScale = WindowDisplayScale;
+
+            if (displayScale != Layout.DisplayScale)
+            {
+                Layout.DisplayScale = displayScale;
+                Layout.UpdateLayout();
+            }
+
             base.Update(gameTime);
 
             Layout.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
@@ -152,7 +218,8 @@ namespace UILayout
 
             GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
 
-            if ((GraphicsDevice.Viewport.Bounds.Width != Layout.Bounds.Width) || (GraphicsDevice.Viewport.Bounds.Height != Layout.Bounds.Height))
+            // UnscaledBounds: window pixels (Bounds is in layout units, which differ once a scale is set)
+            if ((GraphicsDevice.Viewport.Bounds.Width != Layout.UnscaledBounds.Width) || (GraphicsDevice.Viewport.Bounds.Height != Layout.UnscaledBounds.Height))
             {
                 ScreenWidth = GraphicsDevice.Viewport.Bounds.Width;
                 ScreenHeight = GraphicsDevice.Viewport.Bounds.Height;

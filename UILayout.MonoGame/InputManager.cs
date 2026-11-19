@@ -39,7 +39,7 @@ namespace UILayout
                     break;
             }
 
-            return new Touch { TouchID = touchLocation.Id, Position = new Vector2(touchLocation.Position.X, touchLocation.Position.Y) / (Layout.Current as MonoGameLayout).Scale, TouchState = touchState };
+            return new Touch { TouchID = touchLocation.Id, Position = new Vector2(touchLocation.Position.X, touchLocation.Position.Y) / (Layout.Current as MonoGameLayout).TotalScale, TouchState = touchState };
         }
 
         internal bool IsKeyDown(InputKey key)
@@ -81,7 +81,7 @@ namespace UILayout
 
             MouseState mouseState = GetMouseState();
 
-            Vector2 position = new Vector2(mouseState.X, mouseState.Y) / (Layout.Current as MonoGameLayout).Scale;
+            Vector2 position = new Vector2(mouseState.X, mouseState.Y) / (Layout.Current as MonoGameLayout).TotalScale;
 
             MousePosition = position;
 
