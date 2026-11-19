@@ -16,11 +16,13 @@ namespace UILayout
 
         public override Stream OpenContentStream(string contentPath)
         {
-#if WINDOWS
-            return AssemblyRelativeContentManager.OpenAseemblyRelativeStream(Path.Combine(contentManager.RootDirectory, contentPath));
-#else
+            // Open raw content the way the content manager opens assets: next to the assembly for an
+            // AssemblyRelativeContentManager (the Windows Game backend, and the embedded backend - inside a plugin
+            // host, TitleContainer's location is the host application's), otherwise through TitleContainer
+            if (contentManager is AssemblyRelativeContentManager)
+                return AssemblyRelativeContentManager.OpenAseemblyRelativeStream(Path.Combine(contentManager.RootDirectory, contentPath));
+
             return TitleContainer.OpenStream(Path.Combine(contentManager.RootDirectory, contentPath));
-#endif
         }
 
         public override UIImage LoadImage(string imageName)
