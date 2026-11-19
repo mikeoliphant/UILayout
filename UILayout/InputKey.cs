@@ -174,6 +174,23 @@ namespace UILayout
             Modifier = InputKey.None;
         }
 
+        /// <summary>
+        /// Whether this mapping reads the key (as one of its keys or as its modifier).
+        /// </summary>
+        public bool UsesKey(InputKey key)
+        {
+            if ((Modifier != InputKey.None) && (Modifier == key))
+                return true;
+
+            for (int i = 0; i < keys.Length; i++)
+            {
+                if (keys[i] == key)
+                    return true;
+            }
+
+            return false;
+        }
+
         public override string ToString()
         {
             string toStr = "Key Mapping: ";

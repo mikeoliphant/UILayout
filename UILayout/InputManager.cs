@@ -120,6 +120,24 @@ namespace UILayout
             return inputMappings.ContainsKey(name);
         }
 
+        /// <summary>
+        /// Whether any key mapping reads the key. For example a plugin editor tells its host which keys it uses (the
+        /// others can stay host shortcuts). Does not allocate.
+        /// </summary>
+        public bool IsKeyMapped(InputKey key)
+        {
+            foreach (List<IInputMapping> mappings in inputMappings.Values)
+            {
+                foreach (IInputMapping mapping in mappings)
+                {
+                    if ((mapping is KeyMapping keyMapping) && keyMapping.UsesKey(key))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
         public void SwapMappings(string name1, string name2)
         {
             List<IInputMapping> tmp = inputMappings[name1];
