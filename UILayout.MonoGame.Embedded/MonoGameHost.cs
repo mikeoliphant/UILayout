@@ -382,13 +382,18 @@ namespace UILayout
             if (sdl != IntPtr.Zero) return;
 
             // Preload SDL2 through our own load context (deps.json), then let MonoGame initialize: its loader
-            // falls back to the bare library name, which resolves to the already loaded module.
+            // falls back to the bare library name, which resolves to an already loaded module. Without the preload
+            // MonoGame would search the process's folder (inside a DAW, the DAW's) and not find SDL2.
             string name = OperatingSystem.IsWindows() ? "SDL2" : OperatingSystem.IsMacOS() ? "libSDL2-2.0.0.dylib" : "libSDL2-2.0.so.0";
-            IntPtr own = NativeLibrary.Load(name, typeof(MonoGameHost).Assembly, null);
-            IntPtr monoGames = (IntPtr)typeof(Game).Assembly.GetType("Sdl", throwOnError: true).GetField("NativeLibrary").GetValue(null);
-            if (monoGames != own)
-                throw new InvalidOperationException("MonoGame loaded a different SDL2 than this plugin's (another SDL2 was already loaded in the process)");
-            sdl = own;
+            NativeLibrary.Load(name, typeof(MonoGameHost).Assembly, null);
+
+            // The bare name resolves to the first SDL2 loaded in the process: with two different plugins that each
+            // ship SDL2, that is the other plugin's copy, not the one preloaded above. Use whichever MonoGame bound
+            // to, so that this host's SDL calls (the foreign window, the GL context) and MonoGame's go to the same
+            // SDL. Sharing one SDL between plugins is like sharing it between two instances of one plugin.
+            sdl = (IntPtr)typeof(Game).Assembly.GetType("Sdl", throwOnError: true).GetField("NativeLibrary").GetValue(null);
+            if (sdl == IntPtr.Zero)
+                throw new InvalidOperationException("MonoGame could not load SDL2");
 
             SDL_SetHint = (delegate* unmanaged<byte*, byte*, int>)NativeLibrary.GetExport(sdl, "SDL_SetHint");
             SDL_InitSubSystem = (delegate* unmanaged<uint, int>)NativeLibrary.GetExport(sdl, "SDL_InitSubSystem");
