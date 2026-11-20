@@ -138,6 +138,7 @@ namespace UILayout
         {
             MakeCurrent();
             Layout = layout;
+            layout.UseExternalFileDialogs = OperatingSystem.IsLinux(); // no GTK dialogs inside the DAW's process
             layout.SetHost(this);
             layout.SetBounds(new RectF(0, 0, ScreenWidth, ScreenHeight));
             layout.UpdateLayout();

@@ -13,6 +13,8 @@ namespace UILayout
         public UIImage(int width, int height)
             : this(new Texture2D(MonoGameLayout.Current.Host.GraphicsDevice, width, height, false, SurfaceFormat.Color))
         {
+            // OpenGL leaves a new texture's contents undefined (garbage on Linux drivers, for example): start transparent.
+            Texture.SetData(new Color[width * height]);
         }
 
         public UIImage(Texture2D texture)
