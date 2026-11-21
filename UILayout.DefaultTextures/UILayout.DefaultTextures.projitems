@@ -37,7 +37,5 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\CheckBoxBorder.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\CheckMark.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollThumb.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\MeterBackground.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\MeterBar.png" />
   </ItemGroup>
 </Project>

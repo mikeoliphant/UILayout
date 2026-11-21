@@ -28,11 +28,5 @@ namespace UILayout
         public UIColor MutedText { get; set; } = new UIColor(154, 161, 171);
 
         public UIColor Warning { get; set; } = new UIColor(255, 180, 60);
-
-        /// <summary>A level meter: its background, and its bar when low, hot (from half scale) and clipping.</summary>
-        public UIColor MeterBackground { get; set; } = new UIColor(20, 22, 26);
-        public UIColor MeterLow { get; set; } = new UIColor(80, 190, 90);
-        public UIColor MeterHot { get; set; } = new UIColor(255, 180, 60);
-        public UIColor MeterClip { get; set; } = new UIColor(230, 60, 50);
     }
 }

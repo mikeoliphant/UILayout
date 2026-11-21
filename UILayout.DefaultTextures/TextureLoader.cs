@@ -36,8 +36,6 @@ namespace UILayout.DefaultTextures
             Layout.Current.DefaultCheckBoxBorder = Layout.Current.AddImage(loader, "CheckBoxBorder");
             Layout.Current.DefaultCheckMark = Layout.Current.AddImage(loader, "CheckMark");
             Layout.Current.DefaultScrollThumbNinePatch = Layout.Current.AddImage(loader, "ScrollThumb");
-            Layout.Current.DefaultMeterBackgroundNinePatch = Layout.Current.AddImage(loader, "MeterBackground");
-            Layout.Current.DefaultMeterBarNinePatch = Layout.Current.AddImage(loader, "MeterBar");
 
             Layout.Current.DefaultForegroundColor = UIColor.White;
 

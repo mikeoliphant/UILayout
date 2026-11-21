@@ -67,10 +67,8 @@ namespace UILayout
         public UIImage DefaultCheckBoxBorder { get; set; }
         public UIImage DefaultCheckMark { get; set; }
 
-        /// <summary>A list's scroll thumb, and a level meter's background and bar: small rounded nine-patches (white).</summary>
+        /// <summary>A list's scroll thumb: a small rounded nine-patch (white).</summary>
         public UIImage DefaultScrollThumbNinePatch { get; set; }
-        public UIImage DefaultMeterBackgroundNinePatch { get; set; }
-        public UIImage DefaultMeterBarNinePatch { get; set; }
 
         /// <summary>Colors for controls drawn in an input style.</summary>
         public UITheme Theme { get; set; } = new UITheme();
