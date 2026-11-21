@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using System.Text;
@@ -22,8 +23,29 @@ namespace UILayout
 
         SKFont textFont = new SKFont()
         {
-            
+
         };
+
+        // Images drawn with a color are tinted by it (image x color), as the MonoGame backend draws them: SkiaSharp
+        // tints a bitmap only through a color filter (a paint's color gives it only its alpha). One filter per color,
+        // kept.
+        SKPaint tintPaint = new SKPaint();
+        Dictionary<uint, SKColorFilter> tintFilters = new Dictionary<uint, SKColorFilter>();
+
+        SKPaint TintPaint(in UIColor color)
+        {
+            SKColor nativeColor = color.NativeColor;
+
+            if (!tintFilters.TryGetValue((uint)nativeColor, out SKColorFilter filter))
+            {
+                filter = SKColorFilter.CreateBlendMode(nativeColor, SKBlendMode.Modulate);
+                tintFilters[(uint)nativeColor] = filter;
+            }
+
+            tintPaint.ColorFilter = filter;
+
+            return tintPaint;
+        }
 
         public void BeginDraw()
         {
@@ -40,16 +62,12 @@ namespace UILayout
 
         public void DrawImage(UIImage image, float x, float y, in UIColor color)
         {
-            colorPaint.Color = color.NativeColor;
-
-            Canvas.DrawBitmap(image.Bitmap, new SKRect(image.XOffset, image.YOffset, image.Width, image.Height), new SKRect((int)x, (int)y, (int)x + image.Width, (int)y + image.Height), colorPaint);
+            Canvas.DrawBitmap(image.Bitmap, new SKRect(image.XOffset, image.YOffset, image.Width, image.Height), new SKRect((int)x, (int)y, (int)x + image.Width, (int)y + image.Height), TintPaint(color));
         }
 
         public void DrawImage(UIImage image, float x, float y, in UIColor color, float scale)
         {
-            colorPaint.Color = color.NativeColor;
-
-            Canvas.DrawBitmap(image.Bitmap, new SKRect(image.XOffset, image.YOffset, image.Width, image.Height), new SKRect((int)x, (int)y, (int)x + image.Width, (int)y + image.Height), colorPaint);
+            Canvas.DrawBitmap(image.Bitmap, new SKRect(image.XOffset, image.YOffset, image.Width, image.Height), new SKRect((int)x, (int)y, (int)x + image.Width, (int)y + image.Height), TintPaint(color));
         }
 
         public void DrawImage(UIImage image, float x, float y, in Rectangle srcRectangle)
@@ -59,7 +77,7 @@ namespace UILayout
 
         public void DrawImage(UIImage image, float x, float y, in Rectangle srcRectangle, in UIColor color, float scale)
         {
-            Canvas.DrawBitmap(image.Bitmap, new SKRect(srcRectangle.X + image.XOffset, srcRectangle.Y + image.YOffset, srcRectangle.Right, srcRectangle.Bottom), new SKRect((int)x, (int)y, (int)x + image.Width, (int)y + image.Height));
+            Canvas.DrawBitmap(image.Bitmap, new SKRect(srcRectangle.X + image.XOffset, srcRectangle.Y + image.YOffset, srcRectangle.Right, srcRectangle.Bottom), new SKRect((int)x, (int)y, (int)x + image.Width, (int)y + image.Height), TintPaint(color));
         }
 
         public void DrawImage(UIImage image, in Rectangle srcRectangle, in RectF destRectangle)
@@ -69,10 +87,8 @@ namespace UILayout
 
         public void DrawImage(UIImage image, in Rectangle srcRectangle, in RectF destRectangle, in UIColor color)
         {
-            colorPaint.Color = color.NativeColor;
-
             Canvas.DrawBitmap(image.Bitmap, new SKRect(srcRectangle.X + image.XOffset, srcRectangle.Y + image.YOffset, srcRectangle.Right, srcRectangle.Bottom),
-                new SKRect((int)destRectangle.X, (int)destRectangle.Y, (int)destRectangle.Right, (int)destRectangle.Bottom), colorPaint);
+                new SKRect((int)destRectangle.X, (int)destRectangle.Y, (int)destRectangle.Right, (int)destRectangle.Bottom), TintPaint(color));
         }
 
         public void DrawImage(UIImage image, float x, float y, in UIColor color, float rotation, in Vector2 origin, float scale)
@@ -107,21 +123,32 @@ namespace UILayout
 
         public void DrawText(ReadOnlySpan<char> text, UIFont font, float x, float y, in UIColor color)
         {
-            textFont.Typeface = font.Typeface;
-            textPaint.Color = color.NativeColor;
-            textPaint.Typeface = font.Typeface;
-            textPaint.TextSize = font.TextSize;
-
-            Canvas.DrawText(SKTextBlob.Create(text, textFont), x, y + font.TextHeight, textPaint);
+            DrawTextBlob(text, font, x, y, color);
         }
 
         public void DrawText(ReadOnlySpan<char> text, UIFont font, float x, float y, in UIColor color, float scale)
         {
+            DrawTextBlob(text, font, x, y, color);
+        }
+
+        // Spans are drawn as text blobs, laid out with textFont (its typeface and size too). Skia gives no blob for
+        // empty text (an empty text box): nothing to draw.
+        void DrawTextBlob(ReadOnlySpan<char> text, UIFont font, float x, float y, in UIColor color)
+        {
+            if (text.IsEmpty)
+                return;
+
+            textFont.Typeface = font.Typeface;
+            textFont.Size = font.TextSize;
+
             textPaint.Color = color.NativeColor;
             textPaint.Typeface = font.Typeface;
             textPaint.TextSize = font.TextSize;
 
-            Canvas.DrawText(SKTextBlob.Create(text, textFont), x, y + font.TextHeight, textPaint);
+            using SKTextBlob blob = SKTextBlob.Create(text, textFont);
+
+            if (blob != null)
+                Canvas.DrawText(blob, x, y + font.TextHeight, textPaint);
         }
 
         public void DrawText(StringBuilder text, UIFont font, float x, float y, in UIColor color)
