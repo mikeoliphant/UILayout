@@ -6,17 +6,20 @@ namespace UILayout
 {
     public partial class InputManager
     {
-        internal bool IsKeyDown(InputKey key)
+        /// <summary>Whether the key is down (for example a modifier held during a drag).</summary>
+        public bool IsKeyDown(InputKey key)
         {
             return false;
         }
 
-        internal bool WasPressed(InputKey key)
+        /// <summary>Whether the key went down since the last update.</summary>
+        public bool WasPressed(InputKey key)
         {
             return false;
         }
 
-        internal bool WasReleased(InputKey key)
+        /// <summary>Whether the key went up since the last update.</summary>
+        public bool WasReleased(InputKey key)
         {
             return false;
         }

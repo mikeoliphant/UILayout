@@ -1,59 +1,47 @@
 ﻿using System.IO;
-using System.Xml.Serialization;
 using UILayout;
 
 namespace UILayout.DefaultTextures
 {
+    /// <summary>
+    /// Loads UILayout's default textures and fonts into the current layout: one sheet and its manifest (Textures/),
+    /// rendered by DefaultTexturesProcessor from the images in SrcTextures/ and the Inter font. Images and fonts are
+    /// registered by name, so Layout.GetImage and GetFont find them as before.
+    /// </summary>
     public class TextureLoader
     {
         public static void LoadDefaultTextures(ContentLoader loader)
         {
-            Layout.Current.AddImage(loader, "ScrollBar");
-            Layout.Current.AddImage(loader, "ScrollBarGutter");
-            Layout.Current.AddImage(loader, "ScrollUpArrow");
-            Layout.Current.AddImage(loader, "ScrollDownArrow");
+            Layout layout = Layout.Current;
 
-            Layout.Current.AddImage(loader, "HorizontalSlider");
-            Layout.Current.AddImage(loader, "VerticalSlider");
-            Layout.Current.AddImage(loader, "VerticalPointerRight");
-            Layout.Current.AddImage(loader, "VerticalPointerLeft");
-
-            Layout.Current.AddImage(loader, "TabPanelBackground");
-            Layout.Current.AddImage(loader, "TabBackground");
-            Layout.Current.AddImage(loader, "TabForeground");
-
-            Layout.Current.DefaultOutlineNinePatch = Layout.Current.AddImage(loader, "OutlineNinePatch");
-
-            Layout.Current.DefaultPressedNinePatch = Layout.Current.AddImage(loader, "ButtonPressed");
-            Layout.Current.DefaultUnpressedNinePatch = Layout.Current.AddImage(loader, "ButtonUnpressed");
-
-            Layout.Current.DefaultDragImage = Layout.Current.AddImage(loader, "ButtonUnpressed");
-
-            Layout.Current.DefaultInputFillNinePatch = Layout.Current.AddImage(loader, "InputFill");
-            Layout.Current.DefaultInputBorderNinePatch = Layout.Current.AddImage(loader, "InputBorder");
-            Layout.Current.DefaultDropDownArrow = Layout.Current.AddImage(loader, "DropDownArrow");
-            Layout.Current.DefaultCheckBoxFill = Layout.Current.AddImage(loader, "CheckBoxFill");
-            Layout.Current.DefaultCheckBoxBorder = Layout.Current.AddImage(loader, "CheckBoxBorder");
-            Layout.Current.DefaultCheckMark = Layout.Current.AddImage(loader, "CheckMark");
-            Layout.Current.DefaultScrollThumbNinePatch = Layout.Current.AddImage(loader, "ScrollThumb");
-
-            Layout.Current.DefaultForegroundColor = UIColor.White;
-
-            using (Stream fontStream = loader.OpenContentStream("Textures.Font.xml"))
+            using (Stream manifest = loader.OpenContentStream("Textures/ImageManifest.xml"))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(SpriteFontDefinition));
-
-                SpriteFontDefinition fontDef = serializer.Deserialize(fontStream) as SpriteFontDefinition;
-
-                Layout.Current.AddImage(loader, fontDef.Name);
-
-                UIFont font = UIFont.FromSpriteFont(fontDef);
-
-                if (font != null)
-                {
-                    Layout.Current.DefaultFont = Layout.Current.AddFont(fontDef.Name,  font);
-                }
+                ImageManifest.Load(loader, manifest, layout);
             }
+
+            layout.DefaultOutlineNinePatch = layout.GetImage("OutlineNinePatch");
+
+            layout.DefaultPressedNinePatch = layout.GetImage("ButtonPressed");
+            layout.DefaultUnpressedNinePatch = layout.GetImage("ButtonUnpressed");
+
+            layout.DefaultDragImage = layout.GetImage("ButtonUnpressed");
+
+            layout.DefaultInputFillNinePatch = layout.GetImage("InputFill");
+            layout.DefaultInputBorderNinePatch = layout.GetImage("InputBorder");
+            layout.DefaultDropDownArrow = layout.GetImage("DropDownArrow");
+            layout.DefaultCheckBoxFill = layout.GetImage("CheckBoxFill");
+            layout.DefaultCheckBoxBorder = layout.GetImage("CheckBoxBorder");
+            layout.DefaultCheckMark = layout.GetImage("CheckMark");
+            layout.DefaultScrollThumbNinePatch = layout.GetImage("ScrollThumb");
+
+            layout.DefaultForegroundColor = UIColor.White;
+
+            // Bitmap fonts (backends that draw text their own way, as Skia, have none here and set their own)
+            if (layout.TryGetFont("Font", out UIFont font))
+                layout.DefaultFont = font;
+
+            if (layout.TryGetFont("SmallFont", out UIFont smallFont))
+                layout.DefaultSmallFont = smallFont;
         }
     }
 }

@@ -8,34 +8,13 @@
   <PropertyGroup Label="Configuration">
     <Import_RootNamespace>UILayout.DefaultTextures</Import_RootNamespace>
   </PropertyGroup>
+  <!-- The default textures and fonts: a sheet and its manifest, rendered from SrcTextures and Inter by
+       DefaultTexturesProcessor -->
   <ItemGroup>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ButtonPressed.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ButtonUnpressed.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\Font.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\Font.xml" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\OutlineNinePatch.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollBar.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollBarGutter.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollDownArrow.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollUpArrow.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\TabBackground.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\TabForeground.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\TabPanelBackground.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\*.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\*.xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)TextureLoader.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\HorizontalSlider.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\VerticalPointerRight.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\VerticalPointerLeft.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\VerticalSlider.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\InputFill.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\InputBorder.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\DropDownArrow.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\CheckBoxFill.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\CheckBoxBorder.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\CheckMark.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollThumb.png" />
   </ItemGroup>
 </Project>

@@ -17,7 +17,11 @@ namespace UILayout
 
             UILayout.DefaultTextures.TextureLoader.LoadDefaultTextures(loader);
 
-            DefaultFont = new UIFont { Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright), TextSize = 24 };
+            SKTypeface typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal,
+                SKFontStyleSlant.Upright);
+
+            DefaultFont = new UIFont { Typeface = typeface, TextSize = 24 };
+            DefaultSmallFont = new UIFont { Typeface = typeface, TextSize = 16 };
         }
     }
 }

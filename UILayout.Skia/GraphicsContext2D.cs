@@ -80,40 +80,68 @@ namespace UILayout
         {
         }
 
+        // Source rectangles in the image's bitmap: an image can be part of a sheet (its offset), and an SKRect takes
+        // edges, not a size.
+        static SKRect Source(UIImage image)
+        {
+            return SKRect.Create(image.XOffset, image.YOffset, image.Width, image.Height);
+        }
+
+        static SKRect Source(UIImage image, in Rectangle srcRectangle)
+        {
+            return SKRect.Create(srcRectangle.X + image.XOffset, srcRectangle.Y + image.YOffset, srcRectangle.Width,
+                srcRectangle.Height);
+        }
+
+        // Drawn at a position: at the logical size (pixels divided by the image's density), times any scale.
+        static SKRect At(UIImage image, float x, float y, float width, float height, float scale)
+        {
+            return SKRect.Create((int)x, (int)y, (width / image.Density) * scale, (height / image.Density) * scale);
+        }
+
+        static SKRect Into(in RectF destRectangle)
+        {
+            return new SKRect((int)destRectangle.X, (int)destRectangle.Y, (int)destRectangle.Right,
+                (int)destRectangle.Bottom);
+        }
+
         public void DrawImage(UIImage image, float x, float y)
         {
-            Canvas.DrawBitmap(image.Bitmap, new SKRect(image.XOffset, image.YOffset, image.Width, image.Height), new SKRect((int)x, (int)y, (int)x + image.LogicalWidth, (int)y + image.LogicalHeight));
+            Canvas.DrawBitmap(image.Bitmap, Source(image), At(image, x, y, image.Width, image.Height, 1));
         }
 
         public void DrawImage(UIImage image, float x, float y, in UIColor color)
         {
-            Canvas.DrawBitmap(image.Bitmap, new SKRect(image.XOffset, image.YOffset, image.Width, image.Height), new SKRect((int)x, (int)y, (int)x + image.LogicalWidth, (int)y + image.LogicalHeight), TintPaint(color));
+            Canvas.DrawBitmap(image.Bitmap, Source(image), At(image, x, y, image.Width, image.Height, 1),
+                TintPaint(color));
         }
 
         public void DrawImage(UIImage image, float x, float y, in UIColor color, float scale)
         {
-            Canvas.DrawBitmap(image.Bitmap, new SKRect(image.XOffset, image.YOffset, image.Width, image.Height), new SKRect((int)x, (int)y, (int)x + image.LogicalWidth, (int)y + image.LogicalHeight), TintPaint(color));
+            Canvas.DrawBitmap(image.Bitmap, Source(image), At(image, x, y, image.Width, image.Height, scale),
+                TintPaint(color));
         }
 
         public void DrawImage(UIImage image, float x, float y, in Rectangle srcRectangle)
         {
-            Canvas.DrawBitmap(image.Bitmap, new SKRect(srcRectangle.X + image.XOffset, srcRectangle.Y + image.YOffset, srcRectangle.Right, srcRectangle.Bottom), new SKRect((int)x, (int)y, (int)x + image.LogicalWidth, (int)y + image.LogicalHeight));
+            Canvas.DrawBitmap(image.Bitmap, Source(image, srcRectangle),
+                At(image, x, y, srcRectangle.Width, srcRectangle.Height, 1));
         }
 
         public void DrawImage(UIImage image, float x, float y, in Rectangle srcRectangle, in UIColor color, float scale)
         {
-            Canvas.DrawBitmap(image.Bitmap, new SKRect(srcRectangle.X + image.XOffset, srcRectangle.Y + image.YOffset, srcRectangle.Right, srcRectangle.Bottom), new SKRect((int)x, (int)y, (int)x + image.LogicalWidth, (int)y + image.LogicalHeight), TintPaint(color));
+            Canvas.DrawBitmap(image.Bitmap, Source(image, srcRectangle),
+                At(image, x, y, srcRectangle.Width, srcRectangle.Height, scale), TintPaint(color));
         }
 
         public void DrawImage(UIImage image, in Rectangle srcRectangle, in RectF destRectangle)
         {
-            Canvas.DrawBitmap(image.Bitmap, new SKRect(srcRectangle.X + image.XOffset, srcRectangle.Y + image.YOffset, srcRectangle.Right, srcRectangle.Bottom), new SKRect((int)destRectangle.X, (int)destRectangle.Y, (int)destRectangle.Right, (int)destRectangle.Bottom));
+            Canvas.DrawBitmap(image.Bitmap, Source(image, srcRectangle), Into(destRectangle));
         }
 
         public void DrawImage(UIImage image, in Rectangle srcRectangle, in RectF destRectangle, in UIColor color)
         {
-            Canvas.DrawBitmap(image.Bitmap, new SKRect(srcRectangle.X + image.XOffset, srcRectangle.Y + image.YOffset, srcRectangle.Right, srcRectangle.Bottom),
-                new SKRect((int)destRectangle.X, (int)destRectangle.Y, (int)destRectangle.Right, (int)destRectangle.Bottom), TintPaint(color));
+            Canvas.DrawBitmap(image.Bitmap, Source(image, srcRectangle), Into(destRectangle), TintPaint(color));
         }
 
         public void DrawImage(UIImage image, float x, float y, in UIColor color, float rotation, in Vector2 origin, float scale)

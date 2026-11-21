@@ -366,6 +366,16 @@ namespace UILayout
 
         }
 
+        /// <summary>
+        /// The mouse wheel turned while the mouse is over the element (or an element inside it that didn't use the
+        /// wheel). Delta: 120 per notch, positive away from the user. Returns whether the element used it; if not, the
+        /// element containing it is asked next.
+        /// </summary>
+        public virtual bool HandleMouseWheel(int delta)
+        {
+            return false;
+        }
+
         public void BeginDrag(int touchID, object obj)
         {
             BeginDrag(touchID, obj, Layout.Current.DefaultDragImage);

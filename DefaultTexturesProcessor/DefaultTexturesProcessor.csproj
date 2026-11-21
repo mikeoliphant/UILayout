@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--
+		Renders UILayout's default textures (UILayout.DefaultTextures/SrcTextures) and fonts (Inter) into a sheet and
+		manifest in UILayout.DefaultTextures/Textures, which the backends embed. An offline tool: run it by hand after
+		changing a source image or Program.cs, and commit the output.
+	-->
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ImageSheetProcessor\ImageSheetProcessor.csproj" />
+	</ItemGroup>
+
+</Project>

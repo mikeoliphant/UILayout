@@ -48,6 +48,9 @@ namespace UILayout
         public bool UseEmbeddedResources { get; set; } = true;
 
         public UIFont DefaultFont { get; set; }
+
+        /// <summary>A smaller font, for labels, captions and values that pop in over controls.</summary>
+        public UIFont DefaultSmallFont { get; set; }
         public UIColor DefaultForegroundColor { get; set; } = UIColor.Black;
 
         public UIImage DefaultOutlineNinePatch { get; set; }
@@ -98,7 +101,8 @@ namespace UILayout
         float dragImageYOffset = 0;
         Vector2 dragImagePosition;
 
-        Dictionary<int, UIElement> touchCapture = new Dictionary<int, UIElement>();
+        // Sized up front, so the first capture doesn't allocate during a frame
+        Dictionary<int, UIElement> touchCapture = new Dictionary<int, UIElement>(4);
 
         public UIElement ActiveUIElement
         {
@@ -124,7 +128,8 @@ namespace UILayout
         List<UIElement> popupStack = new List<UIElement>();
 
         // The elements under the mouse, from the active element (the top popup, or the root) down to the deepest.
-        List<UIElement> mouseOverPath = new List<UIElement>();
+        // Sized up front for deep element trees, so hovering doesn't grow it during a frame
+        List<UIElement> mouseOverPath = new List<UIElement>(32);
 
         public Layout()
         {
@@ -173,6 +178,11 @@ namespace UILayout
         public UIFont GetFont(string name)
         {
             return fonts[name];
+        }
+
+        public bool TryGetFont(string name, out UIFont font)
+        {
+            return fonts.TryGetValue(name, out font);
         }
 
         public virtual void SetBounds(in RectF bounds)
@@ -235,6 +245,19 @@ namespace UILayout
             UIElement activeElement = ActiveUIElement;
 
             UpdateMouseOver(activeElement);
+
+            // The mouse wheel goes to the element under the mouse, then up through the elements containing it until
+            // one uses it
+            int wheel = InputIsActive ? InputManager.MouseWheelDelta : 0;
+
+            if (wheel != 0)
+            {
+                for (int i = mouseOverPath.Count - 1; i >= 0; i--)
+                {
+                    if (mouseOverPath[i].HandleMouseWheel(wheel))
+                        break;
+                }
+            }
 
             if (activeElement != null)
                 activeElement.HandleInput(InputManager);

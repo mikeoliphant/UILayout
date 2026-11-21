@@ -42,17 +42,20 @@ namespace UILayout
             return new Touch { TouchID = touchLocation.Id, Position = new Vector2(touchLocation.Position.X, touchLocation.Position.Y) / (Layout.Current as MonoGameLayout).TotalScale, TouchState = touchState };
         }
 
-        internal bool IsKeyDown(InputKey key)
+        /// <summary>Whether the key is down (for example a modifier held during a drag).</summary>
+        public bool IsKeyDown(InputKey key)
         {
             return currentState.IsKeyDown((Keys)key);
         }
 
-        internal bool WasPressed(InputKey key)
+        /// <summary>Whether the key went down since the last update.</summary>
+        public bool WasPressed(InputKey key)
         {
             return currentState.IsKeyDown((Keys)key) && !lastState.IsKeyDown((Keys)key);
         }
 
-        internal bool WasReleased(InputKey key)
+        /// <summary>Whether the key went up since the last update.</summary>
+        public bool WasReleased(InputKey key)
         {
             return !currentState.IsKeyDown((Keys)key) && lastState.IsKeyDown((Keys)key);
         }
@@ -63,8 +66,9 @@ namespace UILayout
             currentState = GetKeyboardState();
         }
 
-        // This frame's touches, refilled by GetTouches: a list, so that going through them doesn't allocate.
-        List<Touch> touches = new List<Touch>();
+        // This frame's touches, refilled by GetTouches: a list, so that going through them doesn't allocate (sized up
+        // front, so the first touches don't grow it during a frame).
+        List<Touch> touches = new List<Touch>(16);
 
         /// <summary>
         /// This frame's touches, with the mouse as a touch. Call once per update: it moves the mouse state on. The list
