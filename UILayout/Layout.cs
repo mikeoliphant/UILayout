@@ -105,6 +105,9 @@ namespace UILayout
 
         List<UIElement> popupStack = new List<UIElement>();
 
+        // The elements under the mouse, from the active element (the top popup, or the root) down to the deepest.
+        List<UIElement> mouseOverPath = new List<UIElement>();
+
         public Layout()
         {
             Layout.Current = this;
@@ -213,8 +216,70 @@ namespace UILayout
 
             UIElement activeElement = ActiveUIElement;
 
+            UpdateMouseOver(activeElement);
+
             if (activeElement != null)
                 activeElement.HandleInput(InputManager);
+        }
+
+        /// <summary>The deepest visible element under the mouse, or null (the mouse is outside the layout, or over
+        /// nothing). Only elements of the active element count: while a popup is open, what's under it isn't under the
+        /// mouse.</summary>
+        public UIElement MouseOverElement => (mouseOverPath.Count > 0) ? mouseOverPath[mouseOverPath.Count - 1] : null;
+
+        /// <summary>Whether the mouse is over the element: the element is under the mouse, or contains the element that
+        /// is (as CSS :hover). Updated once per <see cref="Update"/>.</summary>
+        public bool IsMouseOver(UIElement element)
+        {
+            for (int i = 0; i < mouseOverPath.Count; i++)
+            {
+                if (mouseOverPath[i] == element)
+                    return true;
+            }
+
+            return false;
+        }
+
+        // Finds the elements under the mouse, as touches find the element they go to: the last visible child (drawn on
+        // top) whose bounds contain the point, down through lists and wrappers.
+        void UpdateMouseOver(UIElement activeElement)
+        {
+            mouseOverPath.Clear();
+
+            Vector2 position = InputManager.MousePosition;
+
+            if ((activeElement == null) || !Bounds.Contains(position))
+                return;
+
+            UIElement element = activeElement;
+
+            while ((element != null) && element.Visible && element.LayoutBounds.Contains(position))
+            {
+                mouseOverPath.Add(element);
+
+                UIElement next = null;
+
+                if (element is UIElementWrapper wrapper)
+                {
+                    next = wrapper.Child;
+                }
+                else if (element is ListUIElement list)
+                {
+                    for (int i = list.Children.Count - 1; i >= 0; i--)
+                    {
+                        UIElement child = list.Children[i];
+
+                        if (child.Visible && child.LayoutBounds.Contains(position))
+                        {
+                            next = child;
+
+                            break;
+                        }
+                    }
+                }
+
+                element = next;
+            }
         }
 
         public virtual void Draw(UIElement startElement)

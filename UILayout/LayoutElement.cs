@@ -89,6 +89,19 @@ namespace UILayout
             set { children = value; }
         }
 
+        /// <summary>Whether a visible child follows the one at <paramref name="index"/>: spacing goes only between
+        /// visible children, so hidden ones at the end leave no gap.</summary>
+        protected bool HasVisibleChildAfter(int index)
+        {
+            for (int i = index + 1; i < children.Count; i++)
+            {
+                if (children[i].Visible)
+                    return true;
+            }
+
+            return false;
+        }
+
         protected override void DrawContents()
         {
             if (!Visible)
@@ -237,7 +250,7 @@ namespace UILayout
 
                 height += childHeight;
 
-                if (i < (children.Count - 1))
+                if (HasVisibleChildAfter(i))
                 {
                     height += ChildSpacing;
                 }
@@ -266,7 +279,7 @@ namespace UILayout
 
                 neededHeight += childHeight;
 
-                if (i < (children.Count - 1))
+                if (HasVisibleChildAfter(i))
                 {
                     neededHeight += ChildSpacing;
                 }
@@ -314,7 +327,7 @@ namespace UILayout
                         yOffset += childHeight;
                     }
 
-                    if (i < (children.Count - 1))
+                    if (HasVisibleChildAfter(i))
                     {
                         yOffset += ChildSpacing;
                     }
@@ -347,7 +360,7 @@ namespace UILayout
 
                 width += childWidth;
 
-                if (i < (children.Count - 1))
+                if (HasVisibleChildAfter(i))
                 {
                     width += ChildSpacing;
                 }
@@ -376,7 +389,7 @@ namespace UILayout
 
                 neededWidth += childWidth;
 
-                if (i < (children.Count - 1))
+                if (HasVisibleChildAfter(i))
                 {
                     neededWidth += ChildSpacing;
                 }
@@ -425,7 +438,7 @@ namespace UILayout
                     }
                 }
 
-                if (i < (children.Count - 1))
+                if (HasVisibleChildAfter(i))
                 {
                     xOffset += ChildSpacing;
                 }

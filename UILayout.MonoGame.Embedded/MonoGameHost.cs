@@ -248,6 +248,16 @@ namespace UILayout
         /// <summary>delta in wheel units: 120 per notch, positive away from the user.</summary>
         public void MouseWheel(int delta) => wheel += delta;
 
+        /// <summary>The mouse left the window: nothing in the layout is under it until it moves back in. Ignored
+        /// while a button is down (a drag goes on outside the window).</summary>
+        public void MouseLeave()
+        {
+            if (!leftDown && !rightDown && !middleDown)
+                MouseMove(OutsideWindow, OutsideWindow);
+        }
+
+        const int OutsideWindow = -100000;
+
         public void Key(Keys key, bool down)
         {
             int k = (int)key;

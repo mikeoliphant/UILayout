@@ -79,6 +79,10 @@ namespace UILayout
         internal RectF contentBounds;
 
         public bool Visible { get; set; } = true;
+
+        /// <summary>Whether the mouse is over this element (or an element inside it), for hover highlights. Updated
+        /// once per layout update; false while a popup this element isn't part of is open.</summary>
+        public bool IsMouseOver => Layout.Current.IsMouseOver(this);
         public UIColor BackgroundColor { get; set; }
         public LayoutPadding Margin { get; set; }
         public LayoutPadding Padding { get; set; }
