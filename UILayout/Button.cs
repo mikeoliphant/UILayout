@@ -10,8 +10,15 @@ namespace UILayout
         public bool IsToggleButton { get; set; }
         public bool IsPressed { get; private set; }
 
+        /// <summary>
+        /// Whether a (non-toggle) button clicks when released outside itself. Off by default, as in most toolkits: a
+        /// press shows as pressed only while it's over the button, and clicks only when released over it.
+        /// </summary>
+        public bool ClickWhenReleasedOutside { get; set; } = false;
+
         UIElement pressedElement;
         UIElement unpressedElement;
+        bool trackingPress = false;
 
         public UIElement PressedElement
         {
@@ -58,6 +65,16 @@ namespace UILayout
             Child = IsPressed ? pressedElement : unpressedElement;
 
             UpdateContentLayout();
+
+            StateChanged();
+        }
+
+        /// <summary>
+        /// Called when <see cref="IsPressed"/> changes. A button whose pressed and unpressed elements are the same one
+        /// can restyle it here instead.
+        /// </summary>
+        protected virtual void StateChanged()
+        {
         }
 
         protected override void GetContentSize(out float width, out float height)
@@ -97,6 +114,8 @@ namespace UILayout
                         {
                             CaptureTouch(touch);
 
+                            trackingPress = true;
+
                             Toggle();
 
                             if (PressAction != null)
@@ -104,18 +123,37 @@ namespace UILayout
                         }
                     }
                     break;
+                case ETouchState.Moved:
+                case ETouchState.Held:
+                    // Pressed only while over the button.
+                    if (trackingPress && !ClickWhenReleasedOutside)
+                        SetPressed(LayoutBounds.Contains(touch.Position));
+                    break;
                 case ETouchState.Released:
                     if (!IsToggleButton)
                     {
                         ReleaseTouch();
 
+                        bool click = trackingPress && (ClickWhenReleasedOutside || LayoutBounds.Contains(touch.Position));
+
+                        trackingPress = false;
+
                         if (IsPressed)
-                        {
                             Toggle();
 
-                            if (ClickAction != null)
-                                ClickAction();
-                        }
+                        if (click && (ClickAction != null))
+                            ClickAction();
+                    }
+                    break;
+                case ETouchState.Invalid:
+                    // The press was lost: no click.
+                    if (trackingPress)
+                    {
+                        ReleaseTouch();
+
+                        trackingPress = false;
+
+                        SetPressed(false);
                     }
                     break;
             }
@@ -347,6 +385,98 @@ namespace UILayout
             SetElements(pressedImageElement, unpressedImageElement);
 
             IsToggleButton = true;
+        }
+    }
+
+    /// <summary>
+    /// A button drawn in the input style: one <see cref="InputFrame"/> with the text, used as both its pressed and
+    /// unpressed element. Its states only change the frame's colors: the fill takes the theme's active color while
+    /// pressed (or toggled on), the border the accent color when the mouse is over it. A primary button (a dialog's
+    /// default, such as OK) always has the accent border.
+    /// </summary>
+    public class FrameButton : Button
+    {
+        const float TextMarginX = 9;
+
+        InputFrame frame;
+        TextBlock textBlock;
+        bool primary;
+
+        public FrameButton()
+            : this("", null)
+        {
+        }
+
+        public FrameButton(string text, Action clickAction)
+        {
+            textBlock = new TextBlock
+            {
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+                Margin = new LayoutPadding(TextMarginX, 0),
+                TextColor = Layout.Current.Theme.Text
+            };
+
+            frame = new InputFrame(textBlock);
+
+            PressedElement = frame;
+            UnpressedElement = frame;
+
+            Text = text;
+            ClickAction = clickAction;
+
+            HorizontalAlignment = EHorizontalAlignment.Left;
+            VerticalAlignment = EVerticalAlignment.Center;
+
+            UpdateColors();
+        }
+
+        public string Text
+        {
+            get { return textBlock.Text; }
+
+            set
+            {
+                textBlock.Text = value;
+
+                UpdateContentLayout();
+            }
+        }
+
+        /// <summary>A dialog's default button: always the accent border.</summary>
+        public bool Primary
+        {
+            get { return primary; }
+
+            set
+            {
+                primary = value;
+
+                UpdateColors();
+            }
+        }
+
+        protected override void StateChanged()
+        {
+            base.StateChanged();
+
+            UpdateColors();
+        }
+
+        public override void HandleInput(InputManager inputManager)
+        {
+            base.HandleInput(inputManager);
+
+            // The mouse moving over it or off it.
+            UpdateColors();
+        }
+
+        void UpdateColors()
+        {
+            UITheme theme = Layout.Current.Theme;
+
+            frame.FillColor = IsPressed ? theme.Active : theme.Surface;
+            frame.BorderColor = (IsMouseOver || primary) ? theme.Accent : theme.Border;
         }
     }
 }

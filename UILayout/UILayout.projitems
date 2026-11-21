@@ -19,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImageElement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImageManifest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InputFrame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InputDialog.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InputManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LayoutElement.cs" />
@@ -27,6 +28,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)RectF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScrollBar.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Slider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Section.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SpriteFont.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SwipeList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TabPanel.cs" />

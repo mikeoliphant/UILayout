@@ -133,4 +133,81 @@ namespace UILayout
             Layout.Current.GraphicsContext.DrawText(StringBuilder, TextFont, ContentBounds.X, ContentBounds.Y, TextColor);
         }
     }
+
+    /// <summary>
+    /// Text that's cut short with "..." when it doesn't fit its width. Its size is the whole text's, so layout gives it
+    /// the room it wants when there is some; it draws the shortened text when there isn't. Give it a stretched alignment
+    /// to be cut to the room available.
+    /// </summary>
+    public class FittedTextBlock : UIElement
+    {
+        string text = "";
+        string fitted = "";
+        float fittedWidth = -1;
+
+        public FittedTextBlock()
+        {
+            TextColor = Layout.Current.Theme.Text;
+            TextFont = Layout.Current.DefaultFont;
+        }
+
+        public string Text
+        {
+            get { return text; }
+
+            set
+            {
+                if (value == text)
+                    return;
+
+                text = value ?? "";
+                fittedWidth = -1;
+            }
+        }
+
+        public UIColor TextColor { get; set; }
+
+        public UIFont TextFont { get; set; }
+
+        protected override void GetContentSize(out float width, out float height)
+        {
+            TextFont.MeasureString(text, out width, out _);
+
+            height = TextFont.TextHeight;
+        }
+
+        protected override void DrawContents()
+        {
+            base.DrawContents();
+
+            if (ContentBounds.Width != fittedWidth)
+            {
+                fittedWidth = ContentBounds.Width;
+                fitted = Fit(text, fittedWidth);
+            }
+
+            Layout.Current.GraphicsContext.DrawText(fitted, TextFont, ContentBounds.X, ContentBounds.Y, TextColor);
+        }
+
+        // The text, cut with "..." to fit the width.
+        string Fit(string full, float width)
+        {
+            TextFont.MeasureString(full, out float fullWidth, out _);
+
+            if (fullWidth <= width)
+                return full;
+
+            for (int length = full.Length - 1; length > 0; length--)
+            {
+                string cut = full.Substring(0, length) + "...";
+
+                TextFont.MeasureString(cut, out float cutWidth, out _);
+
+                if (cutWidth <= width)
+                    return cut;
+            }
+
+            return "";
+        }
+    }
 }
