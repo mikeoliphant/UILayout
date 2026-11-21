@@ -97,6 +97,9 @@ namespace UILayout
 
         public SwipeList()
         {
+            // Items scrolled partly out of view are cut at the edges.
+            ClipToBounds = true;
+
             TextColor = UIColor.White;
 
             ItemXOffset = 10;

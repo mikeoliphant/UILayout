@@ -80,6 +80,10 @@ namespace UILayout
 
         public bool Visible { get; set; } = true;
 
+        /// <summary>Whether what the element draws inside it is cut to its content bounds: for elements that draw
+        /// more than fits, such as a scrolling list's partly visible items. Its background isn't affected.</summary>
+        public bool ClipToBounds { get; set; }
+
         /// <summary>Whether the mouse is over this element (or an element inside it), for hover highlights. Updated
         /// once per layout update; false while a popup this element isn't part of is open.</summary>
         public bool IsMouseOver => Layout.Current.IsMouseOver(this);
@@ -419,7 +423,20 @@ namespace UILayout
                 Layout.Current.GraphicsContext.DrawRectangle(LayoutBounds, BackgroundColor);
             }
 
+            if (!ClipToBounds)
+            {
+                DrawContents();
+
+                return;
+            }
+
+            GraphicsContext2D graphicsContext = Layout.Current.GraphicsContext;
+
+            graphicsContext.PushClip(ContentBounds);
+
             DrawContents();
+
+            graphicsContext.PopClip();
         }
 
         protected virtual void DrawContents()

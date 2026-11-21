@@ -49,6 +49,31 @@ namespace UILayout
 
         public void BeginDraw()
         {
+            clipDepth = 0;
+        }
+
+        // Clip rectangles pushed: the canvas's own clipping, saved and restored.
+        int clipDepth;
+
+        /// <summary>
+        /// Cuts what is drawn from now on to the rectangle (within the current clip), until <see cref="PopClip"/>.
+        /// </summary>
+        public void PushClip(in RectF rectangle)
+        {
+            Canvas.Save();
+            Canvas.ClipRect(new SKRect(rectangle.X, rectangle.Y, rectangle.Right, rectangle.Bottom));
+
+            clipDepth++;
+        }
+
+        public void PopClip()
+        {
+            if (clipDepth == 0)
+                return;
+
+            Canvas.Restore();
+
+            clipDepth--;
         }
 
         public void EndDraw()
