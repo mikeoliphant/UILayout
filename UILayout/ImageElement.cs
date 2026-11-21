@@ -28,13 +28,13 @@ namespace UILayout
             {
                 if (SourceRectangle.HasValue)
                 {
-                    width = SourceRectangle.Value.Width;
-                    height = SourceRectangle.Value.Height;
+                    width = SourceRectangle.Value.Width / Image.Density;
+                    height = SourceRectangle.Value.Height / Image.Density;
                 }
                 else
                 {
-                    width = Image.Width;
-                    height = Image.Height;
+                    width = Image.LogicalWidth;
+                    height = Image.LogicalHeight;
                 }
             }
         }
@@ -77,8 +77,8 @@ namespace UILayout
 
             if (Image != null)
             {
-                width = Image.Width;
-                height = Image.Height;
+                width = Image.LogicalWidth;
+                height = Image.LogicalHeight;
             }
         }
 
@@ -102,7 +102,8 @@ namespace UILayout
             {
                 image = value;
 
-                Padding = new LayoutPadding((image.Width / 2) - 1, (image.Height / 2) - 1);
+                Padding = new LayoutPadding(((image.Width / 2) - 1) / image.Density,
+                    ((image.Height / 2) - 1) / image.Density);
                 UpdateNintePatch();
             }
         }
@@ -113,8 +114,8 @@ namespace UILayout
 
         int[] imageWidths = new int[3];
         int[] imageHeights = new int[3];
-        int[] destWidths = new int[3];
-        int[] destHeights = new int[3];
+        float[] destWidths = new float[3];
+        float[] destHeights = new float[3];
 
         public NinePatchWrapper()
         {
@@ -144,10 +145,11 @@ namespace UILayout
                 imageHeights[0] = imageHeights[2] = (image.Height / 2) - 1;
                 imageHeights[1] = 2;
 
-                destWidths[0] = destWidths[2] = imageWidths[0];
+                // Corners at the image's density; the middle takes the rest
+                destWidths[0] = destWidths[2] = imageWidths[0] / image.Density;
                 destWidths[1] = (int)(layoutBounds.Width - (destWidths[0] + destWidths[2]));
 
-                destHeights[0] = destHeights[2] = imageHeights[0];
+                destHeights[0] = destHeights[2] = imageHeights[0] / image.Density;
                 destHeights[1] = (int)(layoutBounds.Height - (destHeights[0] + destHeights[2]));
             }
         }
@@ -157,7 +159,7 @@ namespace UILayout
             if (Image != null)
             {
                 int srcOffsetY = 0;
-                int destOffsetY = (int)layoutBounds.Y;
+                float destOffsetY = (int)layoutBounds.Y;
 
                 for (int y = 0; y < 3; y++)
                 {

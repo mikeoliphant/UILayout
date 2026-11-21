@@ -33,7 +33,7 @@ namespace UILayout
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
                 VerticalAlignment = EVerticalAlignment.Stretch,
-                Padding = new LayoutPadding(gutter.Image.Width / 2)
+                Padding = new LayoutPadding(gutter.Image.LogicalWidth / 2)
             };
 
 

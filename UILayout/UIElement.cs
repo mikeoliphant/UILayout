@@ -373,7 +373,7 @@ namespace UILayout
 
         public void BeginDrag(int touchID, object obj, UIImage image)
         {
-            BeginDrag(touchID, obj, image, -image.Width / 2, -image.Height / 2);
+            BeginDrag(touchID, obj, image, -image.LogicalWidth / 2, -image.LogicalHeight / 2);
         }
 
         public void BeginDrag(int touchID, object obj, UIImage image, float imageXOffset, float imageYOffset)

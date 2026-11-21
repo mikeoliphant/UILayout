@@ -35,11 +35,11 @@ namespace UILayout
         {
             if (isHorizontal)
             {
-                levelImageElement.Padding = new LayoutPadding((ContentBounds.Width * currentLevel) - (float)Math.Ceiling((levelImage.Width) / 2f), 0);
+                levelImageElement.Padding = new LayoutPadding((ContentBounds.Width * currentLevel) - (float)Math.Ceiling(levelImage.LogicalWidth / 2f), 0);
             }
             else
             {
-                levelImageElement.Padding = new LayoutPadding(0, (ContentBounds.Height * currentLevel) - (float)Math.Ceiling((levelImage.Height) / 2f));
+                levelImageElement.Padding = new LayoutPadding(0, (ContentBounds.Height * currentLevel) - (float)Math.Ceiling(levelImage.LogicalHeight / 2f));
             }
 
             base.UpdateContentLayout();
@@ -143,14 +143,14 @@ namespace UILayout
         public HorizontalSlider(string sliderImageName)
             : base(sliderImageName, isHorizontal: true)
         {
-            Padding = new LayoutPadding(levelImage.Width / 2f, 0);
+            Padding = new LayoutPadding(levelImage.LogicalWidth / 2f, 0);
 
             Children.Insert(0, new UIElement
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
                 VerticalAlignment = EVerticalAlignment.Center,
                 BackgroundColor = UIColor.Black,
-                DesiredHeight = levelImage.Height * 0.25f
+                DesiredHeight = levelImage.LogicalHeight * 0.25f
             });
         }
 
@@ -168,7 +168,7 @@ namespace UILayout
         public VerticalSlider(string sliderImageName)
             : base(sliderImageName, isHorizontal: false)
         {
-            Padding = new LayoutPadding(0, levelImage.Height / 2f);
+            Padding = new LayoutPadding(0, levelImage.LogicalHeight / 2f);
 
             levelImageElement.HorizontalAlignment = EHorizontalAlignment.Center;
 
@@ -177,7 +177,7 @@ namespace UILayout
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Stretch,
                 BackgroundColor = UIColor.Black,
-                DesiredWidth = levelImage.Width * 0.25f
+                DesiredWidth = levelImage.LogicalWidth * 0.25f
             });
         }
 

@@ -36,6 +36,7 @@ namespace UILayout
         public UIImage(UIImage baseImage)
         {
             Texture = baseImage.Texture;
+            Density = baseImage.Density;
         }
 
         public UIColor[] GetData()

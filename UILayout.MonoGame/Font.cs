@@ -17,7 +17,7 @@ namespace UILayout
 
         public float TextHeight
         {
-            get { return SpriteFont.LineHeight; }
+            get { return SpriteFont.LineHeight / SpriteFont.FontImage.Density; }
         }
 
         public bool HasGlyph(char c)

@@ -423,7 +423,8 @@ namespace UILayout
 
         void UpdateDragDirty()
         {
-            AddDirtyRect(new RectF(dragImagePosition.X + dragImageXOffset, dragImagePosition.Y + dragImageYOffset, dragImage.Width, dragImage.Height));
+            AddDirtyRect(new RectF(dragImagePosition.X + dragImageXOffset, dragImagePosition.Y + dragImageYOffset,
+                dragImage.LogicalWidth, dragImage.LogicalHeight));
         }
 
         internal bool CaptureTouch(int touchID, UIElement captureElement)

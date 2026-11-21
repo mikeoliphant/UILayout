@@ -42,7 +42,7 @@ namespace UILayout
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
                 VerticalAlignment = EVerticalAlignment.Center,
-                Margin = new LayoutPadding(TextMarginX, 0, TextMarginX + ArrowGap + arrow.Image.Width, 0)
+                Margin = new LayoutPadding(TextMarginX, 0, TextMarginX + ArrowGap + arrow.Image.LogicalWidth, 0)
             };
 
             Dock content = new Dock();
@@ -270,7 +270,7 @@ namespace UILayout
                     float track = Shown * rowHeight;
 
                     // No shorter than the thumb image's corners.
-                    thumb.DesiredHeight = Math.Max(thumb.Image.Height, track * Shown / owner.items.Count);
+                    thumb.DesiredHeight = Math.Max(thumb.Image.LogicalHeight, track * Shown / owner.items.Count);
                     thumb.Margin = new LayoutPadding(0, track * top / owner.items.Count, 1, 0);
                 }
 

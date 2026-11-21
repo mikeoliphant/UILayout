@@ -192,35 +192,41 @@ namespace UILayout
                 srcRectangle.Height);
         }
 
+        // Drawn at a position: at the image's logical size (its pixels divided by its density), times any scale.
+
         public void DrawImage(UIImage image, float x, float y)
         {
-            DrawAt(image.Texture, x, y, Source(image), Color.White, 1, Vector2.Zero);
+            DrawAt(image.Texture, x, y, Source(image), Color.White, 1 / image.Density, Vector2.Zero);
         }
 
         public void DrawImage(UIImage image, float x, float y, in UIColor color)
         {
-            DrawAt(image.Texture, x, y, Source(image), color.NativeColor, 1, Vector2.Zero);
+            DrawAt(image.Texture, x, y, Source(image), color.NativeColor, 1 / image.Density, Vector2.Zero);
         }
 
         public void DrawImage(UIImage image, float x, float y, in UIColor color, float scale)
         {
-            DrawAt(image.Texture, x, y, Source(image), color.NativeColor, scale, Vector2.One);
+            DrawAt(image.Texture, x, y, Source(image), color.NativeColor, scale / image.Density,
+                Vector2.One);
         }
 
         public void DrawImage(UIImage image, float x, float y, in System.Drawing.Rectangle srcRectangle)
         {
-            DrawAt(image.Texture, x, y, Source(image, srcRectangle), Color.White, 1, Vector2.Zero);
+            DrawAt(image.Texture, x, y, Source(image, srcRectangle), Color.White, 1 / image.Density,
+                Vector2.Zero);
         }
 
         public void DrawImage(UIImage image, float x, float y, in System.Drawing.Rectangle srcRectangle, in UIColor color)
         {
-            DrawAt(image.Texture, x, y, Source(image, srcRectangle), color.NativeColor, 1, Vector2.Zero);
+            DrawAt(image.Texture, x, y, Source(image, srcRectangle), color.NativeColor, 1 / image.Density,
+                Vector2.Zero);
         }
 
         public void DrawImage(UIImage image, float x, float y, in System.Drawing.Rectangle srcRectangle, in UIColor color,
             float scale)
         {
-            DrawAt(image.Texture, x, y, Source(image, srcRectangle), color.NativeColor, scale, Vector2.One);
+            DrawAt(image.Texture, x, y, Source(image, srcRectangle), color.NativeColor, scale / image.Density,
+                Vector2.One);
         }
 
         public void DrawImage(UIImage image, in System.Drawing.Rectangle srcRectangle, in RectF destRectangle)
@@ -238,7 +244,7 @@ namespace UILayout
             in System.Numerics.Vector2 origin, float scale)
         {
             spriteBatch.Draw(image.Texture, new Vector2(x, y), Source(image), color.NativeColor, rotation,
-                new Vector2(origin.X, origin.Y), scale, SpriteEffects.None, 0);
+                new Vector2(origin.X, origin.Y), scale / image.Density, SpriteEffects.None, 0);
         }
 
         public void DrawRectangle(in RectF rectangle, in UIColor color)

@@ -223,6 +223,9 @@ namespace UILayout
 
         public (float Width, float Height, float XOffset, char LastChar) MeasureString(ReadOnlySpan<char> str, float scale, float width = 0, float height = 0, float xOffset = 0, char lastChar = '\0')
         {
+            // The font's metrics are in its image's pixels
+            scale /= fontImage.Density;
+
             float rowWidth = xOffset;
 
             for (int i = 0; i < str.Length; i++)
@@ -302,6 +305,9 @@ namespace UILayout
             float xOffset = x;
             float yOffset = y;
 
+            // The font's metrics are in its image's pixels (the image is drawn at its density)
+            float pixelScale = scale / fontImage.Density;
+
             System.Drawing.Rectangle drawRect = System.Drawing.Rectangle.Empty;
 
             for (int i = 0; i < str.Length; i++)
@@ -310,7 +316,7 @@ namespace UILayout
 
                 if (c == '\n')
                 {
-                    yOffset += (((x == xOffset) ? EmptyLineHeight : LineHeight) + LineSpacing) * scale;
+                    yOffset += (((x == xOffset) ? EmptyLineHeight : LineHeight) + LineSpacing) * pixelScale;
                     xOffset = x;
 
                     lastChar = '\0';
@@ -335,12 +341,12 @@ namespace UILayout
                             spacing += kern;
                         }
 
-                        xOffset += spacing * scale;
+                        xOffset += spacing * pixelScale;
                     }
 
                     graphicsContext.DrawImage(fontImage, (int)xOffset, (int)yOffset, drawRect, color, scale);
 
-                    xOffset += glyph.Width * scale;
+                    xOffset += glyph.Width * pixelScale;
 
                     lastChar = c;
                 }

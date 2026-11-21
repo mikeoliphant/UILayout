@@ -12,6 +12,9 @@ namespace UILayout
         public string SheetName { get; set; }
         public int SheetWidth { get; set; }
         public int SheetHeight { get; set; }
+
+        /// <summary>Pixels per layout unit of the sheet's images (1 in manifests from before densities).</summary>
+        public float Density { get; set; } = 1;
         public List<ImageManifestSheetImage> Images { get; set; } = new List<ImageManifestSheetImage>();
         public List<SpriteFontDefinition> Fonts { get; set; } = new List<SpriteFontDefinition>();
     }
@@ -40,6 +43,7 @@ namespace UILayout
                 UIImage sheetImage = null;
 
                 sheetImage = loader.LoadImage(sheet.SheetName);
+                sheetImage.Density = sheet.Density;
 
                 foreach (ImageManifestSheetImage image in sheet.Images)
                 {
@@ -48,6 +52,7 @@ namespace UILayout
                     uiImage.YOffset = image.YOffset;
                     uiImage.Width = image.Width;
                     uiImage.Height = image.Height;
+                    uiImage.Density = sheet.Density;
 
                     layout.AddImage(image.ImageName, uiImage);
                 }
