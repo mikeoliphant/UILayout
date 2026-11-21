@@ -63,6 +63,13 @@ namespace ImageSheetProcessor
         public bool WriteToDDS { get; set; }
         public UIColor ImageMaskColor { get; set; }
         public string ImageNamePrefix { get; set; }
+
+        /// <summary>
+        /// Make images added with Add or AddSvg white, keeping their alpha, so they can be tinted (icons drawn in
+        /// black, for example).
+        /// </summary>
+        public bool ForceWhite { get; set; }
+
         public bool InSpriteSheet
         {
             get { return imageSheetGroupName != null; }
@@ -412,9 +419,26 @@ namespace ImageSheetProcessor
             }
         }
 
+        public void ToWhite(ProcImage srcBitmap)
+        {
+            for (int x = 0; x < srcBitmap.ImageWidth; x++)
+            {
+                for (int y = 0; y < srcBitmap.ImageHeight; y++)
+                {
+                    UIColor color = srcBitmap.GetPixel(x, y);
+
+                    srcBitmap.SetPixel(x, y, new UIColor((byte)255, (byte)255, (byte)255, color.A));
+                }
+            }
+        }
+
         public void Add(string textureName, ProcImage bitmap)
         {
             string destFile = Path.Combine(DestPath, textureName) + ".png";
+
+            if (ForceWhite)
+                ToWhite(bitmap);
+
             SaveAndManifest(bitmap, destFile);
         }
 
@@ -424,6 +448,9 @@ namespace ImageSheetProcessor
             string destFile = Path.Combine(DestPath, textureName) + ".png";
 
             ProcImage original = new(srcFile);
+
+            if (ForceWhite)
+                ToWhite(original);
 
             SaveAndManifest(original, destFile);
         }
@@ -529,9 +556,17 @@ namespace ImageSheetProcessor
                 size = Size.Round(svg.GetDimensions());
             }
 
-            Bitmap bitmap = svg.Draw((int)size.Value.Width, (int)size.Value.Height);
+            ProcImage image;
 
-            SaveAndManifest(ImageFromBitmap(bitmap), destFile);
+            using (Bitmap bitmap = svg.Draw((int)size.Value.Width, (int)size.Value.Height))
+            {
+                image = ImageFromBitmap(bitmap);
+            }
+
+            if (ForceWhite)
+                ToWhite(image);
+
+            SaveAndManifest(image, destFile);
         }
 
         public void AddFont(string name, string fontPath, float emSize)
@@ -751,6 +786,8 @@ namespace ImageSheetProcessor
                 }
             }
 
+            bitmap.UnlockBits(bitmapData);
+
             return image;
         }
 
@@ -792,7 +829,8 @@ namespace ImageSheetProcessor
 
         public void SaveImage(ProcImage image, string destFile)
         {
-            using (Stream stream = File.OpenWrite(destFile))
+            // File.Create, not File.OpenWrite: a smaller image must not leave the end of the old file behind
+            using (Stream stream = File.Create(destFile))
             {
                 StbImageWriteSharp.ImageWriter writer = new ();
 

@@ -28,7 +28,7 @@ namespace UILayout
 
         public override Stream OpenContentStream(string contentPath)
         {
-            return resourceAssembly.GetManifestResourceStream(resourceNamespace + "." + contentPath.Replace('\\', '.'));
+            return resourceAssembly.GetManifestResourceStream(resourceNamespace + "." + contentPath.Replace('\\', '.').Replace('/', '.'));
         }
 
         public override UIImage LoadImage(string imageName)
