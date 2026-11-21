@@ -34,6 +34,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)TextBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Touch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UIElement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UITheme.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Layout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InputKey.cs" />
   </ItemGroup>

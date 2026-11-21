@@ -29,6 +29,16 @@ namespace UILayout.DefaultTextures
 
             Layout.Current.DefaultDragImage = Layout.Current.AddImage(loader, "ButtonUnpressed");
 
+            Layout.Current.DefaultInputFillNinePatch = Layout.Current.AddImage(loader, "InputFill");
+            Layout.Current.DefaultInputBorderNinePatch = Layout.Current.AddImage(loader, "InputBorder");
+            Layout.Current.DefaultDropDownArrow = Layout.Current.AddImage(loader, "DropDownArrow");
+            Layout.Current.DefaultCheckBoxFill = Layout.Current.AddImage(loader, "CheckBoxFill");
+            Layout.Current.DefaultCheckBoxBorder = Layout.Current.AddImage(loader, "CheckBoxBorder");
+            Layout.Current.DefaultCheckMark = Layout.Current.AddImage(loader, "CheckMark");
+            Layout.Current.DefaultScrollThumbNinePatch = Layout.Current.AddImage(loader, "ScrollThumb");
+            Layout.Current.DefaultMeterBackgroundNinePatch = Layout.Current.AddImage(loader, "MeterBackground");
+            Layout.Current.DefaultMeterBarNinePatch = Layout.Current.AddImage(loader, "MeterBar");
+
             Layout.Current.DefaultForegroundColor = UIColor.White;
 
             using (Stream fontStream = loader.OpenContentStream("Textures.Font.xml"))

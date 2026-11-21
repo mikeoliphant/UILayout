@@ -30,5 +30,14 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\VerticalPointerRight.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\VerticalPointerLeft.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\VerticalSlider.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\InputFill.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\InputBorder.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\DropDownArrow.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\CheckBoxFill.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\CheckBoxBorder.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\CheckMark.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\ScrollThumb.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\MeterBackground.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Textures\MeterBar.png" />
   </ItemGroup>
 </Project>

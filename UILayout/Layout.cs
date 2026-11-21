@@ -55,6 +55,26 @@ namespace UILayout
         public UIImage DefaultUnpressedNinePatch { get; set; }
         public UIImage DefaultDragImage { get; set; }        
 
+        /// <summary>Input boxes: a nine-patch filled with a rounded rectangle, and its outline (both white).</summary>
+        public UIImage DefaultInputFillNinePatch { get; set; }
+        public UIImage DefaultInputBorderNinePatch { get; set; }
+
+        /// <summary>A drop-down's arrow (white).</summary>
+        public UIImage DefaultDropDownArrow { get; set; }
+
+        /// <summary>A check box: a rounded square, filled, its outline, and the check mark (all white).</summary>
+        public UIImage DefaultCheckBoxFill { get; set; }
+        public UIImage DefaultCheckBoxBorder { get; set; }
+        public UIImage DefaultCheckMark { get; set; }
+
+        /// <summary>A list's scroll thumb, and a level meter's background and bar: small rounded nine-patches (white).</summary>
+        public UIImage DefaultScrollThumbNinePatch { get; set; }
+        public UIImage DefaultMeterBackgroundNinePatch { get; set; }
+        public UIImage DefaultMeterBarNinePatch { get; set; }
+
+        /// <summary>Colors for controls drawn in an input style.</summary>
+        public UITheme Theme { get; set; } = new UITheme();
+
         Dictionary<string, UIImage> images = new Dictionary<string, UIImage>();
         Dictionary<string, UIFont> fonts = new Dictionary<string, UIFont>();
 
