@@ -25,9 +25,12 @@ namespace UILayout
         {
         }
 
-        public IEnumerable<Touch> GetTouches()
+        // No touches here (input comes through the WPF control): an empty list, as the MonoGame backend returns a list.
+        List<Touch> touches = new List<Touch>();
+
+        public List<Touch> GetTouches()
         {
-            return Enumerable.Empty<Touch>();
+            return touches;
         }
     }
 }

@@ -63,20 +63,20 @@ namespace UILayout
             currentState = GetKeyboardState();
         }
 
-        public IEnumerable<Touch> GetTouches()
+        // This frame's touches, refilled by GetTouches: a list, so that going through them doesn't allocate.
+        List<Touch> touches = new List<Touch>();
+
+        /// <summary>
+        /// This frame's touches, with the mouse as a touch. Call once per update: it moves the mouse state on. The list
+        /// is reused (refilled by the next call).
+        /// </summary>
+        public List<Touch> GetTouches()
         {
-            TouchCollection touches = GetTouchState();
+            touches.Clear();
 
-            //TouchCount = touches.Count;
-
-            //if (TouchCount > 1)
-            //{
-            //    HandleMultiTouch(userInterface, PixTouch.FromWP7Touch(touches[0]), PixTouch.FromWP7Touch(touches[1]));
-            //}
-
-            foreach (TouchLocation touch in touches)
+            foreach (TouchLocation touch in GetTouchState())
             {
-                yield return FromXNATouch(touch);
+                touches.Add(FromXNATouch(touch));
             }
 
             MouseState mouseState = GetMouseState();
@@ -88,49 +88,23 @@ namespace UILayout
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
                 if (lastMouseState.LeftButton == ButtonState.Released)
-                {
-                    yield return new Touch()
-                    {
-                        Position = position,
-                        TouchState = ETouchState.Pressed
-                    };
-                }
+                    touches.Add(new Touch() { Position = position, TouchState = ETouchState.Pressed });
+                else if (Vector2.Distance(position, lastMousePosition) == 0)
+                    touches.Add(new Touch() { Position = position, TouchState = ETouchState.Held });
                 else
-                {
-                    if (Vector2.Distance(position, lastMousePosition) == 0)
-                    {
-                        yield return new Touch()
-                        {
-                            Position = position,
-                            TouchState = ETouchState.Held
-                        };
-                    }
-                    else
-                    {
-                        yield return new Touch()
-                        {
-                            Position = position,
-                            TouchState = ETouchState.Moved
-                        };
-                    }
-                }
+                    touches.Add(new Touch() { Position = position, TouchState = ETouchState.Moved });
             }
-            else
+            else if (lastMouseState.LeftButton == ButtonState.Pressed)
             {
-                if (lastMouseState.LeftButton == ButtonState.Pressed)
-                {
-                    yield return new Touch()
-                    {
-                        Position = position,
-                        TouchState = ETouchState.Released
-                    };
-                }
+                touches.Add(new Touch() { Position = position, TouchState = ETouchState.Released });
             }
 
             MouseWheelDelta = mouseState.ScrollWheelValue - lastMouseState.ScrollWheelValue;
 
             lastMouseState = mouseState;
             lastMousePosition = position;
+
+            return touches;
         }
     }
 }

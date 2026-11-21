@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace UILayout
 {
     [StructLayout(LayoutKind.Sequential, Size = 4)]
-    public partial struct UIColor
+    public partial struct UIColor : System.IEquatable<UIColor>
     {
         public static UIColor Transparent { get => new UIColor(0, 0, 0, 0); }
         public static UIColor White { get => new UIColor(255, 255, 255); }
@@ -97,6 +97,22 @@ namespace UILayout
         public static bool operator !=(UIColor c1, UIColor c2)
         {
             return !(c1 == c2);
+        }
+
+        // Equals(UIColor) compares without boxing (the inherited Equals(object) boxed the color on every call).
+        public bool Equals(UIColor other)
+        {
+            return this == other;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return (obj is UIColor other) && (this == other);
+        }
+
+        public override int GetHashCode()
+        {
+            return (R << 24) | (G << 16) | (B << 8) | A;
         }
 
         public Vector3 ToVector3()
