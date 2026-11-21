@@ -84,7 +84,7 @@ namespace UILayout
         {
             this.Host = host;
 
-            GraphicsContext = new GraphicsContext2D(new SpriteBatch(Host.GraphicsDevice)) { Scale = TotalScale, BlendState = host.UsePremultipliedAlpha ? BlendState.AlphaBlend : BlendState.NonPremultiplied };
+            GraphicsContext = new GraphicsContext2D(new SpriteBatch(Host.GraphicsDevice)) { Scale = TotalScale };
 
             UIImage singleWhitePixelImage = new UIImage(1, 1);
 

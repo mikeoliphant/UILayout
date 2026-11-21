@@ -12,7 +12,11 @@ namespace UILayout
 
         public UIImage SingleWhitePixelImage { get; set; }
         public float Scale { get; set; } = 1.0f;
-        public SamplerState SamplerState { get; set; } = SamplerState.PointClamp;
+        // Linear: smooth when an image is drawn at another size than its own, and, at its own size on whole pixels,
+        // the same as point sampling.
+        public SamplerState SamplerState { get; set; } = SamplerState.LinearClamp;
+
+        // Premultiplied alpha: images are premultiplied when loaded, and UIColor.NativeColor premultiplies colors.
         public BlendState BlendState { get; set; } = BlendState.AlphaBlend;
 
         public GraphicsContext2D(SpriteBatch spriteBatch)
@@ -132,51 +136,58 @@ namespace UILayout
             return true;
         }
 
-        // A draw at a position and scale, its origin in source pixels (as SpriteBatch takes them).
+        // A position in layout units on the nearest whole device pixel (layout units times Scale).
+        float Snap(float value)
+        {
+            return MathF.Round(value * Scale) / Scale;
+        }
+
+        // A draw at a position and scale, its origin in source pixels (as SpriteBatch takes them). The top left goes on
+        // a whole device pixel, so an image whose density matches the scale is drawn pixel for pixel.
         void DrawAt(Texture2D texture, float x, float y, Rectangle source, Color color, float scale, Vector2 origin)
         {
-            if (clips.Count == 0)
-            {
-                spriteBatch.Draw(texture, new Vector2(x, y), source, color, 0, origin, scale, SpriteEffects.None, 0);
-
-                return;
-            }
-
             // The drawn rectangle: the origin's source pixel is at (x, y).
             RectF destination = new RectF(x - (origin.X * scale), y - (origin.Y * scale), source.Width * scale,
                 source.Height * scale);
 
+            if (clips.Count == 0)
+            {
+                spriteBatch.Draw(texture, new Vector2(Snap(destination.X), Snap(destination.Y)), source, color, 0,
+                    Vector2.Zero, scale, SpriteEffects.None, 0);
+
+                return;
+            }
+
             if (!Clip(ref destination, ref source))
                 return;
 
-            Vector2 position = new Vector2(destination.X, destination.Y);
+            Vector2 position = new Vector2(Snap(destination.X), Snap(destination.Y));
             Vector2 drawScale = new Vector2(destination.Width / source.Width, destination.Height / source.Height);
 
             spriteBatch.Draw(texture, position, source, color, 0, Vector2.Zero, drawScale, SpriteEffects.None, 0);
         }
 
-        // A draw into a rectangle (whole layout units).
+        // A draw into a rectangle. Its edges are rounded to device pixels on their own, so pieces sharing an edge (a
+        // nine-patch's) meet.
         void DrawInto(Texture2D texture, in RectF rectangle, Rectangle source, Color color)
         {
-            Rectangle destination = new Rectangle((int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width,
-                (int)rectangle.Height);
+            RectF destination = rectangle;
 
-            if (clips.Count > 0)
-            {
-                RectF cut = new RectF(destination.X, destination.Y, destination.Width, destination.Height);
+            if ((clips.Count > 0) && !Clip(ref destination, ref source))
+                return;
 
-                if (!Clip(ref cut, ref source))
-                    return;
+            float left = Snap(destination.X);
+            float top = Snap(destination.Y);
+            float right = Snap(destination.Right);
+            float bottom = Snap(destination.Bottom);
 
-                // Edges rounded on their own, so pieces cut at the same edge meet.
-                int left = (int)MathF.Round(cut.X);
-                int top = (int)MathF.Round(cut.Y);
+            if ((right <= left) || (bottom <= top) || (source.Width <= 0) || (source.Height <= 0))
+                return;
 
-                destination = new Rectangle(left, top, (int)MathF.Round(cut.Right) - left,
-                    (int)MathF.Round(cut.Bottom) - top);
-            }
+            Vector2 drawScale = new Vector2((right - left) / source.Width, (bottom - top) / source.Height);
 
-            spriteBatch.Draw(texture, destination, source, color);
+            spriteBatch.Draw(texture, new Vector2(left, top), source, color, 0, Vector2.Zero, drawScale,
+                SpriteEffects.None, 0);
         }
 
         // ---- drawing ------------------------------------------------------------------------------------------------

@@ -10,6 +10,21 @@ Tested platforms:
 - Windows x64
 - Linux x64
 
+# Architecture
+
+- **Cross-platform:** one code base on Windows and Linux, with SkiaSharp or MonoGame underneath.
+- **High performance:** a retained element tree, laid out when it changes, drawn in batches.
+- **Hardware acceleration:** GPU rendering with the MonoGame backend.
+- **Low GC pressure:** steady-state frames don't allocate, so the garbage collector stays quiet (important for audio and
+  game apps).
+- **High DPI support:** layout in logical units, scaled to the display; images carry a density, so high-resolution
+  images draw pixel for pixel at a matching scale.
+- **Themeable:** images are white with alpha, so they can be tinted or swapped, and the input-style controls take their
+  colors from a theme.
+- **Embeddable:** can run inside another application's window (for example, an audio plugin editor in a DAW), or as an
+  app of its own.
+- **Touch and mouse:** input is handled as touches, with mouse and keyboard support on top.
+
 # Functionality
 
 <img width="800" height="447" alt="UILayoutTest-dx" src="https://github.com/user-attachments/assets/f83a3bea-ff5e-41bc-93cf-3792250fe8a1" />
@@ -17,10 +32,12 @@ Tested platforms:
 UILayout provides the following:
 
 - Layout structure (dock, horizontal/vertical stacks, etc.)
-- UI controls (buttons, text blocks, sliders, menus, dialogs, scrollbars, etc.) 
-- Image rendering (images, ninepatch images, batching, image atlases)
+- UI controls (buttons, text blocks, sliders, menus, dialogs, scrollbars, tab panels, swipe lists, etc.)
+- Input-style controls (framed buttons, drop-downs, check lists, sections) following the theme
+- Image rendering (images, ninepatch images, rotation, tinting, batching, image atlases, image densities)
+- Clipping to element bounds
 - Font rendering (skia text rendering, bitmap fonts)
-- Mouse/Keyboard input handling
+- Mouse/Keyboard/Touch input handling, hover, drag and drop
 - File dialog support
 
 # Getting Started

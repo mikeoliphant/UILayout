@@ -221,7 +221,7 @@ namespace UILayout.Test
                 TextColor = theme.Text,
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center,
-                Margin = (9, 0)
+                Margin = (6, 0)
             })
             {
                 VerticalAlignment = EVerticalAlignment.Stretch

@@ -124,7 +124,6 @@ namespace UILayout
         public GraphicsDevice GraphicsDevice { get; private set; }
         public ContentManager Content { get; private set; }
         public bool IsActive => true;
-        public bool UsePremultipliedAlpha { get; set; }
         public MonoGameLayout Layout { get; private set; }
         public Color ClearColor { get; set; } = Color.Black;
         public int ScreenWidth { get; private set; }

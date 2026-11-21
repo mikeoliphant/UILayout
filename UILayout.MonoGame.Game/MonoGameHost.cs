@@ -19,8 +19,6 @@ namespace UILayout
         public MonoGameLayout Layout { get; private set; }
         public GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
 
-        public bool UsePremultipliedAlpha { get; set; } = false;
-
 #if WINDOWS
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
