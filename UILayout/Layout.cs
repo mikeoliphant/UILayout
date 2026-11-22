@@ -476,12 +476,19 @@ namespace UILayout
 
             if (popup is IPopup)
             {
-                (popup as IPopup).CloseAction = delegate { ClosePopup(popup); };
+                (popup as IPopup).CloseAction = CloseActionFor(popup);
 
                 (popup as IPopup).Opened();
             }
 
             AddDirtyRect(popup.layoutBounds);
+        }
+
+        // An action closing the popup. Its own method: a lambda capturing ShowPopup's parameter would make every
+        // ShowPopup call allocate the captured state, also for popups that need no close action.
+        Action CloseActionFor(UIElement popup)
+        {
+            return delegate { ClosePopup(popup); };
         }
 
         public void ShowPopup(UIElement popup, in Vector2 anchorPoint)
@@ -621,20 +628,22 @@ namespace UILayout
 
     public class ContextUIElementWrapper : UIElementWrapper
     {
-        Vector2 anchorPoint;
-
         public ContextUIElementWrapper(Vector2 point)
         {
             HorizontalAlignment = EHorizontalAlignment.Absolute;
             VerticalAlignment = EVerticalAlignment.Absolute;
 
-            anchorPoint = point;
+            AnchorPoint = point;
         }
+
+        /// <summary>Where the child is placed (moved to fit the bounds it's given), so the wrapper can be shown again
+        /// elsewhere.</summary>
+        public Vector2 AnchorPoint { get; set; }
 
         public override void SetBounds(in RectF bounds, UIElement parent)
         {
-            float horizontalOffset = anchorPoint.X - bounds.X;
-            float verticalOffset = anchorPoint.Y - bounds.Y;
+            float horizontalOffset = AnchorPoint.X - bounds.X;
+            float verticalOffset = AnchorPoint.Y - bounds.Y;
 
             float width, height;
 
@@ -642,7 +651,7 @@ namespace UILayout
 
             if ((horizontalOffset + width) > bounds.Width)
             {
-                horizontalOffset = anchorPoint.X - bounds.X - width;
+                horizontalOffset = AnchorPoint.X - bounds.X - width;
 
                 if (horizontalOffset < 0)
                     horizontalOffset = 0;
@@ -650,7 +659,7 @@ namespace UILayout
 
             if ((verticalOffset + height) > bounds.Height)
             {
-                verticalOffset = anchorPoint.Y - bounds.Y - height;
+                verticalOffset = AnchorPoint.Y - bounds.Y - height;
 
                 if (verticalOffset < 0)
                     verticalOffset = 0;

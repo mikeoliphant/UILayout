@@ -144,6 +144,7 @@ namespace UILayout
         string text = "";
         string fitted = "";
         float fittedWidth = -1;
+        float fittedTextWidth;
 
         public FittedTextBlock()
         {
@@ -169,6 +170,12 @@ namespace UILayout
 
         public UIFont TextFont { get; set; }
 
+        /// <summary>
+        /// Where the (fitted) text sits across the element's width: Left (the default), Center or Right. Stretch and
+        /// Absolute have no meaning for text and act as Left.
+        /// </summary>
+        public EHorizontalAlignment TextAlignment { get; set; } = EHorizontalAlignment.Left;
+
         protected override void GetContentSize(out float width, out float height)
         {
             TextFont.MeasureString(text, out width, out _);
@@ -184,9 +191,18 @@ namespace UILayout
             {
                 fittedWidth = ContentBounds.Width;
                 fitted = Fit(text, fittedWidth);
+
+                TextFont.MeasureString(fitted, out fittedTextWidth, out _);
             }
 
-            Layout.Current.GraphicsContext.DrawText(fitted, TextFont, ContentBounds.X, ContentBounds.Y, TextColor);
+            float x = ContentBounds.X;
+
+            if (TextAlignment == EHorizontalAlignment.Center)
+                x += (ContentBounds.Width - fittedTextWidth) / 2;
+            else if (TextAlignment == EHorizontalAlignment.Right)
+                x += ContentBounds.Width - fittedTextWidth;
+
+            Layout.Current.GraphicsContext.DrawText(fitted, TextFont, x, ContentBounds.Y, TextColor);
         }
 
         // The text, cut with "..." to fit the width.

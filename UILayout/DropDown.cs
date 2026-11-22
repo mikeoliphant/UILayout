@@ -20,7 +20,12 @@ namespace UILayout
         FittedTextBlock text;
         ImageElement arrow;
         int selected = -1;
+
+        // The open list, kept for the next opening (built again when the items or the font change), with the wrapper
+        // placing it and the action closing it, so opening allocates nothing once it has been opened
         DropDownList list;
+        ContextUIElementWrapper listWrapper;
+        Action closeList;
 
         public DropDown()
         {
@@ -83,9 +88,18 @@ namespace UILayout
             get { return (selected >= 0) ? items[selected].Text : ""; }
         }
 
-        UIFont Font
+        /// <summary>The font of the shown item and of the open list (default: the layout's default font).</summary>
+        public UIFont Font
         {
             get { return text.TextFont; }
+
+            set
+            {
+                text.TextFont = value;
+                list = null;
+
+                UpdateContentLayout();
+            }
         }
 
         string ShownText
@@ -99,9 +113,26 @@ namespace UILayout
             items.Clear();
             items.AddRange(newItems);
 
+            list = null;
+
             selected = (items.Count > 0) ? Math.Clamp(select, 0, items.Count - 1) : -1;
 
             ShowSelected();
+        }
+
+        /// <summary>Selects the item at the index (clamped to the items), without calling SelectAction.</summary>
+        public void SelectIndex(int index)
+        {
+            int select = (items.Count > 0) ? Math.Clamp(index, 0, items.Count - 1) : -1;
+
+            if (select == selected)
+                return;
+
+            selected = select;
+
+            ShowSelected();
+
+            Layout.Current.AddDirtyRect(ContentBounds);
         }
 
         /// <summary>Selects the first item whose value matches, or the first item.</summary>
@@ -147,9 +178,26 @@ namespace UILayout
             if (items.Count == 0)
                 return;
 
-            list = new DropDownList(this);
+            if ((list == null) || (list.RowCount != list.Shown))
+            {
+                list = new DropDownList(this);
 
-            Layout.Current.ShowPopup(list, new Vector2(ContentBounds.X, ContentBounds.Bottom));
+                if (listWrapper == null)
+                {
+                    listWrapper = new ContextUIElementWrapper(Vector2.Zero);
+
+                    closeList = delegate { Layout.Current.ClosePopup(listWrapper); };
+                }
+
+                listWrapper.Child = list;
+                list.CloseAction = closeList;
+            }
+
+            list.Prepare();
+
+            listWrapper.AnchorPoint = new Vector2(ContentBounds.X, ContentBounds.Bottom);
+
+            Layout.Current.ShowPopup(listWrapper);
         }
 
         void Choose(int index)
@@ -223,7 +271,23 @@ namespace UILayout
                 content.Children.Add(thumb);
 
                 Content = content;
+            }
 
+            public Action CloseAction { get; set; }
+
+            public void Opened()
+            {
+            }
+
+            /// <summary>The rows it was built with (the items it shows at once).</summary>
+            public int RowCount
+            {
+                get { return rows.Count; }
+            }
+
+            /// <summary>Brings it up to date for an opening: its width, the chosen item in view.</summary>
+            public void Prepare()
+            {
                 // At least as wide as the drop-down, and as the widest item.
                 float width = owner.ContentBounds.Width;
 
@@ -242,13 +306,7 @@ namespace UILayout
                 ShowRows();
             }
 
-            public Action CloseAction { get; set; }
-
-            public void Opened()
-            {
-            }
-
-            int Shown
+            public int Shown
             {
                 get { return Math.Max(1, Math.Min(owner.MaxVisibleItems, owner.items.Count)); }
             }
