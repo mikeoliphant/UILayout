@@ -2,8 +2,8 @@
 
 	<!--
 		Renders UILayout's default textures (UILayout.DefaultTextures/SrcTextures) and fonts (Inter) into a sheet and
-		manifest in UILayout.DefaultTextures/Textures, which the backends embed. An offline tool: run it by hand after
-		changing a source image or Program.cs, and commit the output.
+		manifest in UILayout.DefaultTextures/Textures, which the backends embed. Not committed: run it by hand before
+		building and after changing a source image or Program.cs, until image processing is part of the build.
 	-->
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
