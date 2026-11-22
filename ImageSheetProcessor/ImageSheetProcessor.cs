@@ -99,6 +99,9 @@ namespace ImageSheetProcessor
         {
             DestPath = destPath;
 
+            // The output isn't tracked, so its folder isn't there in a fresh clone
+            Directory.CreateDirectory(DestPath);
+
             tmpDir = Path.Combine(SrcPath, "tmp");
 
             if (!Directory.Exists(tmpDir))
