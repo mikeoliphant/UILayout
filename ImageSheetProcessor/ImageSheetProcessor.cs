@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
+using SkiaSharp;
+using Svg.Skia;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml.Serialization;
@@ -552,19 +553,21 @@ namespace ImageSheetProcessor
             string srcFile = Path.Combine(GetSourcePath(), svgName) + ".svg";
             string destFile = Path.Combine(DestPath, svgName) + ".png";
 
-            var svg = Svg.SvgDocument.Open(srcFile);
+            using SKSvg svg = new SKSvg();
+
+            SKPicture picture = svg.Load(srcFile);
+
+            if (picture == null)
+                throw new InvalidDataException("Could not load " + srcFile);
+
+            SKRect bounds = picture.CullRect;
 
             if (size == null)
             {
-                size = Size.Round(svg.GetDimensions());
+                size = new SizeF(MathF.Round(bounds.Width), MathF.Round(bounds.Height));
             }
 
-            ProcImage image;
-
-            using (Bitmap bitmap = svg.Draw((int)size.Value.Width, (int)size.Value.Height))
-            {
-                image = ImageFromBitmap(bitmap);
-            }
+            ProcImage image = RenderPicture(picture, bounds, (int)size.Value.Width, (int)size.Value.Height);
 
             if (ForceWhite)
                 ToWhite(image);
@@ -762,34 +765,32 @@ namespace ImageSheetProcessor
             return true;
         }
 
-        ProcImage ImageFromBitmap(Bitmap bitmap)
+        // Draws an SVG's picture stretched to width x height (as Svg's SvgDocument.Draw did), in straight alpha.
+        ProcImage RenderPicture(SKPicture picture, SKRect bounds, int width, int height)
         {
-            BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            using SKBitmap bitmap = new SKBitmap(new SKImageInfo(width, height, SKColorType.Rgba8888, SKAlphaType.Premul));
 
-            ProcImage image = new ProcImage(bitmap.Width, bitmap.Height);
-
-            unsafe
+            using (SKCanvas canvas = new SKCanvas(bitmap))
             {
-                byte* srcPixels = (byte*)bitmapData.Scan0;
-                {
-                    for (int y = 0; y < bitmap.Height; y++)
-                    {
-                        for (int x = 0; x < bitmap.Width; x++)
-                        {
-                            byte* offset = srcPixels + (y * bitmapData.Stride) + (x * 4);
+                canvas.Clear(SKColors.Transparent);
+                canvas.Scale(width / bounds.Width, height / bounds.Height);
+                canvas.Translate(-bounds.Left, -bounds.Top);
 
-                            byte b = *(offset++);
-                            byte g = *(offset++);
-                            byte r = *(offset++);
-                            byte a = *(offset++);
-
-                            image.SetPixel(x, y, new UIColor(r, g, b, a));
-                        }
-                    }
-                }
+                canvas.DrawPicture(picture);
             }
 
-            bitmap.UnlockBits(bitmapData);
+            ProcImage image = new ProcImage(width, height);
+
+            // GetPixel gives straight (unpremultiplied) color
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    SKColor color = bitmap.GetPixel(x, y);
+
+                    image.SetPixel(x, y, new UIColor(color.Red, color.Green, color.Blue, color.Alpha));
+                }
+            }
 
             return image;
         }
