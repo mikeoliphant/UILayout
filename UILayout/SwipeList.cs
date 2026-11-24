@@ -60,7 +60,6 @@ namespace UILayout
         UIFont font = Layout.Current.DefaultFont;
         float fontScale = 1.0f;
         float offset = 0;
-        float velocity;
         protected StringBuilder sb = new StringBuilder();
         int touchItem;
         int firstVisibleItem;

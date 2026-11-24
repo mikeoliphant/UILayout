@@ -42,7 +42,7 @@ namespace UILayout.Skia.WPF
             Height = height;
         }
 
-        public void Show()
+        public new void Show()
         {
             Show(IntPtr.Zero);
         }

@@ -41,8 +41,6 @@ namespace UILayout
         public float LineHeight { get; set; }
         public float GlyphHeight { get; set; }
 
-        int numGlyphs = (127 - 32);
-
         protected UIImage fontImage;
         protected Dictionary<int, SpriteFontGlyph> glyphs = new Dictionary<int, SpriteFontGlyph>();
         protected int width;

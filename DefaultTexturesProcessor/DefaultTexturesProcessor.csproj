@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<!--
 		Renders UILayout's default textures (UILayout.DefaultTextures/SrcTextures) and fonts (Inter) into a sheet and
@@ -14,5 +14,11 @@
 	<ItemGroup>
 		<ProjectReference Include="..\ImageSheetProcessor\ImageSheetProcessor.csproj" />
 	</ItemGroup>
-
+	<Target Name="RunImageProcessor"
+			AfterTargets="Build"
+			Inputs="Program.cs"
+			Outputs="..\DefaultTexturesProcessor\Textures\ImageManifest.xml">
+		<Message Text="Running DefaultTexturesProcessor" Importance="High" />
+		<Exec Command="dotnet &quot;$(TargetPath)&quot;" />
+	</Target>
 </Project>

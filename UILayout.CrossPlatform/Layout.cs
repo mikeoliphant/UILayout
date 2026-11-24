@@ -17,7 +17,7 @@ namespace UILayout
             using var selectFolderDialog = new NativeFileDialog()
                 .SelectFolder();
 
-            string? folder;
+            string folder;
 
             var result = selectFolderDialog.Open(out folder, initialPath);
 
@@ -45,7 +45,7 @@ namespace UILayout
             if (!string.IsNullOrEmpty(patternName))
                 selectFileDialog.AddFilter(patternName, patternWildcard);
 
-            string? file;
+            string file;
 
             var result = selectFileDialog.Open(out file, initialPath);
 
