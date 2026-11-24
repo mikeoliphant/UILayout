@@ -55,7 +55,7 @@ namespace UILayout
         Stack<string> backDirStack = new Stack<string>();
         bool canCreateFolders;
         TextBlock headerTextBlock;
-        bool isSaveMode;
+        bool isSaveMode = false;
 
         public FileSelector(string headerText, bool canCreateFolders, UIImage ninePatchImage)
             : base(ninePatchImage)

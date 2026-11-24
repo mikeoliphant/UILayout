@@ -85,8 +85,6 @@ namespace ImageSheetProcessor
         protected string tmpDir;
         protected List<string> directoryStack = new List<string>();
 
-        Dictionary<int, int> jisMapping;
-
         public ImageSheetProcessor()
         {
             PadToPowerOfTwo = true;
@@ -121,7 +119,7 @@ namespace ImageSheetProcessor
                         imageManifest = serializer.Deserialize(reader) as ImageManifest;
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
                 }
             }
@@ -407,8 +405,6 @@ namespace ImageSheetProcessor
 
         public void ToBlack(ProcImage srcBitmap)
         {
-            byte a = 0;
-
             for (int x = 0; x < srcBitmap.ImageWidth; x++)
             {
                 for (int y = 0; y < srcBitmap.ImageHeight; y++)
