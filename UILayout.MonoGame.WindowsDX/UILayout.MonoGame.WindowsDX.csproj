@@ -15,4 +15,8 @@
 	<Import Project="..\UILayout\UILayout.projitems" Label="Shared" />
 	<Import Project="..\UILayout.WindowsNative\UILayout.WindowsNative.projitems" Label="Shared" />
 	<Import Project="..\UILayout.DefaultTextures\UILayout.DefaultTextures.projitems" Label="Shared" />
+
+	<Target Name="Build" Condition="'$(OS)' != 'Windows_NT'">
+		<Message Text="Skipping $(MSBuildProjectName) on $(OS)." Importance="High" />
+	</Target>
 </Project>

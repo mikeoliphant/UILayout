@@ -1,21 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <RollForward>Major</RollForward>
-    <PublishReadyToRun>false</PublishReadyToRun>
-    <TieredCompilation>false</TieredCompilation>
-    <UseWindowsForms>true</UseWindowsForms>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.6.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\UILayout.MonoGame.WindowsDX\UILayout.MonoGame.WindowsDX.csproj" />
-  </ItemGroup>
-  <Import Project="..\UILayout.Test\UILayout.Test.projitems" Label="Shared" />
-  <Import Project="..\MonoGameTestShared\MonoGameTestShared.projitems" Label="Shared" />
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<RollForward>Major</RollForward>
+		<PublishReadyToRun>false</PublishReadyToRun>
+		<TieredCompilation>false</TieredCompilation>
+		<UseWindowsForms>true</UseWindowsForms>
+	</PropertyGroup>
+	<PropertyGroup>
+		<ApplicationIcon>Icon.ico</ApplicationIcon>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.6.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\UILayout.MonoGame.WindowsDX\UILayout.MonoGame.WindowsDX.csproj" />
+	</ItemGroup>
+	<Import Project="..\UILayout.Test\UILayout.Test.projitems" Label="Shared" />
+	<Import Project="..\MonoGameTestShared\MonoGameTestShared.projitems" Label="Shared" />
+
+	<Target Name="Build" Condition="'$(OS)' != 'Windows_NT'">
+		<Message Text="Skipping $(MSBuildProjectName) on $(OS)." Importance="High" />
+	</Target>
 </Project>
