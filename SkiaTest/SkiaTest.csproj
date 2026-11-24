@@ -11,8 +11,4 @@
 	</ItemGroup>
 
 	<Import Project="..\UILayout.Test\UILayout.Test.projitems" Label="Shared" />
-
-	<Target Name="Build" Condition="'$(OS)' != 'Windows_NT'">
-		<Message Text="Skipping $(MSBuildProjectName) on $(OS)." Importance="High" />
-	</Target>
 </Project>
