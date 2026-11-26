@@ -31,6 +31,9 @@ namespace DefaultTexturesProcessor
 
             ForceWhite = false;
 
+            // As drawn: its fill is white (it tints), its shadow black (a tint multiplies it, so it stays dark)
+            AddSvg("PopupFill");
+
             EndSpriteSheetGroup();
         }
 
@@ -43,6 +46,7 @@ namespace DefaultTexturesProcessor
         {
             "FrameFill",
             "FrameBorder",
+            "PopupBorder",
             "TabFill",
             "TabBorder",
             "DropDownArrow",

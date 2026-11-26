@@ -19,8 +19,8 @@ namespace UILayout
 
     /// <summary>
     /// Shows any element as a popup, in a <see cref="Frame"/> (with a little more room inside than the border needs),
-    /// its border in the theme's accent color as all popups' are. Placed at its top left: show it at an anchor point to
-    /// put it there, or align it (centered, for example) to show it without one.
+    /// in the popup style as all popups (<see cref="Frame.SetPopupStyle"/>). Placed at its top left: show it at an
+    /// anchor point to put it there, or align it (centered, for example) to show it without one.
     /// </summary>
     public class PopupWrapper : Frame, IPopup
     {
@@ -31,7 +31,7 @@ namespace UILayout
         {
             HorizontalAlignment = EHorizontalAlignment.Left;
             VerticalAlignment = EVerticalAlignment.Top;
-            BorderColor = Layout.Current.Theme.Accent;
+            SetPopupStyle();
 
             ContentPadding = new LayoutPadding(8);
         }

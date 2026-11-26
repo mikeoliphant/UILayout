@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- A popup's border: the outline of its fill's frame (one pixel wide, on half pixels, so it's sharp), inside the same
+       7-pixel ring as the fill's shadow, so the two nine-patches line up. -->
+  <rect x="7.5" y="7.5" width="17" height="17" rx="2.5" ry="2.5" fill="none" stroke="#ffffff" stroke-width="1"/>
+</svg>

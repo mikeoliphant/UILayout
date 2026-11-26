@@ -263,7 +263,7 @@ namespace UILayout
                 // the popup couldn't move it above the drop-down when it doesn't fit below, or find what's under the mouse.
                 HorizontalAlignment = EHorizontalAlignment.Left;
                 VerticalAlignment = EVerticalAlignment.Top;
-                BorderColor = theme.Accent;
+                SetPopupStyle();
 
                 rowHeight = owner.Font.TextHeight + (2 * RowPadY);
 

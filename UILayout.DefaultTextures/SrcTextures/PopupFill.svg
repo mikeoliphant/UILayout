@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- A popup's fill: the frame's fill (radius 3) with a soft shadow around it, a little below it (as if lit from
+       above), setting it apart from what's behind. A nine-patch: the frame is inset by a 7-pixel shadow ring, and the
+       15-pixel corners keep the blurred shadow's ends away from the 2-pixel middle, so the middle stretches evenly.
+       Not made white as the other images: the fill tints (white), the shadow stays black (a tint multiplies). -->
+  <defs>
+    <filter id="shadow" filterUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
+  <rect x="7" y="8.5" width="18" height="18" rx="3" ry="3" fill="#000000" fill-opacity="0.6" filter="url(#shadow)"/>
+  <rect x="7" y="7" width="18" height="18" rx="3" ry="3" fill="#ffffff"/>
+</svg>

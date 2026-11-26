@@ -23,6 +23,8 @@ namespace UILayout.DefaultTextures
 
             theme.FrameFill = layout.GetImage("FrameFill");
             theme.FrameBorder = layout.GetImage("FrameBorder");
+            theme.PopupFill = layout.GetImage("PopupFill");
+            theme.PopupBorder = layout.GetImage("PopupBorder");
             theme.TabFill = layout.GetImage("TabFill");
             theme.TabBorder = layout.GetImage("TabBorder");
             theme.DropDownArrow = layout.GetImage("DropDownArrow");

@@ -46,6 +46,17 @@ namespace UILayout
         public UIImage FrameBorder { get; set; }
 
         /// <summary>
+        /// A popup's frame (<see cref="Frame.SetPopupStyle"/>): as the frame's fill and border, inside a ring of soft
+        /// shadow (<see cref="PopupShadowWidth"/> wide) that sets it apart from what's behind. The fill's shadow is black,
+        /// not white: tinted, the fill takes the color and the shadow stays dark.
+        /// </summary>
+        public UIImage PopupFill { get; set; }
+        public UIImage PopupBorder { get; set; }
+
+        /// <summary>How far the popup images' shadow reaches outside the frame, in layout pixels.</summary>
+        public float PopupShadowWidth { get; set; } = 7;
+
+        /// <summary>
         /// A <see cref="TabPanel"/>'s tab: as the frame's fill and border, with only the top corners rounded and no
         /// bottom edge, so the chosen tab joins the panel below it.
         /// </summary>

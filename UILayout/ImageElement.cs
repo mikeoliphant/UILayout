@@ -215,8 +215,10 @@ namespace UILayout
 
                 for (int y = 0; y < 3; y++)
                 {
+                    // On whole pixels across as down (at a fractional position, as a centered popup's, a filtering
+                    // backend would spread the edges over two pixels)
                     int srcOffsetX = 0;
-                    float destOffsetX = layoutBounds.X;
+                    float destOffsetX = (int)layoutBounds.X;
 
                     for (int x = 0; x < 3; x++)
                     {

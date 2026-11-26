@@ -11,6 +11,9 @@ namespace UILayout
         NinePatchWrapper fill;
         NinePatchWrapper border;
 
+        // How far the images reach outside the frame (the popup style's shadow ring; none otherwise)
+        float shadowWidth;
+
         public Frame()
             : this(null)
         {
@@ -51,13 +54,50 @@ namespace UILayout
         }
 
         /// <summary>
+        /// Draws the frame as a popup's: the theme's popup images (the frame inside a ring of soft shadow, setting it
+        /// apart from what's behind), the border in the accent color. The shadow is outside the frame's place in the
+        /// layout (a negative margin): the frame is placed and sized as it would be without it, while its bounds (what's
+        /// drawn and made dirty) take the shadow in. The content padding stays as it was, inside the frame's edge. The
+        /// frame's margin is the shadow's: give any margin to what holds it.
+        /// </summary>
+        public void SetPopupStyle()
+        {
+            UITheme theme = Layout.Current.Theme;
+
+            LayoutPadding contentPadding = ContentPadding;
+
+            shadowWidth = theme.PopupShadowWidth;
+
+            fill.Image = theme.PopupFill;
+            border.Image = theme.PopupBorder;
+
+            // Setting the border image set its padding to its corners: back to the content's room inside the frame
+            ContentPadding = contentPadding;
+
+            Margin = new LayoutPadding(-shadowWidth);
+
+            BorderColor = theme.Accent;
+        }
+
+        /// <summary>
         /// The room around the content, inside the frame's edge (by default the border image's corners). Keep it at
-        /// least that, or the content overlaps the corners.
+        /// least that, or the content overlaps the corners. (A popup's shadow, outside the edge, isn't part of it.)
         /// </summary>
         public LayoutPadding ContentPadding
         {
-            get { return border.Padding; }
-            set { border.Padding = value; }
+            get
+            {
+                LayoutPadding padding = border.Padding;
+
+                return new LayoutPadding(padding.Left - shadowWidth, padding.Top - shadowWidth,
+                    padding.Right - shadowWidth, padding.Bottom - shadowWidth);
+            }
+
+            set
+            {
+                border.Padding = new LayoutPadding(value.Left + shadowWidth, value.Top + shadowWidth,
+                    value.Right + shadowWidth, value.Bottom + shadowWidth);
+            }
         }
 
         /// <summary>What's in the frame, inside the border.</summary>

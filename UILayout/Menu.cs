@@ -23,7 +23,7 @@ namespace UILayout
 
             HorizontalAlignment = EHorizontalAlignment.Left;
             VerticalAlignment = EVerticalAlignment.Top;
-            BorderColor = theme.Accent;
+            SetPopupStyle();
 
             TextColor = theme.Text;
             TextFont = theme.Font;
