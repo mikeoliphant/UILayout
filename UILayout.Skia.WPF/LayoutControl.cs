@@ -55,6 +55,29 @@ namespace UILayout.Skia.WPF
         public void SetLayout(SkiaLayout layout)
         {
             this.Layout = layout;
+
+            // Its size is the layout's now
+            InvalidateMeasure();
+        }
+
+        /// <summary>
+        /// The room the layout's root element needs (in WPF's device-independent units), so the control can be sized to
+        /// its layout, as a window with SizeToContent is. Given more, the layout fills it.
+        /// </summary>
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            if ((Layout == null) || (Layout.RootUIElement == null))
+                return base.MeasureOverride(availableSize);
+
+            Layout.RootUIElement.GetSize(out float width, out float height);
+
+            // Layout pixels are device pixels (as mouse positions are converted to them), unless pixel scaling is off
+            DpiScale dpi = VisualTreeHelper.GetDpi(this);
+
+            double scaleX = IgnorePixelScaling ? 1 : dpi.DpiScaleX;
+            double scaleY = IgnorePixelScaling ? 1 : dpi.DpiScaleY;
+
+            return new Size(Math.Ceiling(width) / scaleX, Math.Ceiling(height) / scaleY);
         }
 
         protected override void OnInitialized(EventArgs e)

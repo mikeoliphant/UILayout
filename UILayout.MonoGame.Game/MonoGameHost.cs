@@ -185,6 +185,21 @@ namespace UILayout
             requestResizeHeight = newHeight;
         }
 
+        /// <summary>
+        /// Sizes the window to the layout's root element (the room it needs, in window pixels at the layout's scale).
+        /// Call once the root element is set, after <see cref="Initialize"/> (which sizes the window for the display's
+        /// scale itself).
+        /// </summary>
+        public void ResizeToLayout()
+        {
+            if (Layout.RootUIElement == null)
+                return;
+
+            Layout.RootUIElement.GetSize(out float width, out float height);
+
+            RequestResize((int)Math.Ceiling(width * Layout.TotalScale), (int)Math.Ceiling(height * Layout.TotalScale));
+        }
+
         protected override void Update(GameTime gameTime)
         {
             if (requestResize)

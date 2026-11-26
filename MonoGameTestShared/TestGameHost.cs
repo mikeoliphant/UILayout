@@ -13,6 +13,14 @@ namespace MonoGameTest
         {
         }
 
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            // The window fits the test layout (set in LoadContent, during the base's Initialize)
+            ResizeToLayout();
+        }
+
         protected override void LoadContent()
         {
             Layout.RootUIElement = new UILayout.Test.LayoutTest();

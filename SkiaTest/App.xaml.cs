@@ -15,10 +15,10 @@ namespace SkiaTest
         {
             base.OnStartup(e);
 
+            // The window fits the test layout (the layout control's size is the layout's)
             LayoutWindow layoutWindow = new LayoutWindow()
             {
-                Width = 1024,
-                Height = 800
+                SizeToContent = SizeToContent.WidthAndHeight
             };
 
             SkiaLayout ui = new SkiaLayout();
