@@ -3,40 +3,33 @@ using System.Collections.Generic;
 
 namespace UILayout
 {
-    public class Menu : NinePatchWrapper, IPopup
+    /// <summary>
+    /// A popup menu: a <see cref="Frame"/> with the accent border, holding a row per item. The row under the mouse has
+    /// the theme's active background, and clicking a row does its item. Placed at its top left: show it at an anchor
+    /// point.
+    /// </summary>
+    public class Menu : Frame, IPopup
     {
         public Action CloseAction { get; set; }
 
-        public static UIFont DefaultFont = null;
-        public static UIColor DefaultTextColor = UIColor.White;
-        public static UIColor DefaultTextHighlightColor = new UIColor(255, 255, 100, 255);
-
-        public UIColor TextColor { get; set; } = DefaultTextColor;
-        public UIFont TextFont { get; set; } = DefaultFont ?? Layout.Current.DefaultFont;
-        public UIColor TextHighlightColor { get; set; }
+        public UIColor TextColor { get; set; }
+        public UIFont TextFont { get; set; }
 
         VerticalStack menuStack;
 
         public Menu()
-            : this(Layout.Current.DefaultOutlineNinePatch)
         {
+            UITheme theme = Layout.Current.Theme;
 
-        }
+            HorizontalAlignment = EHorizontalAlignment.Left;
+            VerticalAlignment = EVerticalAlignment.Top;
+            BorderColor = theme.Accent;
 
-        public Menu(string ninePatchImageName)
-            : this(Layout.Current.GetImage(ninePatchImageName))
-        {
-
-        }
-
-        public Menu(UIImage ninePatchImage)
-            : base(ninePatchImage)
-        {
-            TextColor = DefaultTextColor;
-            TextHighlightColor = DefaultTextHighlightColor;
+            TextColor = theme.Text;
+            TextFont = theme.Font;
 
             menuStack = new VerticalStack();
-            Child = menuStack;
+            Content = menuStack;
         }
 
         public Menu(List<MenuItem> menuItems)
@@ -51,15 +44,10 @@ namespace UILayout
 
             foreach (MenuItem menuItem in menuItems)
             {
-                TextButton button = new TextButton(menuItem.Text)
-                {
-                    HorizontalAlignment = EHorizontalAlignment.Stretch,
-                    TextColor = TextColor,
-                    TextFont = TextFont
-                };
-                button.ClickAction = delegate { DoMenuItem(menuItem); };
+                MenuRow row = new MenuRow(menuItem.Text, TextColor, TextFont);
+                row.ClickAction = delegate { DoMenuItem(menuItem); };
 
-                menuStack.Children.Add(button);
+                menuStack.Children.Add(row);
             }
         }
 
@@ -79,9 +67,62 @@ namespace UILayout
             }
         }
 
+        public override void HandleInput(InputManager inputManager)
+        {
+            base.HandleInput(inputManager);
+
+            UIColor active = Layout.Current.Theme.Active;
+
+            foreach (UIElement child in menuStack.Children)
+            {
+                UIColor background = child.IsMouseOver ? active : UIColor.Transparent;
+
+                if (child.BackgroundColor == background)
+                    continue;
+
+                child.BackgroundColor = background;
+
+                Layout.Current.AddDirtyRect(child.LayoutBounds);
+            }
+        }
+
         public void Opened()
         {
 
+        }
+
+        /// <summary>One item's row: its text, clicking when released over it.</summary>
+        class MenuRow : UIElementWrapper
+        {
+            const float TextMarginX = 8;
+            const float TextMarginY = 4;
+
+            public MenuRow(string text, UIColor textColor, UIFont textFont)
+            {
+                HorizontalAlignment = EHorizontalAlignment.Stretch;
+
+                Child = new TextBlock(text)
+                {
+                    TextColor = textColor,
+                    TextFont = textFont,
+                    HorizontalAlignment = EHorizontalAlignment.Left,
+                    VerticalAlignment = EVerticalAlignment.Center,
+                    Margin = new LayoutPadding(TextMarginX, TextMarginY)
+                };
+            }
+
+            public Action ClickAction { get; set; }
+
+            public override bool HandleTouch(in Touch touch)
+            {
+                if ((touch.TouchState == ETouchState.Released) && LayoutBounds.Contains(touch.Position) &&
+                    (ClickAction != null))
+                {
+                    ClickAction();
+                }
+
+                return true;
+            }
         }
     }
 

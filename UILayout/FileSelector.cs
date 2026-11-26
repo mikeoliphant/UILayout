@@ -57,8 +57,7 @@ namespace UILayout
         TextBlock headerTextBlock;
         bool isSaveMode = false;
 
-        public FileSelector(string headerText, bool canCreateFolders, UIImage ninePatchImage)
-            : base(ninePatchImage)
+        public FileSelector(string headerText, bool canCreateFolders)
         {
             this.canCreateFolders = canCreateFolders;
 
@@ -75,18 +74,15 @@ namespace UILayout
 
             VerticalStack header = new VerticalStack
             {
-                BackgroundColor = new UIColor(100, 100, 100),
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
-                Padding = new LayoutPadding(0, 5)
+                Padding = new LayoutPadding(0, 0, 0, 6)
             };
             stack.Children.Add(header);
 
-            headerTextBlock = new TextBlock(headerText) { Padding = new LayoutPadding(5) };
+            headerTextBlock = new TextBlock(headerText) { TextColor = Layout.Current.Theme.MutedText };
             header.Children.Add(headerTextBlock);
 
             inputStack.HorizontalAlignment = EHorizontalAlignment.Stretch;
-            inputStack.Padding = new LayoutPadding(0, 5);
-            inputStack.BackgroundColor = new UIColor(100, 100, 100);
 
             if (isSaveMode)
             {
@@ -134,19 +130,27 @@ namespace UILayout
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
                 VerticalAlignment = EVerticalAlignment.Stretch,
+                ChildSpacing = 4
             };
             stack.Children.Add(listStack);
 
+            UIFont font = Layout.Current.Theme.Font;
+
             fileList = new SwipeList();
-            fileList.TextColor = Layout.Current.DefaultForegroundColor;
             fileList.SelectAction = FileSelected;
             //fileList.HoldAction = ShowContextMenu;
-            fileList.ItemHeight = Layout.Current.DefaultFont.TextHeight * 1.2f;
-            fileList.ItemYOffset = (fileList.ItemHeight - Layout.Current.DefaultFont.TextHeight) / 2;
+            fileList.ItemHeight = font.TextHeight * 1.2f;
+            fileList.ItemYOffset = (fileList.ItemHeight - font.TextHeight) / 2;
             fileList.HorizontalAlignment = EHorizontalAlignment.Stretch;
             fileList.VerticalAlignment = EVerticalAlignment.Stretch;
             fileList.Items = new List<FileMetadata>();
-            listStack.Children.Add(fileList);
+
+            listStack.Children.Add(new Frame(fileList)
+            {
+                HorizontalAlignment = EHorizontalAlignment.Stretch,
+                VerticalAlignment = EVerticalAlignment.Stretch,
+                FillColor = Layout.Current.Theme.Background
+            });
 
             VerticalScrollBarWithArrows scrollBar = new VerticalScrollBarWithArrows()
             {

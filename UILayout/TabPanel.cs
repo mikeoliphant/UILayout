@@ -18,116 +18,98 @@ namespace UILayout
         public TabPanelButton Button { get; internal set; }
     }
 
-    public class TabPanelButton : NinePatchButton
+    /// <summary>
+    /// A tab's button: a toggle <see cref="TextButton"/> drawn with the theme's tab images (top corners rounded, no
+    /// bottom edge). On (its tab shown), it's filled as the panel below and reaches over the panel's top border, so it
+    /// joins the panel; off, it's in the background color and stops at the border. The border takes the accent color
+    /// when the mouse is over a tab that's off.
+    /// </summary>
+    public class TabPanelButton : TextButton
     {
-        public string Text
-        {
-            get => textBlock.Text;
-            set => textBlock.Text = value;
-        }
-
-        public UIColor TextColor
-        {
-            get { return textBlock.TextColor; }
-            set { textBlock.TextColor = value; }
-        }
-
-        public UIFont TextFont
-        {
-            get { return textBlock.TextFont; }
-            set { textBlock.TextFont = value; }
-        }
-
-        TextBlock textBlock;
-
         public TabPanelButton(string text)
-            : this()
+            : base(text)
         {
-            Text = text;
+            IsToggleButton = true;
+
+            UITheme theme = Layout.Current.Theme;
+
+            Frame.SetImages(theme.TabFill, theme.TabBorder);
+
+            // No bottom edge: no room for it below the text.
+            LayoutPadding padding = Frame.ContentPadding;
+
+            Frame.ContentPadding = new LayoutPadding(padding.Left, padding.Top, padding.Right, 1);
+
+            VerticalAlignment = EVerticalAlignment.Stretch;
+
+            UpdateColors();
         }
 
-        public TabPanelButton()
+        protected override void StateChanged()
         {
-            VerticalAlignment = EVerticalAlignment.Bottom;
+            base.StateChanged();
 
-            textBlock = new TextBlock
-            {
-                HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Center,
-            };
+            // Off, it stops above the panel's border (which then closes it below).
+            Margin = new LayoutPadding(0, IsPressed ? 0 : 1, 0, IsPressed ? 0 : 1);
+        }
 
-            SetElements(textBlock, textBlock);
+        protected override void UpdateColors()
+        {
+            // Called from FrameButton's constructor too, before the text exists.
+            if (Content == null)
+                return;
+
+            UITheme theme = Layout.Current.Theme;
+
+            Frame.FillColor = IsPressed ? theme.Surface : theme.Background;
+            Frame.BorderColor = (IsMouseOver && !IsPressed) ? theme.Accent : theme.Border;
+            TextColor = IsPressed ? theme.Text : theme.MutedText;
         }
     }
 
-    //             TabPanel tabPanel = new TabPanel(new UIColor(100, 100, 100), UIColor.White, Layout.Current.GetImage("TabPanelBackground"), Layout.Current.GetImage("TabForeground"), Layout.Current.GetImage("TabBackground"), 5, 5);
+    /// <summary>
+    /// Tabs: a row of tab buttons, one per tab, on a <see cref="Frame"/> showing the chosen tab's contents. The chosen
+    /// tab's button joins the frame. It's as big as its biggest tab.
+    /// </summary>
     public class TabPanel : VerticalStack
     {
-        public TabPanelTab ActiveTab { get; private set; }
+        const float TabIndent = 6;
+        const float TabSpacing = 2;
 
-        public static UIColor DefaultBackgroundColor = new UIColor(100, 100, 100);
-        public static UIColor? TextColor = null;
-        public static UIImage BackgroundImage = null;
-        public static UIImage TabButtonPressed = null;
-        public static UIImage TabButtonUnpressed = null;
-        public static float TabStartOffsetX = 5;
-        public static float TabStartOffsetY = 5;
+        public TabPanelTab ActiveTab { get; private set; }
 
         Dictionary<string, TabPanelTab> tabs = new Dictionary<string, TabPanelTab>();
 
-        UIColor textColor;
         HorizontalStack headerStack;
-        NinePatchWrapper contentsPanel;
         UIElementWrapper contentsWrapper;
-        UIImage tabButtonPressed;
-        UIImage tabButtonUnpressed;
 
         public TabPanel()
-            : this(DefaultBackgroundColor, TextColor ?? Layout.Current.DefaultForegroundColor,
-                  BackgroundImage ?? Layout.Current.GetImage("TabPanelBackground"),
-                  TabButtonPressed ?? Layout.Current.GetImage("TabForeground"),
-                  TabButtonUnpressed ?? Layout.Current.GetImage("TabBackground"),
-                  TabStartOffsetX, TabStartOffsetY)
-        {
-
-        }
-
-        public TabPanel(UIColor backgroundColor, UIColor textColor, UIImage backroundImage, UIImage tabButtonPressed, UIImage tabButtonUnpressed, float tabStartOffsetX, float tabStartOfsetY)
         {
             HorizontalAlignment = EHorizontalAlignment.Stretch;
             VerticalAlignment = EVerticalAlignment.Stretch;
 
-            this.textColor = textColor;
-            this.tabButtonPressed = tabButtonPressed;
-            this.tabButtonUnpressed = tabButtonUnpressed;
-
-            Children.Add(new UIElement { DesiredHeight = tabStartOfsetY });
+            // The tabs reach a pixel down over the frame's top border, so they are drawn after it.
+            DrawInReverse = true;
 
             headerStack = new HorizontalStack()
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
-                Padding = (tabStartOffsetX, 0),
-                ChildSpacing = 5
+                ChildSpacing = TabSpacing,
+                Margin = new LayoutPadding(TabIndent, 0, TabIndent, -1)
             };
             Children.Add(headerStack);
 
-            contentsPanel = new NinePatchWrapper(backroundImage)
+            contentsWrapper = new UIElementWrapper
             {
-                DrawCenter = false,
-                //DrawOnTop = true,
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
                 VerticalAlignment = EVerticalAlignment.Stretch
             };
-            Children.Add(contentsPanel);
 
-            contentsWrapper = new UIElementWrapper
+            Children.Add(new Frame(contentsWrapper)
             {
-                BackgroundColor = backgroundColor,
-                HorizontalAlignment = EHorizontalAlignment.Stretch,
                 VerticalAlignment = EVerticalAlignment.Stretch,
-                Padding = 11
-            };
-            contentsPanel.Child = contentsWrapper;
+                ContentPadding = new LayoutPadding(8)
+            });
         }
 
         protected override void GetContentSize(out float width, out float height)
@@ -161,7 +143,6 @@ namespace UILayout
 
             headerStack.Children.Add(tab.Button = new TabPanelButton(tab.Name)
             {
-                TextColor = textColor,
                 PressAction = delegate
                 {
                     SetTab(tab.Name);
@@ -172,36 +153,33 @@ namespace UILayout
             {
                 ActiveTab = tab;
                 contentsWrapper.Child = tab.Contents;
+            }
 
-                tab.Button.PressedNinePatch.Image = tab.Button.UnpressedNinePatch.Image = tabButtonPressed;
-            }
-            else
-            {
-                tab.Button.PressedNinePatch.Image = tab.Button.UnpressedNinePatch.Image = tabButtonUnpressed;
-            }
+            tab.Button.SetPressed(tab == ActiveTab);
+
+            // Off from the start doesn't change its state: set its look for off.
+            if (tab != ActiveTab)
+                tab.Button.Margin = new LayoutPadding(0, 1, 0, 1);
 
             return tab;
         }
 
         public void SetTab(string tabName)
         {
-            foreach (TabPanelTab tab in tabs.Values)
+            if (tabs.TryGetValue(tabName, out TabPanelTab active))
             {
-                if (tab.Name == tabName)
-                {
-                    ActiveTab = tab;
+                ActiveTab = active;
 
-                    contentsWrapper.Child = tab.Contents;
-
-                    tab.Button.PressedNinePatch.Image = tab.Button.UnpressedNinePatch.Image = tabButtonPressed;
-                }
-                else
-                {
-                    tab.Button.PressedNinePatch.Image = tab.Button.UnpressedNinePatch.Image = tabButtonUnpressed;
-                }
+                contentsWrapper.Child = active.Contents;
             }
 
+            // Pressing the shown tab's button again toggles it off: keep it on.
+            foreach (TabPanelTab tab in tabs.Values)
+                tab.Button.SetPressed(tab == ActiveTab);
+
             UpdateContentLayout();
+
+            Layout.Current.AddDirtyRect(LayoutBounds);
         }
     }
 }

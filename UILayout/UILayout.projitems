@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CheckList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Color.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ContentLoader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ControlInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DropDown.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EditableImage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FileSelector.cs" />
@@ -21,7 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Image.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImageElement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImageManifest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)InputFrame.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Frame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InputDialog.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InputManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LayoutElement.cs" />

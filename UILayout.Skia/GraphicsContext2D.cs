@@ -156,13 +156,25 @@ namespace UILayout
             Canvas.DrawRect(new SKRect(rectangle.X, rectangle.Y, rectangle.Right, rectangle.Bottom), colorPaint);
         }
 
+        // Where text drawn from y has its baseline: the font's ascent below, on a whole device pixel (as the MonoGame
+        // backend snaps its draws), so text placed alike lines up exactly.
+        float Baseline(float y, UIFont font)
+        {
+            SKMatrix matrix = Canvas.TotalMatrix;
+
+            float scale = (matrix.ScaleY != 0) ? matrix.ScaleY : 1;
+            float deviceY = MathF.Round(((y + font.Ascent) * scale) + matrix.TransY);
+
+            return (deviceY - matrix.TransY) / scale;
+        }
+
         public void DrawText(String text, UIFont font, float x, float y, in UIColor color)
         {
             textPaint.Color = color.NativeColor;
             textPaint.Typeface = font.Typeface;
             textPaint.TextSize = font.TextSize;
 
-            Canvas.DrawText(text, x, y + font.TextHeight, textPaint);
+            Canvas.DrawText(text, x, Baseline(y, font), textPaint);
         }
 
         public void DrawText(String text, UIFont font, float x, float y, in UIColor color, float scale)
@@ -171,7 +183,7 @@ namespace UILayout
             textPaint.Typeface = font.Typeface;
             textPaint.TextSize = font.TextSize;
 
-            Canvas.DrawText(text, x, y + font.TextHeight, textPaint);
+            Canvas.DrawText(text, x, Baseline(y, font), textPaint);
         }
 
         public void DrawText(ReadOnlySpan<char> text, UIFont font, float x, float y, in UIColor color)
@@ -201,7 +213,7 @@ namespace UILayout
             using SKTextBlob blob = SKTextBlob.Create(text, textFont);
 
             if (blob != null)
-                Canvas.DrawText(blob, x, y + font.TextHeight, textPaint);
+                Canvas.DrawText(blob, x, Baseline(y, font), textPaint);
         }
 
         public void DrawText(StringBuilder text, UIFont font, float x, float y, in UIColor color)
@@ -210,7 +222,7 @@ namespace UILayout
             textPaint.Typeface = font.Typeface;
             textPaint.TextSize = font.TextSize;
 
-            Canvas.DrawText(text.ToString(), x, y + font.TextHeight, textPaint);
+            Canvas.DrawText(text.ToString(), x, Baseline(y, font), textPaint);
         }
 
         public void DrawText(StringBuilder text, UIFont font, float x, float y, in UIColor color, float scale)
@@ -219,7 +231,7 @@ namespace UILayout
             textPaint.Typeface = font.Typeface;
             textPaint.TextSize = font.TextSize;
 
-            Canvas.DrawText(text.ToString(), x, y + font.TextHeight, textPaint);
+            Canvas.DrawText(text.ToString(), x, Baseline(y, font), textPaint);
         }
     }
 }

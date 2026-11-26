@@ -14,54 +14,59 @@ namespace UILayout
         void SetScrollPercent(float scrollPercent);
     }
 
+    /// <summary>
+    /// A <see cref="VerticalScrollBar"/> in a <see cref="Frame"/> (the track, in the theme's background color), with
+    /// arrow buttons above and below it that scroll by an item.
+    /// </summary>
     public class VerticalScrollBarWithArrows : VerticalStack
     {
+        const float ArrowHeight = 20;
+
         public VerticalScrollBar ScrollBar { get; private set; }
 
         public VerticalScrollBarWithArrows()
         {
-            VerticalAlignment = EVerticalAlignment.Stretch;
+            UITheme theme = Layout.Current.Theme;
 
-            NinePatchWrapper gutter = new NinePatchWrapper(Layout.Current.GetImage("ScrollBarGutter"))
-            {
-                Padding = new LayoutPadding(0),
-                HorizontalAlignment = EHorizontalAlignment.Stretch,
-                VerticalAlignment = EVerticalAlignment.Stretch
-            };
+            VerticalAlignment = EVerticalAlignment.Stretch;
+            ChildSpacing = 2;
 
             ScrollBar = new VerticalScrollBar()
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
-                VerticalAlignment = EVerticalAlignment.Stretch,
-                Padding = new LayoutPadding(gutter.Image.LogicalWidth / 2)
+                VerticalAlignment = EVerticalAlignment.Stretch
             };
 
-
-            Children.Add(new ImageButton("ScrollUpArrow")
+            Frame track = new Frame(ScrollBar)
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
-                DesiredHeight = 20,
+                VerticalAlignment = EVerticalAlignment.Stretch,
+                FillColor = theme.Background
+            };
+
+            Children.Add(new ImageButton(theme.ScrollUpArrow)
+            {
+                HorizontalAlignment = EHorizontalAlignment.Stretch,
+                DesiredHeight = ArrowHeight,
                 ClickAction = ScrollBar.ScrollBackward
             });
 
-            Children.Add(gutter);
+            Children.Add(track);
 
-            gutter.Child = ScrollBar;
-
-            Children.Add(new ImageButton("ScrollDownArrow")
+            Children.Add(new ImageButton(theme.ScrollDownArrow)
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
-                DesiredHeight = 20,
+                DesiredHeight = ArrowHeight,
                 ClickAction = ScrollBar.ScrollForward
             });
         }
-
-        public override void UpdateContentLayout()
-        {
-            base.UpdateContentLayout();
-        }
     }
 
+    /// <summary>
+    /// A vertical scroll bar: the theme's scroll thumb, as long as the part of the list that's in view, at where it is.
+    /// Drag the thumb, or press above or below it to scroll by a page. The thumb takes the accent color when the
+    /// mouse is over it and while it's dragged.
+    /// </summary>
     public class VerticalScrollBar : UIElementWrapper
     {
         public IScrollable Scrollable { get; set; }
@@ -77,17 +82,30 @@ namespace UILayout
 
         public VerticalScrollBar()
         {
-            Child = bar = new NinePatchWrapper(Layout.Current.GetImage("ScrollBar"))
+            UITheme theme = Layout.Current.Theme;
+
+            Child = bar = new NinePatchWrapper(theme.ScrollThumb)
             {
                 Padding = new LayoutPadding(0),
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
-                VerticalAlignment = EVerticalAlignment.Absolute                             
+                VerticalAlignment = EVerticalAlignment.Absolute,
+                Color = theme.Border
             };
         }
 
-        public override void SetBounds(in RectF bounds, UIElement parent)
+        public override void HandleInput(InputManager inputManager)
         {
-            base.SetBounds(bounds, parent);
+            base.HandleInput(inputManager);
+
+            UITheme theme = Layout.Current.Theme;
+            UIColor color = (inDrag || bar.IsMouseOver) ? theme.Accent : theme.Border;
+
+            if (bar.Color == color)
+                return;
+
+            bar.Color = color;
+
+            Layout.Current.AddDirtyRect(LayoutBounds);
         }
 
         public void ScrollBackward()

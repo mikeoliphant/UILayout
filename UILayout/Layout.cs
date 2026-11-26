@@ -17,26 +17,34 @@ namespace UILayout
         void Opened();
     }
 
-    public class PopupWrapper : NinePatchWrapper, IPopup
+    /// <summary>
+    /// Shows any element as a popup, in a <see cref="Frame"/> (with a little more room inside than the border needs).
+    /// Placed at its top left: show it at an anchor point to put it there.
+    /// </summary>
+    public class PopupWrapper : Frame, IPopup
     {
         public Action CloseAction { get; set; }
 
         public PopupWrapper(UIElement child)
-            : this(child, Layout.Current.DefaultOutlineNinePatch)
+            : base(child)
         {
+            HorizontalAlignment = EHorizontalAlignment.Left;
+            VerticalAlignment = EVerticalAlignment.Top;
+
+            ContentPadding = new LayoutPadding(8);
         }
 
-        public PopupWrapper(UIElement child, UIImage ninePatch)
-            : base(ninePatch)
+        public UIElement Child
         {
-            this.Child = child;
+            get { return Content; }
+            set { Content = value; }
         }
 
         public void Opened()
         {
-            if (Child is IPopup)
+            if (Content is IPopup)
             {
-                (Child as IPopup).Opened();
+                (Content as IPopup).Opened();
             }
         }
     }
@@ -47,33 +55,7 @@ namespace UILayout
 
         public bool UseEmbeddedResources { get; set; } = true;
 
-        public UIFont DefaultFont { get; set; }
-
-        /// <summary>A smaller font, for labels, captions and values that pop in over controls.</summary>
-        public UIFont DefaultSmallFont { get; set; }
-        public UIColor DefaultForegroundColor { get; set; } = UIColor.Black;
-
-        public UIImage DefaultOutlineNinePatch { get; set; }
-        public UIImage DefaultPressedNinePatch { get; set; }
-        public UIImage DefaultUnpressedNinePatch { get; set; }
-        public UIImage DefaultDragImage { get; set; }        
-
-        /// <summary>Input boxes: a nine-patch filled with a rounded rectangle, and its outline (both white).</summary>
-        public UIImage DefaultInputFillNinePatch { get; set; }
-        public UIImage DefaultInputBorderNinePatch { get; set; }
-
-        /// <summary>A drop-down's arrow (white).</summary>
-        public UIImage DefaultDropDownArrow { get; set; }
-
-        /// <summary>A check box: a rounded square, filled, its outline, and the check mark (all white).</summary>
-        public UIImage DefaultCheckBoxFill { get; set; }
-        public UIImage DefaultCheckBoxBorder { get; set; }
-        public UIImage DefaultCheckMark { get; set; }
-
-        /// <summary>A list's scroll thumb: a small rounded nine-patch (white).</summary>
-        public UIImage DefaultScrollThumbNinePatch { get; set; }
-
-        /// <summary>Colors for controls drawn in an input style.</summary>
+        /// <summary>How controls look: colors, fonts and images. Set it up before creating controls.</summary>
         public UITheme Theme { get; set; } = new UITheme();
 
         Dictionary<string, UIImage> images = new Dictionary<string, UIImage>();
@@ -97,6 +79,7 @@ namespace UILayout
         int dragTouchID;
         UIElement dragInitiator = null;
         UIImage dragImage = null;
+        UIColor dragImageColor;
         float dragImageXOffset = 0;
         float dragImageYOffset = 0;
         Vector2 dragImagePosition;
@@ -338,7 +321,7 @@ namespace UILayout
 
             if ((dragImage != null) && (dragImagePosition.X != float.MinValue))
             {
-                GraphicsContext.DrawImage(dragImage, (int)(dragImagePosition.X + dragImageXOffset), (int)(dragImagePosition.Y + dragImageYOffset), UIColor.White, 1.0f);
+                GraphicsContext.DrawImage(dragImage, (int)(dragImagePosition.X + dragImageXOffset), (int)(dragImagePosition.Y + dragImageYOffset), dragImageColor, 1.0f);
             }
 
             ClearDirtyRect();
@@ -435,10 +418,18 @@ namespace UILayout
 
         public void BeginDrag(UIElement initiator, int touchID, object obj, UIImage image, float offsetX, float offsetY)
         {
+            BeginDrag(initiator, touchID, obj, image, offsetX, offsetY, UIColor.White);
+        }
+
+        /// <summary>Starts dragging the object, with the image (tinted with the color) following the touch.</summary>
+        public void BeginDrag(UIElement initiator, int touchID, object obj, UIImage image, float offsetX, float offsetY,
+            UIColor color)
+        {
             dragInitiator = initiator;
             dragTouchID = touchID;
             dragObject = obj;
             dragImage = image;
+            dragImageColor = color;
             dragImageXOffset = offsetX;
             dragImageYOffset = offsetY;
             dragImagePosition = new Vector2(float.MinValue);
@@ -493,7 +484,20 @@ namespace UILayout
 
         public void ShowPopup(UIElement popup, in Vector2 anchorPoint)
         {
-            ContextUIElementWrapper contextElementWrapper = new ContextUIElementWrapper(anchorPoint);
+            ShowContextPopup(popup, new ContextUIElementWrapper(anchorPoint));
+        }
+
+        /// <summary>
+        /// Shows the popup just below the anchor bounds (an element's), left-aligned with them; above them when it
+        /// doesn't fit below. The popup should be Left- and Top-aligned (not Absolute or Stretch).
+        /// </summary>
+        public void ShowPopup(UIElement popup, in RectF anchorBounds)
+        {
+            ShowContextPopup(popup, new ContextUIElementWrapper(anchorBounds));
+        }
+
+        void ShowContextPopup(UIElement popup, ContextUIElementWrapper contextElementWrapper)
+        {
             contextElementWrapper.Child = popup;
 
             popupStack.Add(contextElementWrapper);
@@ -520,49 +524,45 @@ namespace UILayout
 
         public void ShowContinuePopup(string text, Action continueAction)
         {
-            ShowPopup(new InputDialog(Layout.Current.DefaultOutlineNinePatch, new TextBlock(text), new DialogInput { Text = "Continue", WaitForRelease = true, Action = continueAction, CloseOnInput = true }));
+            ShowContinuePopup(new TextBlock(text), continueAction);
         }
 
         public void ShowContinuePopup(UIElement contents, Action continueAction)
         {
-            ShowPopup(new InputDialog(Layout.Current.DefaultOutlineNinePatch, contents, new DialogInput { Text = "Continue", WaitForRelease = true, Action = continueAction, CloseOnInput = true }));
+            ShowPopup(new InputDialog(contents,
+                new DialogInput { Text = "Continue", Action = continueAction, CloseOnInput = true, IsPrimary = true }));
         }
 
         public void ShowConfirmationPopup(string text, Action confirmAction)
         {
-            ShowPopup(new InputDialog(Layout.Current.DefaultOutlineNinePatch, new TextBlock(text),
-                new DialogInput { Text = "Yes", Action = confirmAction, WaitForRelease = true, CloseOnInput = true },
-                new DialogInput { Text = "No", WaitForRelease = true, CloseOnInput = true }));
+            ShowConfirmationPopup(new TextBlock(text), confirmAction);
         }
 
         public void ShowConfirmationPopup(UIElement contents, Action confirmAction)
         {
-            ShowPopup(new InputDialog(Layout.Current.DefaultOutlineNinePatch, contents,
-                new DialogInput { Text = "Yes", Action = confirmAction, WaitForRelease = true, CloseOnInput = true },
-                new DialogInput { Text = "No", WaitForRelease = true, CloseOnInput = true }));
+            ShowPopup(new InputDialog(contents,
+                new DialogInput { Text = "Yes", Action = confirmAction, CloseOnInput = true, IsPrimary = true },
+                new DialogInput { Text = "No", CloseOnInput = true }));
         }
 
         public void ShowBackPopup(string text)
         {
-            ShowPopup(new InputDialog(Layout.Current.DefaultOutlineNinePatch, new TextBlock(text), new DialogInput { Text = "Back", WaitForRelease = true, CloseOnInput = true }));
+            ShowBackPopup(new TextBlock(text));
         }
 
         public void ShowBackPopup(UIElement contents)
         {
-            ShowPopup(new InputDialog(Layout.Current.DefaultOutlineNinePatch, contents, new DialogInput { Text = "Back", WaitForRelease = true, CloseOnInput = true }));
+            ShowPopup(new InputDialog(contents, new DialogInput { Text = "Back", CloseOnInput = true }));
         }
 
         public void ShowTextInputPopup(string prompt, Action<string> confirmAction)
         {
-            ShowTextInputPopup(prompt, null, confirmAction, Layout.Current.DefaultForegroundColor, new UIColor(200, 200, 200));
+            ShowTextInputPopup(prompt, null, confirmAction);
         }
 
+        /// <summary>A dialog asking for a line of text: the prompt over a <see cref="TextBox"/>, with Ok and Cancel.
+        /// Enter is Ok.</summary>
         public void ShowTextInputPopup(string prompt, string defaultText, Action<string> confirmAction)
-        {
-            ShowTextInputPopup(prompt, defaultText, confirmAction, Layout.Current.DefaultForegroundColor, new UIColor(200, 200, 200));
-        }
-
-        public void ShowTextInputPopup(string prompt, string defaultText, Action<string> confirmAction, UIColor textColor, UIColor textBackgroundColor)
         {
 #if ANDROID
             Layout.Current.GetKeyboardInput(prompt, defaultText, delegate (string str, object obj)
@@ -570,22 +570,26 @@ namespace UILayout
                 confirmAction(str);
             }, null);            
 #else
-            VerticalStack stack = new VerticalStack { HorizontalAlignment = EHorizontalAlignment.Stretch, VerticalAlignment = EVerticalAlignment.Stretch };
+            VerticalStack stack = new VerticalStack
+            {
+                HorizontalAlignment = EHorizontalAlignment.Stretch,
+                VerticalAlignment = EVerticalAlignment.Stretch,
+                ChildSpacing = 6
+            };
 
             stack.Children.Add(new TextBlock(prompt));
 
             TextBox textBox = new TextBox(256)
             {
-                TextColor = textColor,
-                BackgroundColor = textBackgroundColor,
-                HorizontalAlignment = EHorizontalAlignment.Stretch
+                HorizontalAlignment = EHorizontalAlignment.Stretch,
+                DesiredWidth = 300
             };
             stack.Children.Add(textBox);
 
             textBox.SetText(defaultText);
             textBox.Focus();
 
-            var dialog = new InputDialog(Layout.Current.DefaultOutlineNinePatch, stack,
+            var dialog = new InputDialog(stack,
                 new DialogInput
                 {
                     Text = "Ok",
@@ -593,10 +597,10 @@ namespace UILayout
                     {
                         confirmAction(textBox.GetText());
                     },
-                    WaitForRelease = true,
-                    CloseOnInput = true
+                    CloseOnInput = true,
+                    IsPrimary = true
                 },
-                new DialogInput { Text = "Cancel", WaitForRelease = true, CloseOnInput = true });
+                new DialogInput { Text = "Cancel", CloseOnInput = true });
 
             textBox.EnterAction = delegate
             {
@@ -626,8 +630,17 @@ namespace UILayout
         }
     }
 
+    /// <summary>
+    /// Places a popup at an anchor, inside the bounds it's given. Anchored at a point (a context menu), the popup's top
+    /// left goes there, flipped to the point's left or above it when it doesn't fit. Anchored to an element's bounds
+    /// (a drop-down's list), it goes just below them, left-aligned with them; above them when it doesn't fit below, and
+    /// moved left as far as it needs to fit across.
+    /// </summary>
     public class ContextUIElementWrapper : UIElementWrapper
     {
+        bool anchoredToBounds;
+        RectF anchorBounds;
+
         public ContextUIElementWrapper(Vector2 point)
         {
             HorizontalAlignment = EHorizontalAlignment.Absolute;
@@ -636,14 +649,44 @@ namespace UILayout
             AnchorPoint = point;
         }
 
+        public ContextUIElementWrapper(in RectF anchor)
+        {
+            HorizontalAlignment = EHorizontalAlignment.Absolute;
+            VerticalAlignment = EVerticalAlignment.Absolute;
+
+            AnchorBounds = anchor;
+        }
+
         /// <summary>Where the child is placed (moved to fit the bounds it's given), so the wrapper can be shown again
         /// elsewhere.</summary>
-        public Vector2 AnchorPoint { get; set; }
+        public Vector2 AnchorPoint
+        {
+            get { return new Vector2(anchorBounds.X, anchorBounds.Y); }
+
+            set
+            {
+                anchorBounds = new RectF(value.X, value.Y, 0, 0);
+                anchoredToBounds = false;
+            }
+        }
+
+        /// <summary>The bounds the child is placed below (or above), so the wrapper can be shown again
+        /// elsewhere.</summary>
+        public RectF AnchorBounds
+        {
+            get { return anchorBounds; }
+
+            set
+            {
+                anchorBounds = value;
+                anchoredToBounds = true;
+            }
+        }
 
         public override void SetBounds(in RectF bounds, UIElement parent)
         {
-            float horizontalOffset = AnchorPoint.X - bounds.X;
-            float verticalOffset = AnchorPoint.Y - bounds.Y;
+            float horizontalOffset = anchorBounds.X - bounds.X;
+            float verticalOffset = anchorBounds.Bottom - bounds.Y;
 
             float width, height;
 
@@ -651,7 +694,10 @@ namespace UILayout
 
             if ((horizontalOffset + width) > bounds.Width)
             {
-                horizontalOffset = AnchorPoint.X - bounds.X - width;
+                if (anchoredToBounds)
+                    horizontalOffset = bounds.Width - width;
+                else
+                    horizontalOffset = anchorBounds.X - bounds.X - width;
 
                 if (horizontalOffset < 0)
                     horizontalOffset = 0;
@@ -659,7 +705,7 @@ namespace UILayout
 
             if ((verticalOffset + height) > bounds.Height)
             {
-                verticalOffset = AnchorPoint.Y - bounds.Y - height;
+                verticalOffset = anchorBounds.Y - bounds.Y - height;
 
                 if (verticalOffset < 0)
                     verticalOffset = 0;

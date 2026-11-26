@@ -19,8 +19,8 @@ Tested platforms:
   game apps).
 - **High DPI support:** layout in logical units, scaled to the display; images carry a density, so high-resolution
   images draw pixel for pixel at a matching scale.
-- **Themeable:** images are white with alpha, so they can be tinted or swapped, and the input-style controls take their
-  colors from a theme.
+- **Themeable:** every control takes its colors, fonts and images from one theme (`Layout.Theme`). Images are white
+  with alpha, so they can be tinted or swapped.
 - **Embeddable:** can run inside another application's window (for example, an audio plugin editor in a DAW), or as an
   app of its own.
 - **Touch and mouse:** input is handled as touches, with mouse and keyboard support on top.

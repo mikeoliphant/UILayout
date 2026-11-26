@@ -10,6 +10,9 @@ namespace UILayout
         public Action Action { get; set; }
         public bool CloseOnInput { get; set; }
 
+        /// <summary>The dialog's default input (such as Ok): its button has the accent border.</summary>
+        public bool IsPrimary { get; set; }
+
         public DialogInput()
         {
             CloseOnInput = false;
@@ -17,10 +20,12 @@ namespace UILayout
         }
     }
 
-    public class InputDialog : NinePatchWrapper, IPopup
+    /// <summary>
+    /// A popup dialog: a <see cref="Frame"/> holding its contents over a row of buttons, one for each
+    /// <see cref="DialogInput"/>. Centered when shown without an anchor.
+    /// </summary>
+    public class InputDialog : Frame, IPopup
     {
-        public static float DefaultButtonSpacing = 2;
-
         public Action CloseAction { get { return inputStack.CloseAction; } set { inputStack.CloseAction = value; } }
 
         public float ButtonSpacing
@@ -36,34 +41,32 @@ namespace UILayout
         }
 
         VerticalStack stack;
-        UIElement contents;
         UIElementWrapper wrapper;
         protected DialogInputStack inputStack;
 
-        public InputDialog(UIImage ninePatchImage)
-            : this(ninePatchImage, null, null)
+        public InputDialog()
+            : this(null, null)
         {
         }
 
-        public InputDialog(UIImage ninePatchImage, UIElement contents)
-            : this(ninePatchImage, contents, null)
+        public InputDialog(UIElement contents)
+            : this(contents, null)
         {
         }
 
-        public InputDialog(UIImage ninePatchImage, UIElement contents, params DialogInput[] inputs)
-            : base(ninePatchImage)
+        public InputDialog(UIElement contents, params DialogInput[] inputs)
         {
-            this.contents = contents;
-
             HorizontalAlignment = EHorizontalAlignment.Center;
             VerticalAlignment = EVerticalAlignment.Center;
+
+            ContentPadding = new LayoutPadding(12);
 
             stack = new VerticalStack();
             stack.HorizontalAlignment = EHorizontalAlignment.Stretch;
             stack.VerticalAlignment = EVerticalAlignment.Stretch;
 
-            stack.ChildSpacing = 5;
-            Child = stack;
+            stack.ChildSpacing = 12;
+            Content = stack;
 
             wrapper = new UIElementWrapper();
             wrapper.HorizontalAlignment = EHorizontalAlignment.Stretch;
@@ -72,7 +75,7 @@ namespace UILayout
 
             wrapper.Child = contents;
 
-            inputStack = new DialogInputStack(this, new HorizontalStack { HorizontalAlignment = EHorizontalAlignment.Center, ChildSpacing = DefaultButtonSpacing }, inputs) { HorizontalAlignment = EHorizontalAlignment.Center, VerticalAlignment = EVerticalAlignment.Bottom };
+            inputStack = new DialogInputStack(this, new HorizontalStack { HorizontalAlignment = EHorizontalAlignment.Center, ChildSpacing = 8 }, inputs) { HorizontalAlignment = EHorizontalAlignment.Center, VerticalAlignment = EVerticalAlignment.Bottom };
             stack.Children.Add(inputStack);
         }
 
@@ -129,7 +132,10 @@ namespace UILayout
         {
             inputs.Add(input);
 
-            TextButton button = new TextButton(input.Text);
+            TextButton button = new TextButton(input.Text)
+            {
+                Primary = input.IsPrimary
+            };
 
             Action action = delegate { DoAction(input); };
 

@@ -5,6 +5,11 @@ using System.Text;
 
 namespace UILayout
 {
+    /// <summary>
+    /// A list of text items that scrolls (mouse wheel, drag, or a <see cref="VerticalScrollBar"/>), drawn in the
+    /// theme's font and text color. The item under the mouse and the selected one are highlighted. Put it in a
+    /// <see cref="Frame"/> for a box around it.
+    /// </summary>
     public class SwipeList : UIElement, IScrollable
     {
         public UIFont Font
@@ -30,8 +35,13 @@ namespace UILayout
             }
         }
 
-        public UIColor TextColor { get; set; } = UIColor.White;
-        public UIColor HighlightColor { get; set; } = new UIColor(200, 200, 200, 255);
+        public UIColor TextColor { get; set; }
+
+        /// <summary>Behind the selected item and the one being pressed (default: the theme's active color).</summary>
+        public UIColor HighlightColor { get; set; }
+
+        /// <summary>Behind the item under the mouse (default: the theme's active color, half transparent).</summary>
+        public UIColor HoverColor { get; set; }
         public Action<int> SelectAction { get; set; }
         public Action<int> HoldAction { get; set; }
         public float ItemHeight { get; set; }
@@ -57,7 +67,7 @@ namespace UILayout
 
         IList items;
 
-        UIFont font = Layout.Current.DefaultFont;
+        UIFont font = Layout.Current.Theme.Font;
         float fontScale = 1.0f;
         float offset = 0;
         protected StringBuilder sb = new StringBuilder();
@@ -99,7 +109,11 @@ namespace UILayout
             // Items scrolled partly out of view are cut at the edges.
             ClipToBounds = true;
 
-            TextColor = UIColor.White;
+            UITheme theme = Layout.Current.Theme;
+
+            TextColor = theme.Text;
+            HighlightColor = theme.Active;
+            HoverColor = theme.Active * 0.5f;
 
             ItemXOffset = 10;
 
@@ -225,6 +239,14 @@ namespace UILayout
 
         protected virtual void DrawItem(int item, float y)
         {
+            if (IsMouseOver && (HoverColor.A > 0))
+            {
+                float mouseY = Layout.Current.InputManager.MousePosition.Y;
+
+                if ((mouseY >= y) && (mouseY < (y + ItemHeight)))
+                    Layout.Current.GraphicsContext.DrawRectangle(new RectF(ContentBounds.X, y, ContentBounds.Width, ItemHeight), HoverColor);
+            }
+
             if (HaveTouchCapture && (item == touchItem))
             {
                 Layout.Current.GraphicsContext.DrawRectangle(new RectF(ContentBounds.X, y, ContentBounds.Width, ItemHeight), HighlightColor);

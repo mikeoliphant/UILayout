@@ -20,8 +20,9 @@ namespace UILayout
             SKTypeface typeface = SKTypeface.FromFamilyName("Arial", SKFontStyleWeight.Bold, SKFontStyleWidth.Normal,
                 SKFontStyleSlant.Upright);
 
-            DefaultFont = new UIFont { Typeface = typeface, TextSize = 24 };
-            DefaultSmallFont = new UIFont { Typeface = typeface, TextSize = 16 };
+            // The sizes of the bitmap fonts (16 and 12 points at 96 DPI)
+            Theme.Font = new UIFont { Typeface = typeface, TextSize = 21 };
+            Theme.SmallFont = new UIFont { Typeface = typeface, TextSize = 16 };
         }
     }
 }

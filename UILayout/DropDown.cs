@@ -5,7 +5,7 @@ using System.Numerics;
 namespace UILayout
 {
     /// <summary>
-    /// A drop-down in the input style (as an HTML select): an <see cref="InputFrame"/> with the chosen item's text on
+    /// A drop-down (as an HTML select): an <see cref="Frame"/> with the chosen item's text on
     /// the left and the theme's arrow image on the right. The border takes the accent color when the mouse is over it
     /// or its list is open. Clicking it opens the list of items below it (above, if it doesn't fit), at least as wide as
     /// the drop-down. Text that doesn't fit is cut short with "...".
@@ -16,7 +16,7 @@ namespace UILayout
         const float ArrowGap = 10;
 
         List<(string Text, T Value)> items = new List<(string Text, T Value)>();
-        InputFrame frame;
+        Frame frame;
         FittedTextBlock text;
         ImageElement arrow;
         int selected = -1;
@@ -34,7 +34,7 @@ namespace UILayout
             HorizontalAlignment = EHorizontalAlignment.Stretch;
             VerticalAlignment = EVerticalAlignment.Center;
 
-            arrow = new ImageElement(Layout.Current.DefaultDropDownArrow)
+            arrow = new ImageElement(theme.DropDownArrow)
             {
                 HorizontalAlignment = EHorizontalAlignment.Right,
                 VerticalAlignment = EVerticalAlignment.Center,
@@ -54,7 +54,7 @@ namespace UILayout
             content.Children.Add(text);
             content.Children.Add(arrow);
 
-            frame = new InputFrame(content);
+            frame = new Frame(content);
             Child = frame;
 
             ShowSelected();
@@ -88,7 +88,7 @@ namespace UILayout
             get { return (selected >= 0) ? items[selected].Text : ""; }
         }
 
-        /// <summary>The font of the shown item and of the open list (default: the layout's default font).</summary>
+        /// <summary>The font of the shown item and of the open list (default: the theme's font).</summary>
         public UIFont Font
         {
             get { return text.TextFont; }
@@ -184,7 +184,7 @@ namespace UILayout
 
                 if (listWrapper == null)
                 {
-                    listWrapper = new ContextUIElementWrapper(Vector2.Zero);
+                    listWrapper = new ContextUIElementWrapper(RectF.Empty);
 
                     closeList = delegate { Layout.Current.ClosePopup(listWrapper); };
                 }
@@ -195,7 +195,7 @@ namespace UILayout
 
             list.Prepare();
 
-            listWrapper.AnchorPoint = new Vector2(ContentBounds.X, ContentBounds.Bottom);
+            listWrapper.AnchorBounds = ContentBounds;
 
             Layout.Current.ShowPopup(listWrapper);
         }
@@ -216,12 +216,12 @@ namespace UILayout
         }
 
         /// <summary>
-        /// The open list: an <see cref="InputFrame"/> with the accent border, holding a row per visible item. The row
+        /// The open list: an <see cref="Frame"/> with the accent border, holding a row per visible item. The row
         /// under the mouse has the active background; the chosen item's text is in the accent color. Scrolls with the
         /// mouse wheel when there are more items than it shows, with the theme's scroll thumb at the right showing
         /// where.
         /// </summary>
-        class DropDownList : InputFrame, IPopup
+        class DropDownList : Frame, IPopup
         {
             const float RowPadY = 4;
             const float ThumbWidth = 6;
@@ -257,7 +257,7 @@ namespace UILayout
                     stack.Children.Add(row);
                 }
 
-                thumb = new NinePatchWrapper(Layout.Current.DefaultScrollThumbNinePatch)
+                thumb = new NinePatchWrapper(theme.ScrollThumb)
                 {
                     HorizontalAlignment = EHorizontalAlignment.Right,
                     VerticalAlignment = EVerticalAlignment.Top,
@@ -288,17 +288,18 @@ namespace UILayout
             /// <summary>Brings it up to date for an opening: its width, the chosen item in view.</summary>
             public void Prepare()
             {
-                // At least as wide as the drop-down, and as the widest item.
+                // At least as wide as the drop-down, and as the widest item, but no wider than the layout (items
+                // that don't fit are cut short with "...").
                 float width = owner.ContentBounds.Width;
 
                 foreach (var item in owner.items)
                 {
                     owner.Font.MeasureString(item.Text, out float textWidth, out _);
 
-                    width = Math.Max(width, textWidth + (2 * Row.TextMarginX) + BorderPadding.Left + BorderPadding.Right + ThumbWidth);
+                    width = Math.Max(width, textWidth + (2 * Row.TextMarginX) + ContentPadding.Left + ContentPadding.Right + ThumbWidth);
                 }
 
-                DesiredWidth = width;
+                DesiredWidth = Math.Min(width, Layout.Current.Bounds.Width);
 
                 // Opens with the chosen item in view.
                 top = Math.Clamp(owner.selected - (Shown / 2), 0, owner.items.Count - Shown);
@@ -382,10 +383,10 @@ namespace UILayout
 
                     HorizontalAlignment = EHorizontalAlignment.Stretch;
 
-                    Text = new TextBlock
+                    Text = new FittedTextBlock
                     {
                         TextFont = font,
-                        HorizontalAlignment = EHorizontalAlignment.Left,
+                        HorizontalAlignment = EHorizontalAlignment.Stretch,
                         VerticalAlignment = EVerticalAlignment.Center,
                         Margin = new LayoutPadding(TextMarginX, 0)
                     };
@@ -393,7 +394,7 @@ namespace UILayout
                     Child = Text;
                 }
 
-                public TextBlock Text { get; private set; }
+                public FittedTextBlock Text { get; private set; }
 
                 public override bool HandleTouch(in Touch touch)
                 {

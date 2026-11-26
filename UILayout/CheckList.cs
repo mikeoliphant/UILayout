@@ -6,7 +6,7 @@ namespace UILayout
     /// <summary>
     /// A list of items, each with a check box, that scrolls (mouse wheel or drag). Clicking an item checks or unchecks
     /// it. Items are drawn as <see cref="SwipeList"/> draws them, with the theme's check box images before the text.
-    /// Put it in an <see cref="InputFrame"/> for the input-style box.
+    /// Put it in a <see cref="Frame"/> for a box around it.
     /// </summary>
     public class CheckList<T> : SwipeList
     {
@@ -23,7 +23,8 @@ namespace UILayout
             // The list's own: clicking an item toggles it (use CheckAction to hear about it).
             SelectAction = Toggle;
 
-            TextColor = Layout.Current.Theme.Text;
+            // Checked items aren't selected, so only the item under the mouse is highlighted, in the full color.
+            HoverColor = Layout.Current.Theme.Active;
             Padding = new LayoutPadding(0, 1);
         }
 
@@ -94,20 +95,6 @@ namespace UILayout
                 CheckAction();
         }
 
-        // The item under the mouse has the theme's active background.
-        protected override void DrawItem(int item, float y)
-        {
-            if ((item < items.Count) && IsMouseOver)
-            {
-                float mouseY = Layout.Current.InputManager.MousePosition.Y;
-
-                if ((mouseY >= y) && (mouseY < (y + ItemHeight)))
-                    Layout.Current.GraphicsContext.DrawRectangle(new RectF(ContentBounds.X, y, ContentBounds.Width, ItemHeight), Layout.Current.Theme.Active);
-            }
-
-            base.DrawItem(item, y);
-        }
-
         // A check box, then the item's text.
         public override void DrawItemContents(int item, float x, float y)
         {
@@ -123,9 +110,9 @@ namespace UILayout
             GraphicsContext2D g = Layout.Current.GraphicsContext;
             bool isChecked = checkedValues.Contains(items[item].Value);
 
-            UIImage fill = Layout.Current.DefaultCheckBoxFill;
-            UIImage border = Layout.Current.DefaultCheckBoxBorder;
-            UIImage check = Layout.Current.DefaultCheckMark;
+            UIImage fill = theme.CheckBoxFill;
+            UIImage border = theme.CheckBoxBorder;
+            UIImage check = theme.CheckMark;
 
             int boxX = (int)x;
             int boxY = (int)(y + ((Font.TextHeight - fill.Height) / 2));

@@ -5,20 +5,21 @@ using System.Linq;
 namespace UILayout.Test
 {
     /// <summary>
-    /// The test apps' layout: UILayout's controls, in outlined sections in the theme's colors (the input-style
-    /// controls' look). Older controls (dialogs, menus, tabs) keep their own look until they are themed.
+    /// The test apps' layout: UILayout's controls, in outlined sections, all drawn from the layout's theme.
     /// </summary>
     public class LayoutTest : Dock
     {
         const int RowHeight = 34;
         const int LabelWidth = 130;
         const int Spacing = 8;
-        const int LeftColumnWidth = 260;
+        const int LeftColumnWidth = 280;
 
-        InputFrame spaceFrame;
+        Frame spaceFrame;
         FittedTextBlock choiceText;
         DropDown<string> colorDropDown;
         CheckList<string> fruitList;
+        TextBox nameBox;
+        Slider levelSlider;
 
         public LayoutTest()
         {
@@ -57,9 +58,7 @@ namespace UILayout.Test
             right.Children.Add(CreateInputSection());
             right.Children.Add(CreateDragDropSection());
 
-            TabPanel tabPanel = new TabPanel(new UIColor(100, 100, 100), UIColor.White,
-                Layout.Current.GetImage("TabPanelBackground"), Layout.Current.GetImage("TabForeground"),
-                Layout.Current.GetImage("TabBackground"), 5, 5);
+            TabPanel tabPanel = new TabPanel();
 
             tabPanel.AddTab("Tab 1", new TextBlock("This is tab 1"));
             tabPanel.AddTab("Tab 2", new TextBlock("This is tab 2"));
@@ -77,13 +76,12 @@ namespace UILayout.Test
                 ChildSpacing = 4
             };
 
-            InputDialog dialog = new InputDialog(Layout.Current.DefaultOutlineNinePatch,
-                new TextBlock { Text = "Do you want to?" });
+            InputDialog dialog = new InputDialog(new TextBlock { Text = "Do you want to?" });
 
-            dialog.AddInput(new DialogInput { Text = "Ok", CloseOnInput = true });
+            dialog.AddInput(new DialogInput { Text = "Ok", CloseOnInput = true, IsPrimary = true });
             dialog.AddInput(new DialogInput { Text = "Cancel", CloseOnInput = true });
 
-            buttons.Children.Add(new FrameButton("Input Dialog", () => Layout.Current.ShowPopup(dialog)));
+            buttons.Children.Add(new TextButton("Input Dialog", () => Layout.Current.ShowPopup(dialog)));
 
             List<MenuItem> menuItems = new List<MenuItem>
             {
@@ -94,21 +92,20 @@ namespace UILayout.Test
 
             Menu menu = new Menu(menuItems);
 
-            FrameButton menuButton = new FrameButton("Popup Menu", null);
+            TextButton menuButton = new TextButton("Popup Menu");
             menuButton.ClickAction = () => Layout.Current.ShowPopup(menu, menuButton.ContentBounds.Center);
 
             buttons.Children.Add(menuButton);
 
             UIElement swipeStack = CreateSwipeList();
 
-            buttons.Children.Add(new FrameButton("Swipe List", () => Layout.Current.ShowPopup(swipeStack)));
+            buttons.Children.Add(new TextButton("Swipe List", () => Layout.Current.ShowPopup(swipeStack)));
 
-            buttons.Children.Add(new FrameButton("Text Input", () =>
+            buttons.Children.Add(new TextButton("Text Input", () =>
                 Layout.Current.ShowTextInputPopup("Enter text:",
                     str => Layout.Current.ShowContinuePopup("You entered: " + str))));
 
-            FileSelector fileSelector = new FileSelector("File Selection:", canCreateFolders: false,
-                Layout.Current.DefaultOutlineNinePatch)
+            FileSelector fileSelector = new FileSelector("File Selection:", canCreateFolders: false)
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
                 VerticalAlignment = EVerticalAlignment.Stretch
@@ -120,9 +117,9 @@ namespace UILayout.Test
                 Layout.Current.ShowContinuePopup("Path Selected:\n\n" + filePath);
             };
 
-            buttons.Children.Add(new FrameButton("File Selection", () => Layout.Current.ShowPopup(fileSelector)));
+            buttons.Children.Add(new TextButton("File Selection", () => Layout.Current.ShowPopup(fileSelector)));
 
-            buttons.Children.Add(new FrameButton("Native File Selection", () =>
+            buttons.Children.Add(new TextButton("Native File Selection", () =>
                 Layout.Current.GetFile(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments))));
 
             foreach (UIElement button in buttons.Children)
@@ -134,22 +131,20 @@ namespace UILayout.Test
             return Section(Header("Popups"), buttons);
         }
 
+        // A list with a scroll bar, in a frame; choosing an item closes it.
         UIElement CreateSwipeList()
         {
             HorizontalStack swipeStack = new HorizontalStack()
             {
-                HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Center
+                HorizontalAlignment = EHorizontalAlignment.Stretch,
+                VerticalAlignment = EVerticalAlignment.Stretch,
+                ChildSpacing = 4
             };
 
             SwipeList swipeList = new SwipeList()
             {
-                TextColor = UIColor.Black,
                 DesiredHeight = 200,
-                HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Center,
-                DesiredWidth = 100,
-                BackgroundColor = UIColor.White
+                DesiredWidth = 120
             };
             swipeStack.Children.Add(swipeList);
 
@@ -170,15 +165,23 @@ namespace UILayout.Test
             }
 
             swipeList.Items = items;
-            swipeList.SelectAction = delegate (int item)
+
+            Frame popup = new Frame(swipeStack)
             {
-                Layout.Current.ClosePopup(swipeStack);
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+                ContentPadding = new LayoutPadding(8)
             };
 
-            return swipeStack;
+            swipeList.SelectAction = delegate (int item)
+            {
+                Layout.Current.ClosePopup(popup);
+            };
+
+            return popup;
         }
 
-        // The input-style controls, with what they're set to.
+        // The input controls, with what they're set to.
         UIElement CreateInputSection()
         {
             UITheme theme = Layout.Current.Theme;
@@ -193,15 +196,14 @@ namespace UILayout.Test
             fruitList = new CheckList<string>()
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
-                VerticalAlignment = EVerticalAlignment.Stretch,
-                TextColor = theme.Text
+                VerticalAlignment = EVerticalAlignment.Stretch
             };
             string[] fruits = { "Apples", "Bananas", "Cherries", "Dates", "Elderberries", "Figs" };
 
             fruitList.SetItems(fruits.Select(f => (f, f)), new[] { "Bananas" });
             fruitList.CheckAction = ShowChoices;
 
-            InputFrame fruitFrame = new InputFrame(fruitList)
+            Frame fruitFrame = new Frame(fruitList)
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
                 DesiredHeight = 4 * 29
@@ -213,12 +215,16 @@ namespace UILayout.Test
                 ChildSpacing = Spacing
             };
 
-            buttons.Children.Add(new FrameButton("Toggle", null) { IsToggleButton = true });
-            buttons.Children.Add(new FrameButton("Primary", null) { Primary = true });
-
-            spaceFrame = new InputFrame(new TextBlock("Press Space")
+            buttons.Children.Add(new TextToggleButton("On", "Off"));
+            buttons.Children.Add(new TextButton("Primary") { Primary = true });
+            buttons.Children.Add(new ImageButton(theme.ScrollUpArrow)
             {
-                TextColor = theme.Text,
+                DesiredWidth = RowHeight,
+                VerticalAlignment = EVerticalAlignment.Stretch
+            });
+
+            spaceFrame = new Frame(new TextBlock("Space")
+            {
                 HorizontalAlignment = EHorizontalAlignment.Center,
                 VerticalAlignment = EVerticalAlignment.Center,
                 Margin = (6, 0)
@@ -230,6 +236,17 @@ namespace UILayout.Test
 
             Layout.Current.InputManager.AddMapping("SpacePressed", new KeyMapping(InputKey.Space));
 
+            nameBox = new TextBox(64)
+            {
+                EnterAction = ShowChoices
+            };
+            nameBox.SetText("Type here");
+
+            levelSlider = new Slider()
+            {
+                ValueChanged = ShowChoices
+            };
+
             choiceText = new FittedTextBlock()
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
@@ -240,14 +257,16 @@ namespace UILayout.Test
             ShowChoices();
 
             return Section(Header("Input controls"), Row("Drop-down", colorDropDown), Row("Check list", fruitFrame),
-                Row("Buttons", buttons), Row("Chosen", choiceText));
+                Row("Buttons", buttons), Row("Text box", nameBox), Row("Slider", levelSlider),
+                Row("Chosen", choiceText));
         }
 
         void ShowChoices()
         {
             string chosenFruit = (fruitList.Checked.Count > 0) ? string.Join(", ", fruitList.Checked) : "no fruit";
 
-            choiceText.Text = colorDropDown.Value + "; " + chosenFruit;
+            choiceText.Text = colorDropDown.Value + "; " + chosenFruit + "; " + nameBox.GetText() + "; " +
+                ((int)Math.Round(levelSlider.Value * 100)).ToString() + "%";
 
             Layout.Current.UpdateLayout();
         }
@@ -262,7 +281,7 @@ namespace UILayout.Test
             ListUIDragDropHandler dragDropHander = new ListUIDragDropHandler()
             {
                 ListElement = dragDropStack,
-                DragType = typeof(NinePatchWrapper),
+                DragType = typeof(Frame),
                 InternalOnly = true
             };
 
@@ -270,9 +289,13 @@ namespace UILayout.Test
 
             for (int i = 0; i < 5; i++)
             {
-                dragDropStack.Children.Add(new NinePatchWrapper(Layout.Current.GetImage("ButtonPressed"))
+                dragDropStack.Children.Add(new Frame(new TextBlock("Drag " + (i + 1).ToString())
                 {
-                    Child = new TextBlock("Drag " + (i + 1).ToString())
+                    Margin = new LayoutPadding(6, 2)
+                })
+                {
+                    HorizontalAlignment = EHorizontalAlignment.Left,
+                    VerticalAlignment = EVerticalAlignment.Top
                 });
             }
 
@@ -317,7 +340,6 @@ namespace UILayout.Test
 
             row.Children.Add(new TextBlock(label)
             {
-                TextColor = Layout.Current.Theme.Text,
                 VerticalAlignment = EVerticalAlignment.Center,
                 DesiredWidth = LabelWidth - Spacing,
                 Margin = new LayoutPadding(6, 0, 0, 0)
@@ -326,7 +348,8 @@ namespace UILayout.Test
             if (content.HorizontalAlignment != EHorizontalAlignment.Left)
                 content.HorizontalAlignment = EHorizontalAlignment.Stretch;
 
-            if (content.DesiredHeight == 0)
+            // Controls get the row height; text keeps its own, centered like the label.
+            if ((content.DesiredHeight == 0) && !(content is FittedTextBlock))
                 content.DesiredHeight = RowHeight;
 
             row.Children.Add(content);

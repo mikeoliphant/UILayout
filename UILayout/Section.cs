@@ -1,8 +1,10 @@
 namespace UILayout
 {
-    /// <summary>A group of controls set off by a thin rounded outline (the theme's input border nine-patch, in its border
-    /// color), with a little padding inside.</summary>
-    public class Section : NinePatchWrapper
+    /// <summary>
+    /// A group of controls set off by a thin rounded outline: a <see cref="Frame"/> without its fill, with a little
+    /// more room inside.
+    /// </summary>
+    public class Section : Frame
     {
         public Section()
             : this(null)
@@ -10,16 +12,14 @@ namespace UILayout
         }
 
         public Section(UIElement content)
-            : base(Layout.Current.DefaultInputBorderNinePatch)
+            : base(content)
         {
-            DrawCenter = false;
-            Color = Layout.Current.Theme.Border;
+            DrawFill = false;
             HorizontalAlignment = EHorizontalAlignment.Stretch;
+            VerticalAlignment = EVerticalAlignment.Top;
 
             // More room inside than the outline needs.
-            Padding = new LayoutPadding(6);
-
-            Child = content;
+            ContentPadding = new LayoutPadding(6);
         }
     }
 }

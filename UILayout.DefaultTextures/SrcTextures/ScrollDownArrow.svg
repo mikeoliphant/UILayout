@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6">
+  <!-- A scroll bar's down arrow, as the drop-down arrow. -->
+  <path d="M 0.5 0.5 L 5 6 L 9.5 0.5 Z" fill="#ffffff"/>
+</svg>

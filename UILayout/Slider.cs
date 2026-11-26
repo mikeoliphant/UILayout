@@ -1,193 +1,361 @@
 ﻿using System;
-using System.Numerics;
 
 namespace UILayout
 {
+    /// <summary>
+    /// A slider for a value from 0 to 1, horizontal (low at the left) or vertical (low at the bottom): a recessed
+    /// track, filled in the accent color up to a thumb. Drag the thumb, or press on the track to move the thumb there
+    /// and drag on; turn the mouse wheel over it; hold Shift for fine adjustment (<see cref="ControlInput"/>);
+    /// double-click for the default. It stretches along its length; give it the room to slide in. Images: the theme's
+    /// slider track and thumb; the thumb's ring takes the accent color on hover and while editing.
+    /// </summary>
     public class Slider : Dock
     {
-        public Action<float> ChangeAction { get; set; }
-        public bool InvertLevel { get; set; }
+        bool vertical;
+        NinePatchWrapper track;
+        NinePatchWrapper fill;
+        Dock thumb;
+        ImageElement thumbBody;
+        ImageElement thumbRing;
+        float thumbSize;
+        float trackThickness;
+        double value = -1;
+        float dragOffset;
 
-        protected UIImage levelImage;
-        protected float currentLevel;
-        protected float captureStartLevel;
+        // Fine adjustment (Shift) in a drag: the value moves from an anchor, relative to the touch, at a lower speed
+        bool fineActive;
+        float fineAnchorPosition;
+        double fineAnchorValue;
 
-        bool isHorizontal;
-        protected ImageElement levelImageElement;
-
-        public Slider(string imageName, bool isHorizontal)
+        public Slider(bool vertical = false)
         {
-            this.isHorizontal = isHorizontal;
+            this.vertical = vertical;
 
-            HorizontalAlignment = EHorizontalAlignment.Left;
-            VerticalAlignment = EVerticalAlignment.Top;
+            UITheme theme = Layout.Current.Theme;
 
-            levelImage = Layout.Current.GetImage(imageName);
+            RingColor = theme.Border;
+            ActiveRingColor = theme.Accent;
 
-            Children.Add(levelImageElement = new ImageElement(levelImage)
+            UIImage trackImage = vertical ? theme.SliderTrackVertical : theme.SliderTrack;
+
+            trackThickness = vertical ? trackImage.LogicalWidth : trackImage.LogicalHeight;
+            thumbSize = theme.SliderThumbBody.LogicalWidth;
+
+            // Stretched along its length, as thick as the thumb
+            if (vertical)
             {
-                HorizontalAlignment = isHorizontal ? EHorizontalAlignment.Left : EHorizontalAlignment.Left,
-                VerticalAlignment = isHorizontal ? EVerticalAlignment.Center : EVerticalAlignment.Top,
-            });
-        }
-
-        public override void UpdateContentLayout()
-        {
-            if (isHorizontal)
-            {
-                levelImageElement.Padding = new LayoutPadding((ContentBounds.Width * currentLevel) - (float)Math.Ceiling(levelImage.LogicalWidth / 2f), 0);
+                HorizontalAlignment = EHorizontalAlignment.Center;
+                VerticalAlignment = EVerticalAlignment.Stretch;
+                DesiredWidth = thumbSize;
             }
             else
             {
-                levelImageElement.Padding = new LayoutPadding(0, (ContentBounds.Height * currentLevel) - (float)Math.Ceiling(levelImage.LogicalHeight / 2f));
+                HorizontalAlignment = EHorizontalAlignment.Stretch;
+                VerticalAlignment = EVerticalAlignment.Center;
+                DesiredHeight = thumbSize;
             }
 
+            // The track and fill run between the thumb's centers at either end; drawn at the image's thickness (only
+            // their length stretches)
+            track = new NinePatchWrapper(trackImage)
+            {
+                Padding = new LayoutPadding(0),
+                Color = theme.Background * 0.75f
+            };
+
+            fill = new NinePatchWrapper(trackImage)
+            {
+                Padding = new LayoutPadding(0),
+                Color = theme.Accent
+            };
+
+            float inset = (thumbSize - trackThickness) / 2;
+
+            if (vertical)
+            {
+                track.HorizontalAlignment = EHorizontalAlignment.Center;
+                track.VerticalAlignment = EVerticalAlignment.Stretch;
+                track.DesiredWidth = trackThickness;
+                track.Margin = new LayoutPadding(0, inset);
+
+                fill.HorizontalAlignment = EHorizontalAlignment.Center;
+                fill.VerticalAlignment = EVerticalAlignment.Bottom;
+                fill.DesiredWidth = trackThickness;
+            }
+            else
+            {
+                track.HorizontalAlignment = EHorizontalAlignment.Stretch;
+                track.VerticalAlignment = EVerticalAlignment.Center;
+                track.DesiredHeight = trackThickness;
+                track.Margin = new LayoutPadding(inset, 0);
+
+                fill.HorizontalAlignment = EHorizontalAlignment.Left;
+                fill.VerticalAlignment = EVerticalAlignment.Center;
+                fill.DesiredHeight = trackThickness;
+            }
+
+            thumb = new Dock
+            {
+                HorizontalAlignment = vertical ? EHorizontalAlignment.Center : EHorizontalAlignment.Left,
+                VerticalAlignment = vertical ? EVerticalAlignment.Top : EVerticalAlignment.Center
+            };
+
+            thumb.Children.Add(new ImageElement(theme.SliderThumbShadow) { Color = new UIColor(0, 0, 0, 160) });
+            thumb.Children.Add(thumbBody = new ImageElement(theme.SliderThumbBody)
+            {
+                Color = UIColor.Lerp(theme.Surface, theme.Border, 0.6f)
+            });
+            thumb.Children.Add(new ImageElement(theme.SliderThumbHighlight));
+            thumb.Children.Add(thumbRing = new ImageElement(theme.SliderThumbRing) { Color = RingColor });
+
+            Children.Add(track);
+            Children.Add(fill);
+            Children.Add(thumb);
+
+            Value = 0.5;
+        }
+
+        /// <summary>The value, from 0 to 1. Setting it from code reports nothing.</summary>
+        public double Value
+        {
+            get { return value; }
+
+            set
+            {
+                value = Math.Clamp(value, 0, 1);
+
+                if (value == this.value)
+                    return;
+
+                this.value = value;
+
+                UpdateContentLayout();
+            }
+        }
+
+        /// <summary>The value a double-click returns to.</summary>
+        public double DefaultValue { get; set; } = 0.5;
+
+        /// <summary>
+        /// Steps the user's changes snap to (0, the default: none; N: 0, 1 / N, ... 1), with a wheel notch moving one
+        /// step.
+        /// </summary>
+        public int StepCount { get; set; }
+
+        /// <summary>Whether the user is changing the value (between EditStarted and EditEnded).</summary>
+        public bool IsEditing { get; private set; }
+
+        /// <summary>
+        /// The user's changes, as an edit: EditStarted, then ValueChanged for each new value, then EditEnded (a drag is
+        /// one edit, as is a wheel notch).
+        /// </summary>
+        public Action EditStarted { get; set; }
+        public Action ValueChanged { get; set; }
+        public Action EditEnded { get; set; }
+
+        public UIColor TrackColor
+        {
+            get { return track.Color; }
+            set { track.Color = value; }
+        }
+
+        public UIColor FillColor
+        {
+            get { return fill.Color; }
+            set { fill.Color = value; }
+        }
+
+        public UIColor ThumbColor
+        {
+            get { return thumbBody.Color; }
+            set { thumbBody.Color = value; }
+        }
+
+        /// <summary>The thumb's ring color, and its color on hover and while editing.</summary>
+        public UIColor RingColor { get; set; }
+        public UIColor ActiveRingColor { get; set; }
+
+        /// <summary>Shows hover (the ring's color); called each frame from HandleInput. Doesn't allocate.</summary>
+        public void Update()
+        {
+            UIColor ringColor = (IsEditing || IsMouseOver) ? ActiveRingColor : RingColor;
+
+            if (thumbRing.Color == ringColor)
+                return;
+
+            thumbRing.Color = ringColor;
+
+            Layout.Current.AddDirtyRect(ContentBounds);
+        }
+
+        public override void HandleInput(InputManager inputManager)
+        {
+            base.HandleInput(inputManager);
+
+            Update();
+        }
+
+        // How far the thumb moves: the length less the thumb
+        float Travel => Math.Max(0, (vertical ? ContentBounds.Height : ContentBounds.Width) - thumbSize);
+
+        // Also called when the slider's bounds change (a resize), so the thumb and fill follow the length.
+        public override void UpdateContentLayout()
+        {
+            float inset = (thumbSize - trackThickness) / 2;
+
+            // The thumb's offset from the low end, and the fill from the track's low end to the thumb's center
+            float thumbOffset = (float)value * Travel;
+            float fillLength = thumbOffset + (thumbSize / 2) - inset;
+
+            if (vertical)
+            {
+                thumb.Margin = new LayoutPadding(0, Travel - thumbOffset, 0, 0);
+
+                fill.DesiredHeight = fillLength;
+                fill.Margin = new LayoutPadding(0, 0, 0, inset);
+            }
+            else
+            {
+                thumb.Margin = new LayoutPadding(thumbOffset, 0, 0, 0);
+
+                fill.DesiredWidth = fillLength;
+                fill.Margin = new LayoutPadding(inset, 0, 0, 0);
+            }
+
+            // Shorter than the image's corners, the nine-patch can't draw (it's under the thumb then anyway)
+            UIImage fillImage = fill.Image;
+
+            fill.Visible = fillLength >= (vertical ? fillImage.LogicalHeight : fillImage.LogicalWidth);
+
             base.UpdateContentLayout();
+
+            Layout.Current.AddDirtyRect(ContentBounds);
         }
 
-        public float GetLevel()
+        // A value from the user, reported if it changed
+        void Change(double newValue)
         {
-            return InvertLevel ? (1.0f - currentLevel) : currentLevel;
+            double before = value;
+
+            Value = ControlInput.Snap(newValue, StepCount);
+
+            if ((value != before) && (ValueChanged != null))
+                ValueChanged();
         }
 
-        public void SetLevel(float level)
+        // Where the touch is along the slider, from its low end's edge in the direction the value grows
+        float Position(in Touch touch)
         {
-            UpdateLevel(InvertLevel ? (1.0f - level) : level, sendChange: false);
-        }
-
-        void UpdateLevel(float level, bool sendChange)
-        {
-            level = MathUtil.Saturate(level);
-            this.currentLevel = level;
-
-            if (sendChange && (ChangeAction != null))
-                ChangeAction(GetLevel());
-
-            UpdateContentLayout();
+            return vertical ? (ContentBounds.Bottom - touch.Position.Y) : (touch.Position.X - ContentBounds.X);
         }
 
         public override bool HandleTouch(in Touch touch)
         {
+            // Seen for every touch state, so it can count the taps
+            bool doubleTap = IsDoubleTap(touch, this);
+
             switch (touch.TouchState)
             {
                 case ETouchState.Pressed:
-                    UpdateLevel((touch.Position.X - ContentBounds.X) / ContentBounds.Width, sendChange: true);
-
-                    captureStartLevel = currentLevel;
                     CaptureTouch(touch);
-                    break;
-                case ETouchState.Moved:
-                    float delta = isHorizontal ? ((touch.Position.X - TouchCaptureStartPosition.X) / ContentBounds.Width) : ((touch.Position.Y - TouchCaptureStartPosition.Y) / ContentBounds.Height);
 
-                    UpdateLevel(captureStartLevel + delta, sendChange: true);
+                    IsEditing = true;
+
+                    if (EditStarted != null)
+                        EditStarted();
+
+                    float position = Position(touch);
+                    float thumbStart = (float)value * Travel;
+
+                    fineActive = ControlInput.IsFine;
+                    fineAnchorPosition = position;
+                    fineAnchorValue = value;
+
+                    // On the thumb (or in fine adjustment), drag it from where it was taken; elsewhere, its center jumps
+                    // to the touch
+                    if (fineActive || ((position >= thumbStart) && (position <= (thumbStart + thumbSize))))
+                    {
+                        dragOffset = position - thumbStart;
+                    }
+                    else
+                    {
+                        dragOffset = thumbSize / 2;
+
+                        MoveTo(position);
+                    }
                     break;
+
+                case ETouchState.Moved:
+                case ETouchState.Held:
+                    if (IsEditing)
+                        MoveTo(Position(touch));
+                    break;
+
                 case ETouchState.Released:
-                    ReleaseTouch();
+                case ETouchState.Invalid:
+                    if (IsEditing)
+                    {
+                        if (doubleTap)
+                            Change(DefaultValue);
+
+                        IsEditing = false;
+
+                        ReleaseTouch();
+
+                        if (EditEnded != null)
+                            EditEnded();
+                    }
                     break;
             }
 
-            return base.HandleTouch(touch);
+            return true;
         }
 
-        //public override bool HandleGesture(PixGesture gesture)
-        //{
-        //    if (haveCapture)
-        //    {
-        //        if (gesture.GestureType == EPixGestureType.Drag)
-        //        {
-        //            float delta = ((isHorizontal ? gesture.Position.X : gesture.Position.Y) - startOffset) / (isHorizontal ? ContentLayout.Width : ContentLayout.Height);
-
-        //            UpdateLevel(startLevel + delta, sendChange: true);
-
-        //            return true;
-        //        }
-        //    }
-
-        //    //if (gesture.GestureType == EPixGestureType.Tap)
-        //    //{
-        //    //    float delta = (isHorizontal ? (gesture.Position.X - ContentLayout.Offset.X) : (gesture.Position.Y - ContentLayout.Offset.Y)) /
-        //    //        (isHorizontal ? ContentLayout.Width : ContentLayout.Height);
-
-        //    //    UpdateLevel(delta, sendChange: true);
-        //    //}
-
-        //    return base.HandleGesture(gesture);
-        //}
-    }
-
-    public class VerticalPointer : Slider
-    {
-        public VerticalPointer()
-            : base("VerticalPointerRight", isHorizontal: false)
+        // The thumb's grabbed point to the position; in fine adjustment, the value from its anchor at the fine speed
+        void MoveTo(float position)
         {
-        }
+            float travel = Travel;
 
-        protected override void GetContentSize(out float width, out float height)
-        {
-            base.GetContentSize(out width, out height);
+            if (travel <= 0)
+                return;
 
-            height = 0;
-        }
+            bool fine = ControlInput.IsFine;
 
-
-        public override void SetBounds(in RectF layout, UIElement parent)
-        {
-            base.SetBounds(layout, parent);
-
-            //InputLayout = new UILayout(new Vector2(layout.Offset.X - (levelImage.Width * PixUI.DefaultScale), layout.Offset.Y), layout.Width + (levelImage.Width * PixUI.DefaultScale), layout.Height);
-        }
-    }
-
-    public class HorizontalSlider : Slider
-    {
-        public HorizontalSlider(string sliderImageName)
-            : base(sliderImageName, isHorizontal: true)
-        {
-            Padding = new LayoutPadding(levelImage.LogicalWidth / 2f, 0);
-
-            Children.Insert(0, new UIElement
+            // Shift pressed or released mid-drag: go on from here, the thumb staying where it is
+            if (fine != fineActive)
             {
-                HorizontalAlignment = EHorizontalAlignment.Stretch,
-                VerticalAlignment = EVerticalAlignment.Center,
-                BackgroundColor = UIColor.Black,
-                DesiredHeight = levelImage.LogicalHeight * 0.25f
-            });
+                fineActive = fine;
+
+                if (fine)
+                {
+                    fineAnchorPosition = position;
+                    fineAnchorValue = value;
+                }
+                else
+                {
+                    dragOffset = position - ((float)value * travel);
+                }
+            }
+
+            Change(fine ?
+                fineAnchorValue + (((position - fineAnchorPosition) / travel) * ControlInput.FineScale) :
+                (position - dragOffset) / travel);
         }
 
-        public override void SetBounds(in RectF layout, UIElement parent)
+        public override bool HandleMouseWheel(int delta)
         {
-            base.SetBounds(layout, parent);
+            if (IsEditing)
+                return true;
 
-            //InputLayout = new UILayout(new Vector2(ContentLayout.Offset.X - ((levelImage.Width * PixUI.DefaultScale) / 2f), ContentLayout.Offset.Y),
-            //    ContentLayout.Width + (levelImage.Width * PixUI.DefaultScale), ContentLayout.Height);
+            if (EditStarted != null)
+                EditStarted();
+
+            Change(ControlInput.WheelValue(value, delta, StepCount));
+
+            if (EditEnded != null)
+                EditEnded();
+
+            return true;
         }
     }
-
-    public class VerticalSlider : Slider
-    {
-        public VerticalSlider(string sliderImageName)
-            : base(sliderImageName, isHorizontal: false)
-        {
-            Padding = new LayoutPadding(0, levelImage.LogicalHeight / 2f);
-
-            levelImageElement.HorizontalAlignment = EHorizontalAlignment.Center;
-
-            Children.Insert(0, new UIElement
-            {
-                HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Stretch,
-                BackgroundColor = UIColor.Black,
-                DesiredWidth = levelImage.LogicalWidth * 0.25f
-            });
-        }
-
-        public override void SetBounds(in RectF layout, UIElement parent)
-        {
-            base.SetBounds(layout, parent);
-
-            //InputLayout = new UILayout(new Vector2(ContentLayout.Offset.X, ContentLayout.Offset.Y - ((levelImage.Height * PixUI.DefaultScale) / 2f)),
-            //    ContentLayout.Width, ContentLayout.Height + (levelImage.Height * PixUI.DefaultScale));
-        }
-    }
-
 }

@@ -376,9 +376,14 @@ namespace UILayout
             return false;
         }
 
+        /// <summary>Starts dragging the object, shown by the theme's frame fill in its accent color.</summary>
         public void BeginDrag(int touchID, object obj)
         {
-            BeginDrag(touchID, obj, Layout.Current.DefaultDragImage);
+            UITheme theme = Layout.Current.Theme;
+            UIImage image = theme.FrameFill;
+
+            Layout.Current.BeginDrag(this, touchID, obj, image, -image.LogicalWidth / 2, -image.LogicalHeight / 2,
+                theme.Accent);
         }
 
         public void BeginDrag(int touchID, object obj, UIImage image)

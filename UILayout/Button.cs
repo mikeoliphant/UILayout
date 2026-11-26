@@ -167,263 +167,29 @@ namespace UILayout
         }
     }
 
-    public class NinePatchButton : Button
-    {
-        UIImage pressedNinePatchImage;
-        UIImage unpressedNinePatchImage;
-
-        public NinePatchWrapper PressedNinePatch
-        {
-            get { return PressedElement as NinePatchWrapper; }
-        }
-
-        public NinePatchWrapper UnpressedNinePatch
-        {
-            get { return UnpressedElement as NinePatchWrapper; }
-        }
-
-        public NinePatchButton()
-            : this(Layout.Current.DefaultPressedNinePatch, Layout.Current.DefaultUnpressedNinePatch)
-        {
-        }
-
-        public NinePatchButton(UIImage ninePatchImage)
-        {
-            this.pressedNinePatchImage = ninePatchImage;
-            this.unpressedNinePatchImage = ninePatchImage;
-        }
-
-        public NinePatchButton(UIImage pressedNinePatchImage, UIImage unpressedNinePatchImage)
-        {
-            this.pressedNinePatchImage = pressedNinePatchImage;
-            this.unpressedNinePatchImage = unpressedNinePatchImage;
-        }
-
-        public void SetElements(UIElement pressedElement, UIElement unpressedElement)
-        {
-            if (pressedNinePatchImage != null)
-            {
-                PressedElement = new NinePatchWrapper(pressedNinePatchImage)
-                {
-                    Child = pressedElement,
-                    HorizontalAlignment = EHorizontalAlignment.Stretch,
-                    VerticalAlignment = EVerticalAlignment.Stretch
-                };
-
-                UnpressedElement = new NinePatchWrapper(unpressedNinePatchImage)
-                {
-                    Child = unpressedElement,
-                    HorizontalAlignment = EHorizontalAlignment.Stretch,
-                    VerticalAlignment = EVerticalAlignment.Stretch
-                };
-            }
-            else
-            {
-                PressedElement = new UIElementWrapper
-                {
-                    Child = pressedElement,
-                    HorizontalAlignment = EHorizontalAlignment.Stretch,
-                    VerticalAlignment = EVerticalAlignment.Stretch,
-                    Padding = new LayoutPadding(2, 5),
-                    BackgroundColor = UIColor.Green
-                };
-
-                UnpressedElement = new UIElementWrapper()
-                {
-                    Child = unpressedElement,
-                    HorizontalAlignment = EHorizontalAlignment.Stretch,
-                    VerticalAlignment = EVerticalAlignment.Stretch,
-                    Padding = new LayoutPadding(2, 5),
-                    BackgroundColor = UIColor.Red
-                };
-            }
-        }
-    }
-
-    public class EmptyButton : NinePatchButton
-    {
-        public EmptyButton()
-        {
-            SetElements(null, null);
-        }
-    }
-
-    public class TextButton : NinePatchButton
-    {
-        public string Text
-        {
-            get => textBlock.Text;
-            set => textBlock.Text = value;
-        }
-
-        public UIColor TextColor
-        {
-            get { return textBlock.TextColor; }
-            set { textBlock.TextColor = value; }
-        }
-
-        public UIFont TextFont
-        {
-            get { return textBlock.TextFont; }
-            set { textBlock.TextFont = value; }
-        }
-
-        TextBlock textBlock;
-
-        public TextButton(string text)
-            : this()
-        {
-            Text = text;
-        }
-
-        public TextButton()
-        {
-            textBlock = new TextBlock
-            {
-                HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Center,
-            };
-
-            SetElements(textBlock, textBlock);
-        }
-    }
-
-    public class TextToggleButton : NinePatchButton
-    {
-        public string PressedText
-        {
-            get => pressedTextBlock.Text;
-            set => pressedTextBlock.Text = value;
-        }
-
-        TextBlock pressedTextBlock;
-
-        public string UnpressedText
-        {
-            get => unpressedTextBlock.Text;
-            set => unpressedTextBlock.Text = value;
-        }
-
-        TextBlock unpressedTextBlock;
-
-        public TextToggleButton(string pressedText, string unpressedText)
-            : this()
-        {
-            PressedText = pressedText;
-            UnpressedText = unpressedText;
-        }
-
-        public TextToggleButton()
-        {
-            IsToggleButton = true;
-
-            pressedTextBlock = new TextBlock
-            {
-                HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Center,
-            };
-
-            unpressedTextBlock = new TextBlock
-            {
-                HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Center,
-            };
-
-            SetElements(pressedTextBlock, unpressedTextBlock);
-        }
-    }
-
-    public class ImageButton : NinePatchButton
-    {
-        public UIColor ImageColor
-        {
-            get { return imageElement.Color;  }
-            set { imageElement.Color = value; }
-        }
-
-
-        ImageElement imageElement;
-
-        public ImageButton(string imageName)
-            : this(Layout.Current.GetImage(imageName))
-        {
-        }
-
-        public ImageButton(UIImage image)
-        {
-            imageElement = new ImageElement(image)
-            {
-                HorizontalAlignment = EHorizontalAlignment.Stretch,
-                VerticalAlignment = EVerticalAlignment.Stretch
-            };
-
-            SetElements(imageElement, imageElement);
-        }
-    }
-
-    public class ImageToggleButton : NinePatchButton
-    {
-        public UIColor ImageColor
-        {
-            get { return pressedImageElement.Color; }
-            set { pressedImageElement.Color = unpressedImageElement.Color = value; }
-        }
-
-        ImageElement pressedImageElement;
-        ImageElement unpressedImageElement;
-
-        public ImageToggleButton(string pressedImageName, string unpressedImageName)
-            : this(Layout.Current.GetImage(pressedImageName), Layout.Current.GetImage(unpressedImageName))
-        {
-        }
-
-        public ImageToggleButton(UIImage pressedImage, UIImage unpressedImage)
-        {
-            pressedImageElement = new ImageElement(pressedImage);
-            unpressedImageElement = new ImageElement(unpressedImage);
-
-            SetElements(pressedImageElement, unpressedImageElement);
-
-            IsToggleButton = true;
-        }
-    }
-
     /// <summary>
-    /// A button drawn in the input style: one <see cref="InputFrame"/> with the text, used as both its pressed and
-    /// unpressed element. Its states only change the frame's colors: the fill takes the theme's active color while
-    /// pressed (or toggled on), the border the accent color when the mouse is over it. A primary button (a dialog's
-    /// default, such as OK) always has the accent border.
+    /// A button drawn in a <see cref="Frame"/> around its content, which is both its pressed and unpressed element.
+    /// Its states only change the frame's colors: the fill takes the theme's active color while pressed (or toggled
+    /// on), the border the accent color when the mouse is over it. A primary button (a dialog's default, such as OK)
+    /// always has the accent border. The base of <see cref="TextButton"/> and <see cref="ImageButton"/>; use it
+    /// directly for other content.
     /// </summary>
     public class FrameButton : Button
     {
-        const float TextMarginX = 9;
-
-        InputFrame frame;
-        TextBlock textBlock;
+        Frame frame;
         bool primary;
 
         public FrameButton()
-            : this("", null)
+            : this(null)
         {
         }
 
-        public FrameButton(string text, Action clickAction)
+        public FrameButton(UIElement content)
         {
-            textBlock = new TextBlock
-            {
-                HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Center,
-                Margin = new LayoutPadding(TextMarginX, 0),
-                TextColor = Layout.Current.Theme.Text
-            };
-
-            frame = new InputFrame(textBlock);
+            frame = new Frame(content);
 
             PressedElement = frame;
             UnpressedElement = frame;
-
-            Text = text;
-            ClickAction = clickAction;
 
             HorizontalAlignment = EHorizontalAlignment.Left;
             VerticalAlignment = EVerticalAlignment.Center;
@@ -431,13 +197,20 @@ namespace UILayout
             UpdateColors();
         }
 
-        public string Text
+        /// <summary>The frame the content is in, for example to change its padding.</summary>
+        public Frame Frame
         {
-            get { return textBlock.Text; }
+            get { return frame; }
+        }
+
+        /// <summary>What's in the button's frame.</summary>
+        public UIElement Content
+        {
+            get { return frame.Content; }
 
             set
             {
-                textBlock.Text = value;
+                frame.Content = value;
 
                 UpdateContentLayout();
             }
@@ -471,12 +244,203 @@ namespace UILayout
             UpdateColors();
         }
 
-        void UpdateColors()
+        /// <summary>Sets the frame's colors for the button's state (pressed, mouse over, primary).</summary>
+        protected virtual void UpdateColors()
         {
             UITheme theme = Layout.Current.Theme;
 
             frame.FillColor = IsPressed ? theme.Active : theme.Surface;
             frame.BorderColor = (IsMouseOver || primary) ? theme.Accent : theme.Border;
+        }
+    }
+
+    /// <summary>A <see cref="FrameButton"/> with text, centered.</summary>
+    public class TextButton : FrameButton
+    {
+        const float TextMarginX = 9;
+
+        TextBlock textBlock;
+
+        public TextButton()
+            : this("", null)
+        {
+        }
+
+        public TextButton(string text)
+            : this(text, null)
+        {
+        }
+
+        public TextButton(string text, Action clickAction)
+        {
+            textBlock = new TextBlock
+            {
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+                Margin = new LayoutPadding(TextMarginX, 0)
+            };
+
+            Content = textBlock;
+
+            Text = text;
+            ClickAction = clickAction;
+        }
+
+        public string Text
+        {
+            get { return textBlock.Text; }
+
+            set
+            {
+                textBlock.Text = value;
+
+                UpdateContentLayout();
+            }
+        }
+
+        public UIColor TextColor
+        {
+            get { return textBlock.TextColor; }
+            set { textBlock.TextColor = value; }
+        }
+
+        public UIFont TextFont
+        {
+            get { return textBlock.TextFont; }
+
+            set
+            {
+                textBlock.TextFont = value;
+
+                UpdateContentLayout();
+            }
+        }
+    }
+
+    /// <summary>A toggle <see cref="TextButton"/> showing one text while it's on (pressed) and another while off.</summary>
+    public class TextToggleButton : TextButton
+    {
+        string pressedText;
+        string unpressedText;
+
+        public TextToggleButton()
+            : this("", "")
+        {
+        }
+
+        public TextToggleButton(string pressedText, string unpressedText)
+        {
+            IsToggleButton = true;
+
+            this.pressedText = pressedText;
+            this.unpressedText = unpressedText;
+
+            ShowText();
+        }
+
+        public string PressedText
+        {
+            get { return pressedText; }
+
+            set
+            {
+                pressedText = value;
+
+                ShowText();
+            }
+        }
+
+        public string UnpressedText
+        {
+            get { return unpressedText; }
+
+            set
+            {
+                unpressedText = value;
+
+                ShowText();
+            }
+        }
+
+        protected override void StateChanged()
+        {
+            base.StateChanged();
+
+            ShowText();
+        }
+
+        void ShowText()
+        {
+            Text = IsPressed ? pressedText : unpressedText;
+        }
+    }
+
+    /// <summary>A <see cref="FrameButton"/> with an image, centered, in the theme's text color.</summary>
+    public class ImageButton : FrameButton
+    {
+        ImageElement imageElement;
+
+        public ImageButton(string imageName)
+            : this(Layout.Current.GetImage(imageName))
+        {
+        }
+
+        public ImageButton(UIImage image)
+        {
+            imageElement = new ImageElement(image)
+            {
+                HorizontalAlignment = EHorizontalAlignment.Center,
+                VerticalAlignment = EVerticalAlignment.Center,
+                Color = Layout.Current.Theme.Text
+            };
+
+            Content = imageElement;
+        }
+
+        public UIImage Image
+        {
+            get { return imageElement.Image; }
+
+            set
+            {
+                imageElement.Image = value;
+
+                UpdateContentLayout();
+            }
+        }
+
+        public UIColor ImageColor
+        {
+            get { return imageElement.Color; }
+            set { imageElement.Color = value; }
+        }
+    }
+
+    /// <summary>A toggle <see cref="ImageButton"/> showing one image while it's on (pressed) and another while off.</summary>
+    public class ImageToggleButton : ImageButton
+    {
+        UIImage pressedImage;
+        UIImage unpressedImage;
+
+        public ImageToggleButton(string pressedImageName, string unpressedImageName)
+            : this(Layout.Current.GetImage(pressedImageName), Layout.Current.GetImage(unpressedImageName))
+        {
+        }
+
+        public ImageToggleButton(UIImage pressedImage, UIImage unpressedImage)
+            : base(unpressedImage)
+        {
+            IsToggleButton = true;
+
+            this.pressedImage = pressedImage;
+            this.unpressedImage = unpressedImage;
+        }
+
+        protected override void StateChanged()
+        {
+            base.StateChanged();
+
+            Image = IsPressed ? pressedImage : unpressedImage;
         }
     }
 }

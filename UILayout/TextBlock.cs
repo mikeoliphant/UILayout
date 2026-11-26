@@ -40,6 +40,7 @@ namespace UILayout
         }
     }
 
+    /// <summary>A line (or lines) of text, in the theme's font and text color.</summary>
     public class TextBlock : UIElement
     {
         public string Text { get; set; }
@@ -49,8 +50,8 @@ namespace UILayout
 
         public TextBlock()
         {
-            TextFont = Layout.Current.DefaultFont;
-            TextColor = Layout.Current.DefaultForegroundColor;
+            TextFont = Layout.Current.Theme.Font;
+            TextColor = Layout.Current.Theme.Text;
         }
 
         public TextBlock(string text)
@@ -95,8 +96,8 @@ namespace UILayout
 
         public StringBuilderTextBlock()
         {
-            TextFont = Layout.Current.DefaultFont;
-            TextColor = Layout.Current.DefaultForegroundColor;
+            TextFont = Layout.Current.Theme.Font;
+            TextColor = Layout.Current.Theme.Text;
 
             StringBuilder = new StringBuilder();
         }
@@ -149,7 +150,7 @@ namespace UILayout
         public FittedTextBlock()
         {
             TextColor = Layout.Current.Theme.Text;
-            TextFont = Layout.Current.DefaultFont;
+            TextFont = Layout.Current.Theme.Font;
         }
 
         public string Text
@@ -180,7 +181,8 @@ namespace UILayout
         {
             TextFont.MeasureString(text, out width, out _);
 
-            height = TextFont.TextHeight;
+            // As high as a TextBlock with the text (so they line up side by side); when empty, as a line of text.
+            TextFont.MeasureString((text.Length > 0) ? text : "Ag", out _, out height);
         }
 
         protected override void DrawContents()
