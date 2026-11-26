@@ -25,6 +25,9 @@ namespace UILayout.Skia.WPF
         float scaleY = 1.0f;
         bool needRePaint = false;
 
+        // When the last frame was rendered, for the layout's update
+        TimeSpan lastRenderingTime = TimeSpan.Zero;
+
         public SkiaLayout Layout { get; private set; }
 
         public SKSize CanvasSize { get; private set; }
@@ -69,6 +72,9 @@ namespace UILayout.Skia.WPF
 
         private void LayoutControl_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            // Off the layout: the mouse is over nothing
+            Layout.InputManager.SetMousePosition(new Vector2(float.MinValue, float.MinValue));
+
             if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
             {
                 Point p = e.GetPosition(this);
@@ -83,15 +89,18 @@ namespace UILayout.Skia.WPF
             }
         }
 
+        // The mouse is tracked as it moves (for hover), and is a touch moving while the button is down
         private void LayoutControl_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            Vector2 position = GetPostion(e.GetPosition(this));
+
+            Layout.InputManager.SetMousePosition(position);
+
             if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
             {
-                Point p = e.GetPosition(this);
-
                 Touch touch = new Touch()
                 {
-                    Position = GetPostion(p),
+                    Position = position,
                     TouchState = ETouchState.Moved
                 };
 
@@ -125,10 +134,21 @@ namespace UILayout.Skia.WPF
             Layout.HandleTouch(touch);
         }
 
+        // Each frame the layout is updated (as the MonoGame hosts do: what the mouse is over, for one), and repainted if
+        // anything is dirty
         private void CompositionTarget_Rendering(object sender, EventArgs e)
         {
-            if (designMode)
+            if (designMode || (Layout == null))
                 return;
+
+            TimeSpan renderingTime = ((System.Windows.Media.RenderingEventArgs)e).RenderingTime;
+
+            float secondsElapsed = (lastRenderingTime == TimeSpan.Zero) ? 0 :
+                (float)(renderingTime - lastRenderingTime).TotalSeconds;
+
+            lastRenderingTime = renderingTime;
+
+            Layout.Update(secondsElapsed);
 
             if (Layout.HaveDirty)
                 UpdatePaint();

@@ -1,11 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace UILayout
 {
     public partial class InputManager
     {
+        /// <summary>
+        /// Where the mouse is, in layout pixels, for hover (the host calls this as the mouse moves: input comes through
+        /// the host's control, not polled). A position outside the layout's bounds, as when the mouse leaves, is over
+        /// nothing.
+        /// </summary>
+        public void SetMousePosition(in Vector2 position)
+        {
+            MousePosition = position;
+        }
+
         /// <summary>Whether the key is down (for example a modifier held during a drag).</summary>
         public bool IsKeyDown(InputKey key)
         {

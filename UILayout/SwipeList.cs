@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace UILayout
@@ -235,6 +236,41 @@ namespace UILayout
                 y += ItemHeight;
                 item++;
             }
+        }
+
+        // The item at a height (as drawn: scrolled by the offset)
+        int ItemAt(float y)
+        {
+            return (int)Math.Floor(((y - ContentBounds.Y) + offset) / ItemHeight);
+        }
+
+        // The hover highlight follows the mouse from item to item: the item it left and the one it is over are redrawn
+        public override void HandleMouseMoveOver(in Vector2 lastPosition, in Vector2 position)
+        {
+            if (HoverColor.A == 0)
+                return;
+
+            int lastItem = ItemAt(lastPosition.Y);
+            int item = ItemAt(position.Y);
+
+            if (item == lastItem)
+                return;
+
+            AddItemDirty(lastItem);
+            AddItemDirty(item);
+        }
+
+        void AddItemDirty(int item)
+        {
+            float y = (ContentBounds.Y + (item * ItemHeight)) - offset;
+
+            RectF itemRect = new RectF(ContentBounds.X, y, ContentBounds.Width, ItemHeight);
+
+            // Only what shows (an empty rectangle would still stretch the dirty area)
+            itemRect.IntersectWith(ContentBounds);
+
+            if (!itemRect.IsEmpty)
+                Layout.Current.AddDirtyRect(itemRect);
         }
 
         protected virtual void DrawItem(int item, float y)

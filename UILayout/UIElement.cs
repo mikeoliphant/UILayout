@@ -376,6 +376,15 @@ namespace UILayout
             return false;
         }
 
+        /// <summary>
+        /// The mouse moved and is still over the element. Called only when the layout redraws just its dirty area
+        /// (<see cref="Layout.RedrawsDirtyArea"/>): an element that looks different depending on where in it the mouse
+        /// is (as a list highlighting the item under the mouse) adds the area that changed.
+        /// </summary>
+        public virtual void HandleMouseMoveOver(in Vector2 lastPosition, in Vector2 position)
+        {
+        }
+
         /// <summary>Starts dragging the object, shown by the theme's frame fill in its accent color.</summary>
         public void BeginDrag(int touchID, object obj)
         {

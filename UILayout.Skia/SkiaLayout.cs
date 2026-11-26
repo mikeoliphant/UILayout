@@ -9,6 +9,9 @@ namespace UILayout
         public static new SkiaLayout Current { get { return Layout.Current as SkiaLayout; } }
         public static string DefaultTextureNamespace { get; set; } = "UILayout";
 
+        // The Skia hosts repaint only when something is dirty, and copy only the dirty area to the screen
+        public override bool RedrawsDirtyArea { get { return true; } }
+
         public SkiaLayout()
         {
             GraphicsContext = new GraphicsContext2D();

@@ -75,6 +75,13 @@ namespace UILayout
         public RectF DirtyRect { get { return dirtyRect; } set { dirtyRect = value; } }
         public virtual bool InputIsActive { get { return true;  } }
 
+        /// <summary>
+        /// Whether the host redraws only the dirty area (as the Skia backend does), so changes that are otherwise
+        /// redrawn anyway, as what the mouse is over, need to add their area. Hosts that redraw everything each frame
+        /// (the MonoGame backends) leave it false.
+        /// </summary>
+        public virtual bool RedrawsDirtyArea { get { return false; } }
+
         object dragObject = null;
         int dragTouchID;
         UIElement dragInitiator = null;
@@ -113,6 +120,10 @@ namespace UILayout
         // The elements under the mouse, from the active element (the top popup, or the root) down to the deepest.
         // Sized up front for deep element trees, so hovering doesn't grow it during a frame
         List<UIElement> mouseOverPath = new List<UIElement>(32);
+
+        // The path before the last update (the two lists swap each update), and where the mouse was then
+        List<UIElement> lastMouseOverPath = new List<UIElement>(32);
+        Vector2 lastMousePosition;
 
         public Layout()
         {
@@ -264,9 +275,47 @@ namespace UILayout
             return false;
         }
 
-        // Finds the elements under the mouse, as touches find the element they go to: the last visible child (drawn on
-        // top) whose bounds contain the point, down through lists and wrappers.
+        // Finds the elements under the mouse. For a host that redraws only the dirty area, the elements the mouse entered
+        // or left are dirty (they look different when the mouse is over them), and the ones it moved within are told
+        // (they may look different depending on where in them it is).
         void UpdateMouseOver(UIElement activeElement)
+        {
+            (lastMouseOverPath, mouseOverPath) = (mouseOverPath, lastMouseOverPath);
+
+            FindMouseOverPath(activeElement);
+
+            if (!RedrawsDirtyArea)
+                return;
+
+            // The paths share the elements down to where they part; the rest of each changed
+            int same = 0;
+
+            while ((same < mouseOverPath.Count) && (same < lastMouseOverPath.Count) &&
+                (mouseOverPath[same] == lastMouseOverPath[same]))
+            {
+                same++;
+            }
+
+            for (int i = same; i < lastMouseOverPath.Count; i++)
+                AddDirtyRect(lastMouseOverPath[i].LayoutBounds);
+
+            for (int i = same; i < mouseOverPath.Count; i++)
+                AddDirtyRect(mouseOverPath[i].LayoutBounds);
+
+            Vector2 position = InputManager.MousePosition;
+
+            if (position != lastMousePosition)
+            {
+                for (int i = 0; i < same; i++)
+                    mouseOverPath[i].HandleMouseMoveOver(lastMousePosition, position);
+            }
+
+            lastMousePosition = position;
+        }
+
+        // The elements under the mouse, as touches find the element they go to: the last visible child (drawn on top)
+        // whose bounds contain the point, down through lists and wrappers.
+        void FindMouseOverPath(UIElement activeElement)
         {
             mouseOverPath.Clear();
 

@@ -236,12 +236,13 @@ namespace UILayout
             UpdateColors();
         }
 
-        public override void HandleInput(InputManager inputManager)
+        // The mouse moving over it or off it shows when it's drawn: its colors are chosen then, not as it gets input
+        // (while a popup is open only the popup does, and the button under it would keep its hover)
+        protected override void DrawContents()
         {
-            base.HandleInput(inputManager);
-
-            // The mouse moving over it or off it.
             UpdateColors();
+
+            base.DrawContents();
         }
 
         /// <summary>Sets the frame's colors for the button's state (pressed, mouse over, primary).</summary>
