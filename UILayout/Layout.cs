@@ -574,7 +574,33 @@ namespace UILayout
                 (popup as IPopup).Opened();
             }
 
-            AddDirtyRect(popup.layoutBounds);
+            AddDirtyRect(PopupArea(popup));
+        }
+
+        /// <summary>
+        /// Shows the popup (where its alignment puts it); with closeOnOutsideClick, a click outside it closes it, as a
+        /// context menu's does (for lists and pickers, not for dialogs that wait for an answer).
+        /// </summary>
+        public void ShowPopup(UIElement popup, bool closeOnOutsideClick)
+        {
+            if (!closeOnOutsideClick)
+            {
+                ShowPopup(popup);
+
+                return;
+            }
+
+            ShowWrappedPopup(popup, new LightDismissWrapper());
+        }
+
+        // What a popup shows: a wrapper closing it on outside clicks covers the layout (or reaches from its corner, for
+        // a placed one), but only its child is drawn
+        static RectF PopupArea(UIElement popup)
+        {
+            if ((popup is LightDismissWrapper wrapper) && (wrapper.Child != null))
+                return wrapper.Child.layoutBounds;
+
+            return popup.layoutBounds;
         }
 
         // An action closing the popup. Its own method: a lambda capturing ShowPopup's parameter would make every
@@ -586,7 +612,7 @@ namespace UILayout
 
         public void ShowPopup(UIElement popup, in Vector2 anchorPoint)
         {
-            ShowContextPopup(popup, new ContextUIElementWrapper(anchorPoint));
+            ShowWrappedPopup(popup, new ContextUIElementWrapper(anchorPoint));
         }
 
         /// <summary>
@@ -595,23 +621,24 @@ namespace UILayout
         /// </summary>
         public void ShowPopup(UIElement popup, in RectF anchorBounds)
         {
-            ShowContextPopup(popup, new ContextUIElementWrapper(anchorBounds));
+            ShowWrappedPopup(popup, new ContextUIElementWrapper(anchorBounds));
         }
 
-        void ShowContextPopup(UIElement popup, ContextUIElementWrapper contextElementWrapper)
+        // The popup in a wrapper that closes it on outside clicks (and places it, for a context popup)
+        void ShowWrappedPopup(UIElement popup, LightDismissWrapper wrapper)
         {
             // Keys don't go on to an element under the popup
             SetFocus(null);
 
-            contextElementWrapper.Child = popup;
+            wrapper.Child = popup;
 
-            popupStack.Add(contextElementWrapper);
+            popupStack.Add(wrapper);
 
-            contextElementWrapper.SetBounds(Bounds, null);
+            wrapper.SetBounds(Bounds, null);
 
             if (popup is IPopup)
             {
-                (popup as IPopup).CloseAction = delegate { ClosePopup(contextElementWrapper); };
+                (popup as IPopup).CloseAction = delegate { ClosePopup(wrapper); };
             }
 
             AddDirtyRect(popup.layoutBounds);
@@ -719,14 +746,31 @@ namespace UILayout
 #endif
         }
 
+        /// <summary>Closes the popup: the element given to ShowPopup (also when it was shown in a wrapper).</summary>
         public void ClosePopup(UIElement popup)
         {
             // Keys don't go on to an element in the closed popup
             SetFocus(null);
 
-            popupStack.Remove(popup);
+            UIElement shown = popup;
 
-            AddDirtyRect(popup.layoutBounds);
+            if (!popupStack.Contains(popup))
+            {
+                // Shown in a wrapper: the wrapper is the one in the stack
+                foreach (UIElement element in popupStack)
+                {
+                    if ((element is LightDismissWrapper wrapper) && (wrapper.Child == popup))
+                    {
+                        shown = wrapper;
+
+                        break;
+                    }
+                }
+            }
+
+            popupStack.Remove(shown);
+
+            AddDirtyRect(PopupArea(shown));
         }
 
         public void GetKeyboardInput(string title, string defaultText, Action<string, object> callback, object userData)
@@ -741,12 +785,43 @@ namespace UILayout
     }
 
     /// <summary>
-    /// Places a popup at an anchor, inside the bounds it's given. Anchored at a point (a context menu), the popup's top
-    /// left goes there, flipped to the point's left or above it when it doesn't fit. Anchored to an element's bounds
-    /// (a drop-down's list), it goes just below them, left-aligned with them; above them when it doesn't fit below, and
-    /// moved left as far as it needs to fit across.
+    /// Holds a popup (its child) that closes when clicked outside of it ("light dismiss", as a context menu or a list
+    /// to pick from): a click released outside the child closes it, one inside goes to the child. As the top popup it
+    /// gets every click, wherever it is; it covers the layout, and the child keeps its own alignment in it. Touches the
+    /// child has captured (a drag released outside it) still go to the child, not here.
     /// </summary>
-    public class ContextUIElementWrapper : UIElementWrapper
+    public class LightDismissWrapper : UIElementWrapper
+    {
+        public LightDismissWrapper()
+        {
+            HorizontalAlignment = EHorizontalAlignment.Stretch;
+            VerticalAlignment = EVerticalAlignment.Stretch;
+        }
+
+        public override bool HandleTouch(in Touch touch)
+        {
+            if ((touch.TouchState == ETouchState.Invalid) || ((touch.TouchState == ETouchState.Released) && !Child.ContentBounds.Contains(touch.Position)))
+            {
+                Layout.Current.ClosePopup(this);
+
+                return true;
+            }
+
+            if (Child.ContentBounds.Contains(touch.Position))
+                return base.HandleTouch(touch);
+
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Places a popup at an anchor, inside the bounds it's given, and closes it on a click outside it (as
+    /// <see cref="LightDismissWrapper"/>). Anchored at a point (a context menu), the popup's top left goes there, flipped
+    /// to the point's left or above it when it doesn't fit. Anchored to an element's bounds (a drop-down's list), it goes
+    /// just below them, left-aligned with them; above them when it doesn't fit below, and moved left as far as it needs
+    /// to fit across.
+    /// </summary>
+    public class ContextUIElementWrapper : LightDismissWrapper
     {
         bool anchoredToBounds;
         RectF anchorBounds;
@@ -824,21 +899,6 @@ namespace UILayout
             Margin = new LayoutPadding(horizontalOffset, verticalOffset);
 
             base.SetBounds(bounds, parent);
-        }
-
-        public override bool HandleTouch(in Touch touch)
-        {
-            if ((touch.TouchState == ETouchState.Invalid) || ((touch.TouchState == ETouchState.Released) && !Child.ContentBounds.Contains(touch.Position)))
-            {
-                Layout.Current.ClosePopup(this);
-
-                return true;
-            }
-
-            if (Child.ContentBounds.Contains(touch.Position))
-                return base.HandleTouch(touch);
-
-            return false;
         }
     }
 }

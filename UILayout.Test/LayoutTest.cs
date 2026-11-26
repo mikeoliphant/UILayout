@@ -99,7 +99,9 @@ namespace UILayout.Test
 
             UIElement swipeStack = CreateSwipeList();
 
-            buttons.Children.Add(new TextButton("Swipe List", () => Layout.Current.ShowPopup(swipeStack)));
+            // A list to pick from: a click outside it closes it
+            buttons.Children.Add(new TextButton("Swipe List", () => Layout.Current.ShowPopup(swipeStack,
+                closeOnOutsideClick: true)));
 
             buttons.Children.Add(new TextButton("Text Input", () =>
                 Layout.Current.ShowTextInputPopup("Enter text:",
