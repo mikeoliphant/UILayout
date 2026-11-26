@@ -87,9 +87,10 @@ namespace UILayout
             lineSpacing = font.Spacing;
         }
 
+        /// <summary>Whether the typeface has the character (typed text it doesn't have is left out).</summary>
         public bool HasGlyph(char c)
         {
-            return true;
+            return font.ContainsGlyph(c);
         }
 
         public void MeasureString(string text, out float width, out float height)

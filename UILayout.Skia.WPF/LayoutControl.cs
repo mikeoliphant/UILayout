@@ -46,6 +46,10 @@ namespace UILayout.Skia.WPF
         public LayoutControl()
         {
             designMode = DesignerProperties.GetIsInDesignMode(this);
+
+            // Takes keyboard focus (on a click), for keys and typed text; no focus rectangle around the layout
+            Focusable = true;
+            FocusVisualStyle = null;
         }
 
         public void SetLayout(SkiaLayout layout)
@@ -63,6 +67,88 @@ namespace UILayout.Skia.WPF
             MouseUp += LayoutControl_MouseUp;
             MouseMove += LayoutControl_MouseMove;
             MouseLeave += LayoutControl_MouseLeave;
+            MouseWheel += LayoutControl_MouseWheel;
+
+            KeyDown += LayoutControl_KeyDown;
+            KeyUp += LayoutControl_KeyUp;
+            TextInput += LayoutControl_TextInput;
+            LostKeyboardFocus += LayoutControl_LostKeyboardFocus;
+        }
+
+        // WPF's own units: 120 per notch, positive away from the user
+        private void LayoutControl_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            Layout.InputManager.AddMouseWheel(e.Delta);
+
+            e.Handled = true;
+        }
+
+        // The key's virtual-key code (InputKey's values). With Alt held, WPF reports the key as System.
+        static InputKey ToInputKey(System.Windows.Input.KeyEventArgs e)
+        {
+            System.Windows.Input.Key key = e.Key;
+
+            if (key == System.Windows.Input.Key.System)
+                key = e.SystemKey;
+            else if (key == System.Windows.Input.Key.ImeProcessed)
+                key = e.ImeProcessedKey;
+
+            return (InputKey)System.Windows.Input.KeyInterop.VirtualKeyFromKey(key);
+        }
+
+        // Keys WPF would otherwise use to move keyboard focus away (the layout uses them itself)
+        static bool IsNavigationKey(System.Windows.Input.Key key)
+        {
+            switch (key)
+            {
+                case System.Windows.Input.Key.Tab:
+                case System.Windows.Input.Key.Left:
+                case System.Windows.Input.Key.Right:
+                case System.Windows.Input.Key.Up:
+                case System.Windows.Input.Key.Down:
+                case System.Windows.Input.Key.PageUp:
+                case System.Windows.Input.Key.PageDown:
+                case System.Windows.Input.Key.Home:
+                case System.Windows.Input.Key.End:
+                    return true;
+            }
+
+            return false;
+        }
+
+        // Only navigation keys are marked handled: a handled key types no text (TextInput isn't raised for it), and Alt
+        // shortcuts (as Alt+F4) still reach the window
+        private void LayoutControl_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            Layout.InputManager.KeyDown(ToInputKey(e));
+
+            if (IsNavigationKey(e.Key))
+                e.Handled = true;
+        }
+
+        private void LayoutControl_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            Layout.InputManager.KeyUp(ToInputKey(e));
+        }
+
+        // Typed text, to the element with focus (a text box). Backspace and Enter come as text too ('\b', '\r'): they
+        // are keys to the layout, so control characters are left out.
+        private void LayoutControl_TextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            foreach (char c in e.Text)
+            {
+                if (char.IsControl(c))
+                    continue;
+
+                if (Layout.HandleTextInput(c))
+                    e.Handled = true;
+            }
+        }
+
+        // Key releases go elsewhere now: nothing stays held
+        private void LayoutControl_LostKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
+        {
+            Layout.InputManager.ReleaseAllKeys();
         }
 
         Vector2 GetPostion(in Point p)
@@ -110,6 +196,9 @@ namespace UILayout.Skia.WPF
 
         private void LayoutControl_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            // Clicked: keys and typed text come here
+            Focus();
+
             Point p = e.GetPosition(this);
 
             Touch touch = new Touch()

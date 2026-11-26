@@ -67,6 +67,12 @@ namespace UILayout.Skia.WPF
                 IntPtr hWnd = windowHwnd.Handle;
                 SetParent(hWnd, parentWindow);
             }
+            else
+            {
+                // A window of its own: keys and typed text go to the layout from the start (in a host's window, the
+                // layout takes focus when clicked)
+                SkiaCanvas.Focus();
+            }
 
             var m = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
 
