@@ -1,6 +1,6 @@
 # UILayout
 
-UILayout is a simple, peformant, layout-based, cross-platform user interface library for .NET languages.
+UILayout is a simple, performant, layout-based, cross-platform user interface library for .NET languages. It began as the UI framework for [my games](https://www.facebook.com/nostaticsoftware/) back in the day - starting on XBOX Indie Games, and moving on from there to XBOX, Nintendo, PlayStation and Steam and mobile platforms. It has become the UI framework for most of my cross-platform app development. 
 
 # Platforms Supported
 
@@ -54,8 +54,8 @@ That said, it already provides considerable functionality and is being used in s
 
 Projects using UILayout include:
 
+- [AudioPlugSharp](https://github.com/mikeoliphant/AudioPlugSharp): Audio plugin framework (VST3, CLAP) for C# .NET
 - [ChartPlayer](https://github.com/mikeoliphant/ChartPlayer): Visual player for song charts synchronized to music recordings.
-- [ChartConverter](https://github.com/mikeoliphant/ChartConverter): Convert Rocksmith PSARC and Rock Band files to OpenSongChart format.
-- [StompboxUI](https://github.com/mikeoliphant/StompboxUI): Remote GUI and VST3 plugin for Stompbox guitar simulation.
+- [Stompbox](https://github.com/mikeoliphant/Stompbox): Guitar amplification and effects pedalboard simulation.
 - [FaustVst](https://github.com/mikeoliphant/FaustVst): Load/edit Faust dsp effects in a VST.
 
