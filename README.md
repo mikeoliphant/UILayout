@@ -27,7 +27,7 @@ Tested platforms:
 
 # Functionality
 
-<img width="800" height="447" alt="UILayoutTest-dx" src="https://github.com/user-attachments/assets/f83a3bea-ff5e-41bc-93cf-3792250fe8a1" />
+<img width="774" height="444" alt="UILayout" src="https://github.com/user-attachments/assets/f09afcf7-7b47-449d-a8ab-07a8c011b576" />
 
 UILayout provides the following:
 
