@@ -394,6 +394,15 @@ namespace UILayout
         {
         }
 
+        /// <summary>
+        /// The element got keyboard focus (hasFocus) or lost it (<see cref="Layout.SetFocus"/>): keys and typed text now
+        /// go to it, or no longer do. An element that looks different with focus updates its look (and so its dirty
+        /// area) here.
+        /// </summary>
+        public virtual void HandleFocusChanged(bool hasFocus)
+        {
+        }
+
         /// <summary>Starts dragging the object, shown by the theme's frame fill in its accent color.</summary>
         public void BeginDrag(int touchID, object obj)
         {

@@ -26,7 +26,7 @@ namespace UILayout
             HorizontalAlignment = EHorizontalAlignment.Stretch;
             VerticalAlignment = EVerticalAlignment.Center;
 
-            editor = new Editor(maxSize)
+            editor = new Editor(this, maxSize)
             {
                 HorizontalAlignment = EHorizontalAlignment.Stretch,
                 VerticalAlignment = EVerticalAlignment.Center,
@@ -84,16 +84,9 @@ namespace UILayout
             editor.Focus();
         }
 
-        public override void HandleInput(InputManager inputManager)
-        {
-            base.HandleInput(inputManager);
-
-            // Focus coming or going (the color change makes it dirty)
-            UpdateColors();
-        }
-
         // The mouse moving over it or off it shows when it's drawn, also while a popup has the input (as a button's; see
-        // FrameButton). A subclass overriding this calls the base, or loses its hover.
+        // FrameButton). A subclass overriding this calls the base, or loses its hover. Focus coming or going updates the
+        // border at once (the editor tells it).
         protected override void DrawContents()
         {
             UpdateColors();
@@ -107,7 +100,8 @@ namespace UILayout
             UpdateColors();
         }
 
-        // Called in input and as it draws: only sets colors (no layout changes, which would happen in a draw)
+        // Called as it draws, and as the mouse or focus comes or goes: only sets colors (no layout changes, which would
+        // happen in a draw)
         void UpdateColors()
         {
             UITheme theme = Layout.Current.Theme;
@@ -153,19 +147,21 @@ namespace UILayout
             RectF cursorRect;
             float blinkSecs = 0;
             int maxSize;
-            bool haveFocus = false;
+            TextBox owner;
 
-            public Editor(int maxSize)
+            public Editor(TextBox owner, int maxSize)
             {
+                this.owner = owner;
                 this.maxSize = maxSize;
 
                 TextFont = Layout.Current.Theme.Font;
                 TextColor = Layout.Current.Theme.Text;
             }
 
+            // The layout's keyboard focus: one element has it at a time
             public bool HasFocus
             {
-                get { return haveFocus; }
+                get { return Layout.Current.FocusedElement == this; }
             }
 
             public string GetText()
@@ -203,11 +199,18 @@ namespace UILayout
 
             public void Focus()
             {
-                haveFocus = true;
-                blinkSecs = 0;
+                Layout.Current.SetFocus(this);
+            }
 
-                // The cursor shows (and the border is the accent color: the box's input sees that)
+            // The cursor shows (from the start of a blink) or goes, and the box's border changes
+            public override void HandleFocusChanged(bool hasFocus)
+            {
+                if (hasFocus)
+                    blinkSecs = 0;
+
                 Layout.Current.AddDirtyRect(cursorRect);
+
+                owner.UpdateColors();
             }
 
             protected override void GetContentSize(out float width, out float height)
@@ -368,7 +371,7 @@ namespace UILayout
 
             public override bool HandleTextInput(char c)
             {
-                if (!haveFocus)
+                if (!HasFocus)
                     return false;
 
                 blinkSecs = 0;
@@ -386,7 +389,7 @@ namespace UILayout
 
             public override void HandleInput(InputManager inputManager)
             {
-                if (!haveFocus)
+                if (!HasFocus)
                 {
                     base.HandleInput(inputManager);
 
@@ -422,13 +425,11 @@ namespace UILayout
                 }
                 else if (inputManager.WasPressed("Enter"))
                 {
+                    // Done editing: focus goes first, so the action can give it to something else (a next field)
+                    Layout.Current.SetFocus(null);
+
                     if (EnterAction != null)
                         EnterAction();
-
-                    haveFocus = false;
-
-                    // The cursor goes
-                    Layout.Current.AddDirtyRect(cursorRect);
                 }
             }
 
@@ -453,7 +454,7 @@ namespace UILayout
                 Layout.Current.GraphicsContext.DrawText(CollectionsMarshal.AsSpan<char>(text).Slice(startDrawChar, endDrawChar - startDrawChar), TextFont, ContentBounds.X, ContentBounds.Y, TextColor);
 
                 // The blink moves on in input (Blink), not here: drawn or not, it keeps time
-                if (haveFocus && CursorOn)
+                if (HasFocus && CursorOn)
                     Layout.Current.GraphicsContext.DrawRectangle(cursorRect, TextColor);
             }
         }

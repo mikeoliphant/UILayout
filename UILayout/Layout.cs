@@ -380,8 +380,42 @@ namespace UILayout
             ClearDirtyRect();
         }
 
+        /// <summary>
+        /// The element keys and typed text go to (a text box being edited), or null. An element takes it with
+        /// <see cref="SetFocus"/>, for example when pressed; a press anywhere else in the layout takes it away, as does a
+        /// popup showing or closing (the element may be under the popup, or in it).
+        /// </summary>
+        public UIElement FocusedElement { get; private set; }
+
+        // Whether the press being handled focused an element (one that didn't loses focus)
+        bool pressFocused;
+
+        /// <summary>Gives the element keyboard focus (null: none). The element losing it and the one getting it are
+        /// told (<see cref="UIElement.HandleFocusChanged"/>).</summary>
+        public void SetFocus(UIElement element)
+        {
+            pressFocused = true;
+
+            if (element == FocusedElement)
+                return;
+
+            UIElement lost = FocusedElement;
+
+            FocusedElement = element;
+
+            if (lost != null)
+                lost.HandleFocusChanged(false);
+
+            if (element != null)
+                element.HandleFocusChanged(true);
+        }
+
+        // Typed text goes to the focused element; with none, to the active element (and in it, whoever takes it)
         public bool HandleTextInput(char c)
         {
+            if (FocusedElement != null)
+                return FocusedElement.HandleTextInput(c);
+
             UIElement activeElement = ActiveUIElement;
 
             if (activeElement != null)
@@ -462,7 +496,19 @@ namespace UILayout
             {
                 if (activeElement != null)
                 {
-                    return activeElement.HandleTouch(touch);
+                    bool press = (touch.TouchState == ETouchState.Pressed);
+
+                    if (press)
+                        pressFocused = false;
+
+                    bool handled = activeElement.HandleTouch(touch);
+
+                    // Pressed anywhere but on an element that takes focus (as the focused text box itself): the focused
+                    // element loses it
+                    if (press && !pressFocused)
+                        SetFocus(null);
+
+                    return handled;
                 }
             }
 
@@ -514,6 +560,9 @@ namespace UILayout
 
         public void ShowPopup(UIElement popup)
         {
+            // Keys don't go on to an element under the popup (the popup can focus one of its own once shown)
+            SetFocus(null);
+
             popupStack.Add(popup);
 
             popup.SetBounds(Bounds, null);
@@ -551,6 +600,9 @@ namespace UILayout
 
         void ShowContextPopup(UIElement popup, ContextUIElementWrapper contextElementWrapper)
         {
+            // Keys don't go on to an element under the popup
+            SetFocus(null);
+
             contextElementWrapper.Child = popup;
 
             popupStack.Add(contextElementWrapper);
@@ -640,7 +692,6 @@ namespace UILayout
             stack.Children.Add(textBox);
 
             textBox.SetText(defaultText);
-            textBox.Focus();
 
             var dialog = new InputDialog(stack,
                 new DialogInput
@@ -662,11 +713,17 @@ namespace UILayout
             };
 
             ShowPopup(dialog);
+
+            // Typing goes to the text box (focused once the dialog shows: showing a popup takes focus away)
+            textBox.Focus();
 #endif
         }
 
         public void ClosePopup(UIElement popup)
         {
+            // Keys don't go on to an element in the closed popup
+            SetFocus(null);
+
             popupStack.Remove(popup);
 
             AddDirtyRect(popup.layoutBounds);
