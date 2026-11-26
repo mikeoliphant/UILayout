@@ -3,8 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <RootNamespace>UILayout</RootNamespace>
+    <!-- Typed text is read from SDL's event (a fixed byte buffer) -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,5 +25,7 @@
   <Import Project="..\UILayout\UILayout.projitems" Label="Shared" />
 
   <Import Project="..\UILayout.CrossPlatform\UILayout.CrossPlatform.projitems" Label="Shared" />
+
+  <Import Project="..\UILayout.DefaultTextures\UILayout.DefaultTextures.projitems" Label="Shared" />
 
 </Project>

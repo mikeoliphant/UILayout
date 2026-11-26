@@ -4,11 +4,14 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="4.157.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\UILayout.Skia.SDL\UILayout.Skia.SDL.csproj" />
 	</ItemGroup>
 
 	<Import Project="..\UILayout.Test\UILayout.Test.projitems" Label="Shared" />

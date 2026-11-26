@@ -56,6 +56,9 @@ namespace UILayout.Skia.WPF
         {
             this.Layout = layout;
 
+            // Repainted only when something is dirty, and only the dirty area copied to the screen
+            layout.RedrawsDirtyArea = true;
+
             // Its size is the layout's now
             InvalidateMeasure();
         }

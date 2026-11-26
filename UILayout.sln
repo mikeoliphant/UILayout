@@ -51,6 +51,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.MonoGame.Embedded"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DefaultTexturesProcessor", "DefaultTexturesProcessor\DefaultTexturesProcessor.csproj", "{3E8B6F14-9C27-4D5A-B1E0-6A2F9D47C835}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UILayout.Skia.SDL", "UILayout.Skia.SDL\UILayout.Skia.SDL.csproj", "{1B3B9329-785E-4A17-9132-FBE4A39155BD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkiaTestSDL", "SkiaTestSDL\SkiaTestSDL.csproj", "{2CFDD5D3-7757-42AB-8A82-98F3DE15C78C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +97,14 @@ Global
 		{3E8B6F14-9C27-4D5A-B1E0-6A2F9D47C835}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E8B6F14-9C27-4D5A-B1E0-6A2F9D47C835}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E8B6F14-9C27-4D5A-B1E0-6A2F9D47C835}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B3B9329-785E-4A17-9132-FBE4A39155BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B3B9329-785E-4A17-9132-FBE4A39155BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B3B9329-785E-4A17-9132-FBE4A39155BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B3B9329-785E-4A17-9132-FBE4A39155BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CFDD5D3-7757-42AB-8A82-98F3DE15C78C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CFDD5D3-7757-42AB-8A82-98F3DE15C78C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CFDD5D3-7757-42AB-8A82-98F3DE15C78C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CFDD5D3-7757-42AB-8A82-98F3DE15C78C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,7 +113,12 @@ Global
 		SolutionGuid = {B3DE844C-79C2-4FC9-9C96-5457339160C3}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		UILayout.CrossPlatform\UILayout.CrossPlatform.projitems*{1b3b9329-785e-4a17-9132-fbe4a39155bd}*SharedItemsImports = 5
+		UILayout.DefaultTextures\UILayout.DefaultTextures.projitems*{1b3b9329-785e-4a17-9132-fbe4a39155bd}*SharedItemsImports = 5
+		UILayout.Skia\UILayout.Skia.projitems*{1b3b9329-785e-4a17-9132-fbe4a39155bd}*SharedItemsImports = 5
+		UILayout\UILayout.projitems*{1b3b9329-785e-4a17-9132-fbe4a39155bd}*SharedItemsImports = 5
 		UILayout.CrossPlatform\UILayout.CrossPlatform.projitems*{1c1b80df-0836-443f-9067-3276336b1ee5}*SharedItemsImports = 13
+		UILayout.Test\UILayout.Test.projitems*{2cfdd5d3-7757-42ab-8a82-98f3de15c78c}*SharedItemsImports = 5
 		UILayout.Skia\UILayout.Skia.projitems*{43920506-574a-4227-9759-5c55c3d54a9a}*SharedItemsImports = 13
 		MonoGameTestShared\MonoGameTestShared.projitems*{47f7b7a0-5f63-4900-bf71-c2834ea876ba}*SharedItemsImports = 5
 		UILayout.Test\UILayout.Test.projitems*{47f7b7a0-5f63-4900-bf71-c2834ea876ba}*SharedItemsImports = 5

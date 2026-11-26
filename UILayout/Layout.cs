@@ -76,11 +76,11 @@ namespace UILayout
         public virtual bool InputIsActive { get { return true;  } }
 
         /// <summary>
-        /// Whether the host redraws only the dirty area (as the Skia backend does), so changes that are otherwise
-        /// redrawn anyway, as what the mouse is over, need to add their area. Hosts that redraw everything each frame
-        /// (the MonoGame backends) leave it false.
+        /// Whether the host redraws only the dirty area (as the Skia WPF control does), so changes that are otherwise
+        /// redrawn anyway, as what the mouse is over, need to add their area. Set by the host: hosts that redraw
+        /// everything each frame (the MonoGame hosts, the Skia SDL window) leave it false.
         /// </summary>
-        public virtual bool RedrawsDirtyArea { get { return false; } }
+        public bool RedrawsDirtyArea { get; set; }
 
         object dragObject = null;
         int dragTouchID;

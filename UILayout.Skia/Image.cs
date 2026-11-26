@@ -25,9 +25,15 @@ namespace UILayout
             }
         }
 
+        // Loaded images are never changed: immutable, Skia draws them without copying, and a GPU canvas (as the SDL
+        // window's) keeps their texture instead of uploading it again for every draw
         public UIImage(Stream stream)
         {
-            Bitmap = SKBitmap.Decode(stream);
+            SKBitmap bitmap = SKBitmap.Decode(stream);
+
+            bitmap.SetImmutable();
+
+            Bitmap = bitmap;
         }
 
         public UIImage(int width, int height)
