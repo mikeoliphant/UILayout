@@ -27,11 +27,13 @@ namespace UILayout
         bool inInitialRepeat;
         float secondsSinceRepeat { get; set; }
 
+        // Repeats as the OS repeats typed text with its default keyboard settings (Windows: half a second, then about 30
+        // a second), so keys (Backspace, the arrows) keep pace with typing
         public InputMappingBase()
         {
             DoRepeat = false;
             InitialDelay = 0.5f;
-            RepeatDelay = 0.1f;
+            RepeatDelay = 1.0f / 30;
         }
 
         public virtual bool IsDown(InputManager inputManager)
