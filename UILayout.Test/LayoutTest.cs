@@ -168,11 +168,11 @@ namespace UILayout.Test
 
             swipeList.Items = items;
 
-            Frame popup = new Frame(swipeStack)
+            // A popup's frame (the accent border, as all popups'), centered
+            PopupWrapper popup = new PopupWrapper(swipeStack)
             {
                 HorizontalAlignment = EHorizontalAlignment.Center,
-                VerticalAlignment = EVerticalAlignment.Center,
-                ContentPadding = new LayoutPadding(8)
+                VerticalAlignment = EVerticalAlignment.Center
             };
 
             swipeList.SelectAction = delegate (int item)

@@ -22,7 +22,8 @@ namespace UILayout
 
     /// <summary>
     /// A popup dialog: a <see cref="Frame"/> holding its contents over a row of buttons, one for each
-    /// <see cref="DialogInput"/>. Centered when shown without an anchor.
+    /// <see cref="DialogInput"/>. Centered when shown without an anchor. Its border is the theme's accent color, as all
+    /// popups' are (it's open), setting it apart from what's behind it.
     /// </summary>
     public class InputDialog : Frame, IPopup
     {
@@ -58,6 +59,7 @@ namespace UILayout
         {
             HorizontalAlignment = EHorizontalAlignment.Center;
             VerticalAlignment = EVerticalAlignment.Center;
+            BorderColor = Layout.Current.Theme.Accent;
 
             ContentPadding = new LayoutPadding(12);
 
