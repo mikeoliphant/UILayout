@@ -46,11 +46,7 @@ Have a look at the included test UI for examples of how to use it:
 
 https://github.com/mikeoliphant/UILayout/blob/master/UILayout.Test/LayoutTest.cs
 
-# Current Status
-
-UILayout is currently under active development and everything is very much subject to change.
-
-That said, it already provides considerable functionality and is being used in several large projects.
+# Projects using UILayout
 
 Projects using UILayout include:
 
