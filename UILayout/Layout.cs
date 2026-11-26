@@ -276,8 +276,8 @@ namespace UILayout
         }
 
         // Finds the elements under the mouse. For a host that redraws only the dirty area, the elements the mouse entered
-        // or left are dirty (they look different when the mouse is over them), and the ones it moved within are told
-        // (they may look different depending on where in them it is).
+        // or left, and the ones it moved within, are told: the ones that look different add the area that changes (not
+        // the containers the mouse crossed, which look the same).
         void UpdateMouseOver(UIElement activeElement)
         {
             (lastMouseOverPath, mouseOverPath) = (mouseOverPath, lastMouseOverPath);
@@ -296,13 +296,13 @@ namespace UILayout
                 same++;
             }
 
+            Vector2 position = InputManager.MousePosition;
+
             for (int i = same; i < lastMouseOverPath.Count; i++)
-                AddDirtyRect(lastMouseOverPath[i].LayoutBounds);
+                lastMouseOverPath[i].HandleMouseOverChanged(false, lastMousePosition, position);
 
             for (int i = same; i < mouseOverPath.Count; i++)
-                AddDirtyRect(mouseOverPath[i].LayoutBounds);
-
-            Vector2 position = InputManager.MousePosition;
+                mouseOverPath[i].HandleMouseOverChanged(true, lastMousePosition, position);
 
             if (position != lastMousePosition)
             {

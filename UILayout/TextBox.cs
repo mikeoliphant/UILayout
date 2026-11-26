@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
@@ -98,6 +99,12 @@ namespace UILayout
             UpdateColors();
 
             base.DrawContents();
+        }
+
+        // The border for the mouse over it or not (a changed color makes the frame dirty)
+        public override void HandleMouseOverChanged(bool isOver, in Vector2 lastPosition, in Vector2 position)
+        {
+            UpdateColors();
         }
 
         // Called in input and as it draws: only sets colors (no layout changes, which would happen in a draw)

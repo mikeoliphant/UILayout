@@ -385,6 +385,15 @@ namespace UILayout
         {
         }
 
+        /// <summary>
+        /// The mouse came over the element (isOver), or left it (also when a popup opens over it). Called only when the
+        /// layout redraws just its dirty area (<see cref="Layout.RedrawsDirtyArea"/>): an element that looks different
+        /// with the mouse over it adds the area that changes. Most elements look the same, and add nothing.
+        /// </summary>
+        public virtual void HandleMouseOverChanged(bool isOver, in Vector2 lastPosition, in Vector2 position)
+        {
+        }
+
         /// <summary>Starts dragging the object, shown by the theme's frame fill in its accent color.</summary>
         public void BeginDrag(int touchID, object obj)
         {

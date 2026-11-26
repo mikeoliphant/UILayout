@@ -172,6 +172,12 @@ namespace UILayout
             base.DrawContents();
         }
 
+        // The border for the mouse over it or not (a changed color makes the frame dirty)
+        public override void HandleMouseOverChanged(bool isOver, in Vector2 lastPosition, in Vector2 position)
+        {
+            UpdateColors();
+        }
+
         // Called in input and as it draws: only sets colors (no layout changes, which would happen in a draw)
         void UpdateColors()
         {
@@ -410,6 +416,12 @@ namespace UILayout
                 }
 
                 public FittedTextBlock Text { get; private set; }
+
+                // Its background changes (the list sets it, in its input after this): redrawn
+                public override void HandleMouseOverChanged(bool isOver, in Vector2 lastPosition, in Vector2 position)
+                {
+                    Layout.Current.AddDirtyRect(LayoutBounds);
+                }
 
                 public override bool HandleTouch(in Touch touch)
                 {

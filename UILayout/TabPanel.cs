@@ -177,9 +177,8 @@ namespace UILayout
             foreach (TabPanelTab tab in tabs.Values)
                 tab.Button.SetPressed(tab == ActiveTab);
 
+            // Lays out the tabs (their margins) and the shown contents, and makes the panel dirty
             UpdateContentLayout();
-
-            Layout.Current.AddDirtyRect(LayoutBounds);
         }
     }
 }

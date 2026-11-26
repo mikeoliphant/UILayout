@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 
 namespace UILayout
 {
@@ -189,7 +190,14 @@ namespace UILayout
 
             thumbRing.Color = ringColor;
 
-            Layout.Current.AddDirtyRect(ContentBounds);
+            // Only the thumb changes
+            Layout.Current.AddDirtyRect(thumb.LayoutBounds);
+        }
+
+        // The ring for the mouse over it or not (a changed color makes the thumb dirty)
+        public override void HandleMouseOverChanged(bool isOver, in Vector2 lastPosition, in Vector2 position)
+        {
+            Update();
         }
 
         public override void HandleInput(InputManager inputManager)
@@ -241,9 +249,8 @@ namespace UILayout
 
             fill.Visible = fillLength >= (vertical ? fillImage.LogicalHeight : fillImage.LogicalWidth);
 
+            // Lays out the track, fill and thumb, and makes the slider dirty
             base.UpdateContentLayout();
-
-            Layout.Current.AddDirtyRect(ContentBounds);
         }
 
         // A value from the user, reported if it changed

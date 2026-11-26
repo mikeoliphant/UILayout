@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 
 namespace UILayout
 {
@@ -62,9 +63,19 @@ namespace UILayout
         {
             IsPressed = !IsPressed;
 
-            Child = IsPressed ? pressedElement : unpressedElement;
+            UIElement shown = IsPressed ? pressedElement : unpressedElement;
 
-            UpdateContentLayout();
+            // A different element is laid out; the same one (restyled in StateChanged, as a FrameButton's) only redrawn
+            if (shown != Child)
+            {
+                Child = shown;
+
+                UpdateContentLayout();
+            }
+            else
+            {
+                Layout.Current.AddDirtyRect(LayoutBounds);
+            }
 
             StateChanged();
         }
@@ -248,6 +259,13 @@ namespace UILayout
             base.DrawContents();
         }
 
+        // The colors for the mouse over it or not: a changed color makes the frame dirty (a primary button, always in
+        // the accent color, doesn't change)
+        public override void HandleMouseOverChanged(bool isOver, in Vector2 lastPosition, in Vector2 position)
+        {
+            UpdateColors();
+        }
+
         /// <summary>
         /// Sets the frame's colors for the button's state (pressed, mouse over, primary). Called as the button draws (and
         /// when its state changes): an override only sets colors, and doesn't change the layout (sizes, margins,
@@ -301,6 +319,9 @@ namespace UILayout
 
             set
             {
+                if (value == textBlock.Text)
+                    return;
+
                 textBlock.Text = value;
 
                 UpdateContentLayout();
@@ -412,6 +433,9 @@ namespace UILayout
 
             set
             {
+                if (value == imageElement.Image)
+                    return;
+
                 imageElement.Image = value;
 
                 UpdateContentLayout();

@@ -110,6 +110,13 @@ namespace UILayout
             base.DrawContents();
         }
 
+        // The bar's color for the mouse over it or not (a changed color makes it dirty). Moving between the track and the
+        // bar, the scroll bar stays under the mouse: its input sees that.
+        public override void HandleMouseOverChanged(bool isOver, in Vector2 lastPosition, in Vector2 position)
+        {
+            UpdateColors();
+        }
+
         // Called in input and as it draws: only sets colors (no layout changes, which would happen in a draw)
         void UpdateColors()
         {
@@ -121,7 +128,7 @@ namespace UILayout
 
             bar.Color = color;
 
-            Layout.Current.AddDirtyRect(LayoutBounds);
+            Layout.Current.AddDirtyRect(bar.LayoutBounds);
         }
 
         public void ScrollBackward()

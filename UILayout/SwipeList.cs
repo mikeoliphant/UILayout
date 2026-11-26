@@ -260,6 +260,15 @@ namespace UILayout
             AddItemDirty(item);
         }
 
+        // Only the item under the mouse is highlighted: the one it came over, or the one it left, is redrawn
+        public override void HandleMouseOverChanged(bool isOver, in Vector2 lastPosition, in Vector2 position)
+        {
+            if (HoverColor.A == 0)
+                return;
+
+            AddItemDirty(ItemAt(isOver ? position.Y : lastPosition.Y));
+        }
+
         void AddItemDirty(int item)
         {
             float y = (ContentBounds.Y + (item * ItemHeight)) - offset;
