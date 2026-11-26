@@ -9,24 +9,35 @@ namespace UILayout
     /// line of it as high as the font's ascent plus descent, whatever the text (so text in one font is always the same
     /// height, and lines up when placed alike). The baseline is the ascent below the top.
     /// </summary>
+    /// <remarks>
+    /// The font's <see cref="SKFont"/> (typeface, size, edging) is what text is both measured and drawn with, so the
+    /// two always agree; a paint gives drawn text only its color.
+    /// </remarks>
     public partial class UIFont
     {
-        SKTypeface typeface;
-        float textSize;
+        SKFont font = new SKFont
+        {
+            Edging = SKFontEdging.Antialias,
+        };
 
-        // Measuring, and the metrics for the typeface and size
-        SKFont measureFont = new SKFont();
+        // The metrics for the typeface and size
         float ascent;
         float descent;
         float lineSpacing;
 
+        /// <summary>The Skia font text is measured and drawn with.</summary>
+        public SKFont NativeFont
+        {
+            get { return font; }
+        }
+
         public SKTypeface Typeface
         {
-            get { return typeface; }
+            get { return font.Typeface; }
 
             set
             {
-                typeface = value;
+                font.Typeface = value;
 
                 UpdateMetrics();
             }
@@ -35,11 +46,11 @@ namespace UILayout
         /// <summary>The font's size in pixels (an em).</summary>
         public float TextSize
         {
-            get { return textSize; }
+            get { return font.Size; }
 
             set
             {
-                textSize = value;
+                font.Size = value;
 
                 UpdateMetrics();
             }
@@ -68,15 +79,12 @@ namespace UILayout
 
         void UpdateMetrics()
         {
-            measureFont.Typeface = typeface;
-            measureFont.Size = textSize;
-
-            measureFont.GetFontMetrics(out SKFontMetrics metrics);
+            font.GetFontMetrics(out SKFontMetrics metrics);
 
             // Skia's ascent is above the baseline, so negative
             ascent = -metrics.Ascent;
             descent = metrics.Descent;
-            lineSpacing = measureFont.Spacing;
+            lineSpacing = font.Spacing;
         }
 
         public bool HasGlyph(char c)
@@ -105,7 +113,7 @@ namespace UILayout
                 int newLine = text.IndexOf('\n');
                 ReadOnlySpan<char> line = (newLine >= 0) ? text.Slice(0, newLine) : text;
 
-                width = Math.Max(width, measureFont.MeasureText(line));
+                width = Math.Max(width, font.MeasureText(line));
 
                 if (newLine < 0)
                     break;
@@ -122,7 +130,7 @@ namespace UILayout
             height = (sb.Length > 0) ? (ascent + descent) : 0;
 
             foreach (ReadOnlyMemory<char> chunk in sb.GetChunks())
-                width += measureFont.MeasureText(chunk.Span);
+                width += font.MeasureText(chunk.Span);
         }
     }
 }
