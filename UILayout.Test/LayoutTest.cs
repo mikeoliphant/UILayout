@@ -265,10 +265,9 @@ namespace UILayout.Test
         {
             string chosenFruit = (fruitList.Checked.Count > 0) ? string.Join(", ", fruitList.Checked) : "no fruit";
 
+            // Stretched, the text block's size doesn't change: setting the text redraws it, with nothing to lay out
             choiceText.Text = colorDropDown.Value + "; " + chosenFruit + "; " + nameBox.GetText() + "; " +
                 ((int)Math.Round(levelSlider.Value * 100)).ToString() + "%";
-
-            Layout.Current.UpdateLayout();
         }
 
         UIElement CreateDragDropSection()

@@ -43,7 +43,26 @@ namespace UILayout
     /// <summary>A line (or lines) of text, in the theme's font and text color.</summary>
     public class TextBlock : UIElement
     {
-        public string Text { get; set; }
+        string text;
+
+        /// <summary>
+        /// The text. A change is redrawn; its size follows the text, so the caller lays it out again when that can
+        /// change.
+        /// </summary>
+        public string Text
+        {
+            get { return text; }
+
+            set
+            {
+                if (value == text)
+                    return;
+
+                text = value;
+
+                Layout.Current.AddDirtyRect(LayoutBounds);
+            }
+        }
 
         UIColor textColor;
 
@@ -187,6 +206,10 @@ namespace UILayout
             TextFont = Layout.Current.Theme.Font;
         }
 
+        /// <summary>
+        /// The text. A change is redrawn (fitted again as it's drawn). Stretched, its size doesn't depend on the text, so
+        /// there is nothing to lay out; otherwise the caller lays it out again, as it takes the text's width.
+        /// </summary>
         public string Text
         {
             get { return text; }
@@ -198,6 +221,8 @@ namespace UILayout
 
                 text = value ?? "";
                 fittedWidth = -1;
+
+                Layout.Current.AddDirtyRect(LayoutBounds);
             }
         }
 
