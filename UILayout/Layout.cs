@@ -194,6 +194,10 @@ namespace UILayout
             if (float.IsNaN(dirty.Width) || float.IsNaN(dirty.Height))
                 return;
 
+            // Nothing to redraw (as an element not laid out yet): it would only stretch the dirty area to where it is
+            if ((dirty.Width <= 0) || (dirty.Height <= 0))
+                return;
+
             if (!haveDirty)
             {
                 dirtyRect.Copy(dirty);

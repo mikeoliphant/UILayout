@@ -91,6 +91,9 @@ namespace UILayout
             if (!checkedValues.Remove(value))
                 checkedValues.Add(value);
 
+            // Its check box changes
+            AddItemDirty(index);
+
             if (CheckAction != null)
                 CheckAction();
         }

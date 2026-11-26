@@ -48,7 +48,25 @@ namespace UILayout
         public float ItemHeight { get; set; }
         public float ItemXOffset { get; set; }
         public float ItemYOffset { get; set; }
-        public int LastSelectedItem { get; set; } = -1;
+        int lastSelectedItem = -1;
+
+        /// <summary>The selected item (highlighted), or -1. A change redraws the item it left and the one it's on.</summary>
+        public int LastSelectedItem
+        {
+            get { return lastSelectedItem; }
+
+            set
+            {
+                if (value == lastSelectedItem)
+                    return;
+
+                AddItemDirty(lastSelectedItem);
+
+                lastSelectedItem = value;
+
+                AddItemDirty(lastSelectedItem);
+            }
+        }
 
         public int CurrentTopItemIndex
         {
@@ -71,6 +89,7 @@ namespace UILayout
         UIFont font = Layout.Current.Theme.Font;
         float fontScale = 1.0f;
         float offset = 0;
+        float shownOffset = 0;
         protected StringBuilder sb = new StringBuilder();
         int touchItem;
         int firstVisibleItem;
@@ -102,6 +121,9 @@ namespace UILayout
                 {
                     scrollBar.SetVisiblePercent((ContentBounds.Height / ItemHeight) / (float)ItemCount);
                 }
+
+                // Other items: redrawn (also when the offset was already at the top)
+                Layout.Current.AddDirtyRect(ContentBounds);
             }
         }
 
@@ -174,12 +196,19 @@ namespace UILayout
                 offset = maxOffset;
             }
 
+            // The scrolling functions move the offset and then settle it here: compared with where it was last shown
+            if (offset == shownOffset)
+                return;
+
+            shownOffset = offset;
+
             if (scrollBar != null)
             {
                 scrollBar.SetScrollPercent((offset / ItemHeight) / (float)ItemCount);
             }
 
-            UpdateContentLayout();
+            // Only the items move (drawn here: nothing to lay out)
+            Layout.Current.AddDirtyRect(ContentBounds);
         }
 
         public void SetTopItem(int topItem)
@@ -269,17 +298,17 @@ namespace UILayout
             AddItemDirty(ItemAt(isOver ? position.Y : lastPosition.Y));
         }
 
-        void AddItemDirty(int item)
+        /// <summary>Redraws the item (the part of it showing; nothing when it's scrolled out).</summary>
+        protected void AddItemDirty(int item)
         {
             float y = (ContentBounds.Y + (item * ItemHeight)) - offset;
 
             RectF itemRect = new RectF(ContentBounds.X, y, ContentBounds.Width, ItemHeight);
 
-            // Only what shows (an empty rectangle would still stretch the dirty area)
+            // Only what shows (none of it, when it's scrolled out: an empty rectangle, which adds nothing)
             itemRect.IntersectWith(ContentBounds);
 
-            if (!itemRect.IsEmpty)
-                Layout.Current.AddDirtyRect(itemRect);
+            Layout.Current.AddDirtyRect(itemRect);
         }
 
         protected virtual void DrawItem(int item, float y)
@@ -327,6 +356,13 @@ namespace UILayout
 
             if ((touch.TouchState == ETouchState.Pressed) || (touch.TouchState == ETouchState.Moved) || (touch.TouchState == ETouchState.Held))
             {
+                // The pressed item's highlight follows the touch (shown from the press)
+                if ((itemPos != touchItem) || (touch.TouchState == ETouchState.Pressed))
+                {
+                    AddItemDirty(touchItem);
+                    AddItemDirty(itemPos);
+                }
+
                 touchItem = itemPos;
             }
 
@@ -342,16 +378,18 @@ namespace UILayout
             {
                 float diff = touch.Position.Y - TouchCaptureStartPosition.Y;
 
+                // Redrawn if it scrolled
                 SetOffset(dragStartOffset - diff);
 
                 lastDragY = touch.Position.Y;
-
-                UpdateContentLayout();
             }
 
             if ((touch.TouchState == ETouchState.Released) || (touch.TouchState == ETouchState.Invalid))
             {
                 ReleaseTouch();
+
+                // The pressed item's highlight goes
+                AddItemDirty(touchItem);
             }
 
             if (IsTap(touch, this))

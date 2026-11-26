@@ -131,8 +131,6 @@ namespace UILayout
             selected = select;
 
             ShowSelected();
-
-            Layout.Current.AddDirtyRect(ContentBounds);
         }
 
         /// <summary>Selects the first item whose value matches, or the first item.</summary>
@@ -145,10 +143,13 @@ namespace UILayout
             ShowSelected();
         }
 
+        // The chosen item's text, redrawn (it's fitted to the room the drop-down has, which doesn't change: no layout)
         void ShowSelected()
         {
             text.Text = ShownText;
             text.TextColor = (selected >= 0) ? Layout.Current.Theme.Text : Layout.Current.Theme.MutedText;
+
+            Layout.Current.AddDirtyRect(ContentBounds);
         }
 
         bool IsOpen
@@ -229,8 +230,6 @@ namespace UILayout
             selected = index;
 
             ShowSelected();
-
-            Layout.Current.UpdateLayout();
 
             if (SelectAction != null)
                 SelectAction();

@@ -124,7 +124,24 @@ namespace UILayout
         // The text and its cursor (drawn here, a plain leaf).
         class Editor : UIElement
         {
-            public UIColor TextColor { get; set; }
+            UIColor textColor;
+
+            // A changed color is redrawn
+            public UIColor TextColor
+            {
+                get { return textColor; }
+
+                set
+                {
+                    if (textColor == value)
+                        return;
+
+                    textColor = value;
+
+                    Layout.Current.AddDirtyRect(LayoutBounds);
+                }
+            }
+
             public UIFont TextFont { get; set; }
 
             public int InsertPosition { get; private set; } = 0;
@@ -188,6 +205,9 @@ namespace UILayout
             {
                 haveFocus = true;
                 blinkSecs = 0;
+
+                // The cursor shows (and the border is the accent color: the box's input sees that)
+                Layout.Current.AddDirtyRect(cursorRect);
             }
 
             protected override void GetContentSize(out float width, out float height)
@@ -300,7 +320,23 @@ namespace UILayout
                 cursorRect.Y = ContentBounds.Y + 2;
                 cursorRect.Width = Math.Max(1, TextFont.TextHeight / 12.0f);
                 cursorRect.Height = ContentBounds.Height - 4;
+
+                // The text or where the cursor is changed: redrawn
+                Layout.Current.AddDirtyRect(LayoutBounds);
             }
+
+            // The cursor blinks while it has focus (twice a second); redrawn when it turns on or off
+            void Blink()
+            {
+                bool wasOn = CursorOn;
+
+                blinkSecs += Layout.Current.SecondsElapsed;
+
+                if (CursorOn != wasOn)
+                    Layout.Current.AddDirtyRect(cursorRect);
+            }
+
+            bool CursorOn => (((int)(blinkSecs * 2)) % 2) == 0;
 
             int FindInsertPosition(float relativeX)
             {
@@ -357,6 +393,8 @@ namespace UILayout
                     return;
                 }
 
+                Blink();
+
                 if (inputManager.WasPressed("LeftArrow"))
                 {
                     if (InsertPosition > 0)
@@ -388,6 +426,9 @@ namespace UILayout
                         EnterAction();
 
                     haveFocus = false;
+
+                    // The cursor goes
+                    Layout.Current.AddDirtyRect(cursorRect);
                 }
             }
 
@@ -411,15 +452,9 @@ namespace UILayout
 
                 Layout.Current.GraphicsContext.DrawText(CollectionsMarshal.AsSpan<char>(text).Slice(startDrawChar, endDrawChar - startDrawChar), TextFont, ContentBounds.X, ContentBounds.Y, TextColor);
 
-                if (haveFocus)
-                {
-                    blinkSecs += Layout.Current.SecondsElapsed;
-
-                    int blink = (int)(blinkSecs * 2);
-
-                    if ((blink % 2) == 0)
-                        Layout.Current.GraphicsContext.DrawRectangle(cursorRect, TextColor);
-                }
+                // The blink moves on in input (Blink), not here: drawn or not, it keeps time
+                if (haveFocus && CursorOn)
+                    Layout.Current.GraphicsContext.DrawRectangle(cursorRect, TextColor);
             }
         }
     }

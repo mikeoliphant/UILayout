@@ -6,7 +6,25 @@ namespace UILayout
     public partial class ImageElement : UIElement
     {
         public UIImage Image { get; set; }
-        public UIColor Color { get; set; } = UIColor.White;
+
+        UIColor color = UIColor.White;
+
+        /// <summary>The color the image is tinted with (white: as it is). A changed color is redrawn.</summary>
+        public UIColor Color
+        {
+            get { return color; }
+
+            set
+            {
+                if (color == value)
+                    return;
+
+                color = value;
+
+                Layout.Current.AddDirtyRect(LayoutBounds);
+            }
+        }
+
         public Rectangle? SourceRectangle { get; set; } = null;
 
         public ImageElement(string imageName)
@@ -57,7 +75,25 @@ namespace UILayout
     public partial class RotatingImageElement : UIElement
     {
         public UIImage Image { get; set; }
-        public UIColor Color { get; set; } = UIColor.White;
+
+        UIColor color = UIColor.White;
+
+        /// <summary>The color the image is tinted with (white: as it is). A changed color is redrawn.</summary>
+        public UIColor Color
+        {
+            get { return color; }
+
+            set
+            {
+                if (color == value)
+                    return;
+
+                color = value;
+
+                Layout.Current.AddDirtyRect(LayoutBounds);
+            }
+        }
+
         public float Rotation { get; set; } = 0;
 
         public RotatingImageElement(string imageName)
@@ -110,7 +146,23 @@ namespace UILayout
 
         public bool DrawCenter { get; set; } = true;
 
-        public UIColor Color { get; set; } = UIColor.White;
+        UIColor color = UIColor.White;
+
+        /// <summary>The color the image is tinted with (white: as it is). A changed color is redrawn.</summary>
+        public UIColor Color
+        {
+            get { return color; }
+
+            set
+            {
+                if (color == value)
+                    return;
+
+                color = value;
+
+                Layout.Current.AddDirtyRect(LayoutBounds);
+            }
+        }
 
         int[] imageWidths = new int[3];
         int[] imageHeights = new int[3];

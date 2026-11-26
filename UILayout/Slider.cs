@@ -185,16 +185,11 @@ namespace UILayout
         {
             UIColor ringColor = (IsEditing || IsMouseOver) ? ActiveRingColor : RingColor;
 
-            if (thumbRing.Color == ringColor)
-                return;
-
+            // Only the ring changes (a changed color makes it dirty)
             thumbRing.Color = ringColor;
-
-            // Only the thumb changes
-            Layout.Current.AddDirtyRect(thumb.LayoutBounds);
         }
 
-        // The ring for the mouse over it or not (a changed color makes the thumb dirty)
+        // The ring for the mouse over it or not (a changed color makes the ring dirty)
         public override void HandleMouseOverChanged(bool isOver, in Vector2 lastPosition, in Vector2 position)
         {
             Update();

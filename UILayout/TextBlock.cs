@@ -45,7 +45,24 @@ namespace UILayout
     {
         public string Text { get; set; }
 
-        public UIColor TextColor { get; set; }
+        UIColor textColor;
+
+        /// <summary>The text's color. A changed color is redrawn.</summary>
+        public UIColor TextColor
+        {
+            get { return textColor; }
+
+            set
+            {
+                if (textColor == value)
+                    return;
+
+                textColor = value;
+
+                Layout.Current.AddDirtyRect(LayoutBounds);
+            }
+        }
+
         public UIFont TextFont { get; set; }
 
         public TextBlock()
@@ -91,7 +108,24 @@ namespace UILayout
     {
         public StringBuilder StringBuilder { get; set; }
 
-        public UIColor TextColor { get; set; }
+        UIColor textColor;
+
+        /// <summary>The text's color. A changed color is redrawn.</summary>
+        public UIColor TextColor
+        {
+            get { return textColor; }
+
+            set
+            {
+                if (textColor == value)
+                    return;
+
+                textColor = value;
+
+                Layout.Current.AddDirtyRect(LayoutBounds);
+            }
+        }
+
         public UIFont TextFont { get; set; }
 
         public StringBuilderTextBlock()
@@ -167,7 +201,23 @@ namespace UILayout
             }
         }
 
-        public UIColor TextColor { get; set; }
+        UIColor textColor;
+
+        /// <summary>The text's color. A changed color is redrawn.</summary>
+        public UIColor TextColor
+        {
+            get { return textColor; }
+
+            set
+            {
+                if (textColor == value)
+                    return;
+
+                textColor = value;
+
+                Layout.Current.AddDirtyRect(LayoutBounds);
+            }
+        }
 
         public UIFont TextFont { get; set; }
 

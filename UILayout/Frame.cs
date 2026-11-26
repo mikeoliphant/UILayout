@@ -74,34 +74,18 @@ namespace UILayout
             set { fill.Visible = value; }
         }
 
+        /// <summary>The fill's color. A changed color is redrawn (the nine-patch's own setter makes it dirty).</summary>
         public UIColor FillColor
         {
             get { return fill.Color; }
-
-            set
-            {
-                if (fill.Color.Equals(value))
-                    return;
-
-                fill.Color = value;
-
-                Layout.Current.AddDirtyRect(LayoutBounds);
-            }
+            set { fill.Color = value; }
         }
 
+        /// <summary>The border's color. A changed color is redrawn (the nine-patch's own setter makes it dirty).</summary>
         public UIColor BorderColor
         {
             get { return border.Color; }
-
-            set
-            {
-                if (border.Color.Equals(value))
-                    return;
-
-                border.Color = value;
-
-                Layout.Current.AddDirtyRect(LayoutBounds);
-            }
+            set { border.Color = value; }
         }
     }
 }

@@ -11,6 +11,11 @@ namespace UILayout
         void ScrollForward();
         void ScrollPageBackward();
         void ScrollPageForward();
+
+        /// <summary>
+        /// Scrolls to the percent (a scroll bar's drag). When it scrolls, it sets its scroll bar's percent to where it
+        /// got (<see cref="VerticalScrollBar.SetScrollPercent"/>): that moves the bar.
+        /// </summary>
         void SetScrollPercent(float scrollPercent);
     }
 
@@ -121,14 +126,8 @@ namespace UILayout
         void UpdateColors()
         {
             UITheme theme = Layout.Current.Theme;
-            UIColor color = (inDrag || bar.IsMouseOver) ? theme.Accent : theme.Border;
-
-            if (bar.Color == color)
-                return;
-
-            bar.Color = color;
-
-            Layout.Current.AddDirtyRect(bar.LayoutBounds);
+            // A changed color makes the bar dirty
+            bar.Color = (inDrag || bar.IsMouseOver) ? theme.Accent : theme.Border;
         }
 
         public void ScrollBackward()
@@ -143,8 +142,12 @@ namespace UILayout
                 Scrollable.ScrollForward();
         }
 
+        // The bar is sized and placed by layout (its height and margin): laid out again only for a change
         public void SetVisiblePercent(float visiblePercent)
         {
+            if (visiblePercent == this.visiblePercent)
+                return;
+
             this.visiblePercent = visiblePercent;
 
             UpdateContentLayout();
@@ -152,6 +155,9 @@ namespace UILayout
 
         public void SetScrollPercent(float scrollPercent)
         {
+            if (scrollPercent == this.scrollPercent)
+                return;
+
             this.scrollPercent = scrollPercent;
 
             UpdateContentLayout();
@@ -217,14 +223,14 @@ namespace UILayout
                             yOffset = ContentBounds.Bottom - bar.DesiredHeight;
                         }
 
-                        scrollPercent = (yOffset - ContentBounds.Top) / ContentBounds.Height;
+                        float percent = (yOffset - ContentBounds.Top) / ContentBounds.Height;
 
+                        // The list scrolls there, and sets the bar to where it got (when it moved); with nothing to
+                        // scroll, the bar just follows
                         if (Scrollable != null)
-                        {
-                            Scrollable.SetScrollPercent(scrollPercent);
-                        }
-
-                        UpdateContentLayout();
+                            Scrollable.SetScrollPercent(percent);
+                        else
+                            SetScrollPercent(percent);
                     }
                     break;
                 case ETouchState.Released:
@@ -234,7 +240,8 @@ namespace UILayout
                         inDrag = false;
                         ReleaseTouch(touchID);
 
-                        UpdateContentLayout();
+                        // Only the bar's color changes (no longer dragged)
+                        UpdateColors();
                     }
                     break;
             }
