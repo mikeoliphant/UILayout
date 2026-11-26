@@ -237,7 +237,10 @@ namespace UILayout
         }
 
         // The mouse moving over it or off it shows when it's drawn: its colors are chosen then, not as it gets input
-        // (while a popup is open only the popup does, and the button under it would keep its hover)
+        // (while a popup is open only the popup does, and the button under it would keep its hover). This relies on the
+        // whole button being redrawn when what the mouse is over changes: on hosts that redraw only the dirty area, the
+        // layout makes it dirty then (a color changed here, in the draw, isn't redrawn anywhere else). Until it's drawn,
+        // the frame has the colors from the last draw. A subclass overriding this calls the base, or loses its hover.
         protected override void DrawContents()
         {
             UpdateColors();
@@ -245,7 +248,12 @@ namespace UILayout
             base.DrawContents();
         }
 
-        /// <summary>Sets the frame's colors for the button's state (pressed, mouse over, primary).</summary>
+        /// <summary>
+        /// Sets the frame's colors for the button's state (pressed, mouse over, primary). Called as the button draws (and
+        /// when its state changes): an override only sets colors, and doesn't change the layout (sizes, margins,
+        /// content), which would be redone in the middle of a draw. Layout changes for a state go in
+        /// <see cref="StateChanged"/>.
+        /// </summary>
         protected virtual void UpdateColors()
         {
             UITheme theme = Layout.Current.Theme;

@@ -97,6 +97,22 @@ namespace UILayout
         {
             base.HandleInput(inputManager);
 
+            // A drag ending (the color change makes it dirty)
+            UpdateColors();
+        }
+
+        // The mouse moving over the bar or off it shows when it's drawn, also while a popup has the input (as a
+        // button's; see FrameButton). A subclass overriding this calls the base, or loses its hover.
+        protected override void DrawContents()
+        {
+            UpdateColors();
+
+            base.DrawContents();
+        }
+
+        // Called in input and as it draws: only sets colors (no layout changes, which would happen in a draw)
+        void UpdateColors()
+        {
             UITheme theme = Layout.Current.Theme;
             UIColor color = (inDrag || bar.IsMouseOver) ? theme.Accent : theme.Border;
 

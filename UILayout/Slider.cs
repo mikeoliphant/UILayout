@@ -175,7 +175,11 @@ namespace UILayout
         public UIColor RingColor { get; set; }
         public UIColor ActiveRingColor { get; set; }
 
-        /// <summary>Shows hover (the ring's color); called each frame from HandleInput. Doesn't allocate.</summary>
+        /// <summary>
+        /// Shows hover and editing (the ring's color); called each frame from HandleInput, and as the slider draws (for
+        /// hover while a popup has the input, as a button's). Only sets colors: no layout changes, which would happen in
+        /// a draw. Doesn't allocate.
+        /// </summary>
         public void Update()
         {
             UIColor ringColor = (IsEditing || IsMouseOver) ? ActiveRingColor : RingColor;
@@ -192,7 +196,17 @@ namespace UILayout
         {
             base.HandleInput(inputManager);
 
+            // Editing ending (the color change makes it dirty)
             Update();
+        }
+
+        // The mouse moving over it or off it shows when it's drawn, also while a popup has the input (see FrameButton).
+        // A subclass overriding this calls the base, or loses its hover.
+        protected override void DrawContents()
+        {
+            Update();
+
+            base.DrawContents();
         }
 
         // How far the thumb moves: the length less the thumb

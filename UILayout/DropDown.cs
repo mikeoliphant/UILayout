@@ -160,6 +160,21 @@ namespace UILayout
         {
             base.HandleInput(inputManager);
 
+            UpdateColors();
+        }
+
+        // The mouse moving over it or off it shows when it's drawn, also while a popup has the input (as a button's; see
+        // FrameButton). A subclass overriding this calls the base, or loses its hover.
+        protected override void DrawContents()
+        {
+            UpdateColors();
+
+            base.DrawContents();
+        }
+
+        // Called in input and as it draws: only sets colors (no layout changes, which would happen in a draw)
+        void UpdateColors()
+        {
             UITheme theme = Layout.Current.Theme;
 
             frame.BorderColor = (IsMouseOver || IsOpen) ? theme.Accent : theme.Border;
