@@ -4,7 +4,7 @@ UILayout is a simple, performant, layout-based, cross-platform user interface li
 
 # Platforms Supported
 
-UILayout currently supports SkiaSharp and MonoGame as underlying rendering systems. As such, it has the ability to target the same platforms they do - so most platforms are potentially supported.
+UILayout currently supports MonoGame and SkiaSharp as underlying rendering systems. As such, it has the ability to target the same platforms they do - so most platforms are potentially supported.
 
 Tested platforms:
 - Windows x64
