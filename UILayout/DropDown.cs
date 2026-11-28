@@ -54,7 +54,12 @@ namespace UILayout
             content.Children.Add(text);
             content.Children.Add(arrow);
 
-            frame = new Frame(content);
+            // Fills the drop-down (its width is usually set)
+            frame = new Frame(content)
+            {
+                HorizontalAlignment = EHorizontalAlignment.Stretch,
+                VerticalAlignment = EVerticalAlignment.Stretch
+            };
             Child = frame;
 
             ShowSelected();

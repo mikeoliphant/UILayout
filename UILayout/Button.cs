@@ -197,7 +197,12 @@ namespace UILayout
 
         public FrameButton(UIElement content)
         {
-            frame = new Frame(content);
+            // Fills the button, also when the button is stretched
+            frame = new Frame(content)
+            {
+                HorizontalAlignment = EHorizontalAlignment.Stretch,
+                VerticalAlignment = EVerticalAlignment.Stretch
+            };
 
             PressedElement = frame;
             UnpressedElement = frame;
@@ -347,11 +352,15 @@ namespace UILayout
         }
     }
 
-    /// <summary>A toggle <see cref="TextButton"/> showing one text while it's on (pressed) and another while off.</summary>
+    /// <summary>
+    /// A toggle <see cref="TextButton"/> showing one text while it's on (pressed) and another while off. On, it's
+    /// filled in the active color, unless <see cref="HighlightOn"/> is false.
+    /// </summary>
     public class TextToggleButton : TextButton
     {
         string pressedText;
         string unpressedText;
+        bool highlightOn = true;
 
         public TextToggleButton()
             : this("", "")
@@ -359,13 +368,37 @@ namespace UILayout
         }
 
         public TextToggleButton(string pressedText, string unpressedText)
+            : this(pressedText, unpressedText, highlightOn: true)
+        {
+        }
+
+        public TextToggleButton(string pressedText, string unpressedText, bool highlightOn)
         {
             IsToggleButton = true;
 
             this.pressedText = pressedText;
             this.unpressedText = unpressedText;
+            this.highlightOn = highlightOn;
 
             ShowText();
+
+            UpdateColors();
+        }
+
+        /// <summary>
+        /// Whether the button is filled in the active color while on (the default). False for a choice between two
+        /// values where neither is "on" (left or right handed): both look alike, and only the text changes.
+        /// </summary>
+        public bool HighlightOn
+        {
+            get { return highlightOn; }
+
+            set
+            {
+                highlightOn = value;
+
+                UpdateColors();
+            }
         }
 
         public string PressedText
@@ -402,6 +435,22 @@ namespace UILayout
         void ShowText()
         {
             Text = IsPressed ? pressedText : unpressedText;
+        }
+
+        // Each color is set once (a color set back and forth in a draw would make the button dirty every frame)
+        protected override void UpdateColors()
+        {
+            if (highlightOn)
+            {
+                base.UpdateColors();
+
+                return;
+            }
+
+            UITheme theme = Layout.Current.Theme;
+
+            Frame.FillColor = theme.Surface;
+            Frame.BorderColor = (IsMouseOver || Primary) ? theme.Accent : theme.Border;
         }
     }
 

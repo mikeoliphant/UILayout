@@ -4,7 +4,8 @@ namespace UILayout
     /// The frame most controls are drawn in (buttons, drop-downs, text boxes, popups, sections): the theme's rounded
     /// fill nine-patch with its border nine-patch over it, both in the same bounds, around the content. The fill is in
     /// the theme's surface color and the border in its border color; controls built on it change
-    /// <see cref="FillColor"/> and <see cref="BorderColor"/> for hover, pressed and open.
+    /// <see cref="FillColor"/> and <see cref="BorderColor"/> for hover, pressed and open. Left and top aligned (sized to
+    /// its content), unlike the <see cref="Dock"/> it's built on: set Stretch for a frame that fills its room.
     /// </summary>
     public class Frame : Dock
     {
@@ -21,6 +22,10 @@ namespace UILayout
 
         public Frame(UIElement content)
         {
+            // A box around its content, not a layer that fills its parent as a Dock does
+            HorizontalAlignment = EHorizontalAlignment.Left;
+            VerticalAlignment = EVerticalAlignment.Top;
+
             UITheme theme = Layout.Current.Theme;
 
             fill = new NinePatchWrapper(theme.FrameFill)

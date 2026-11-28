@@ -107,6 +107,7 @@ namespace UILayout
 
             Children.Add(new Frame(contentsWrapper)
             {
+                HorizontalAlignment = EHorizontalAlignment.Stretch,
                 VerticalAlignment = EVerticalAlignment.Stretch,
                 ContentPadding = new LayoutPadding(8)
             });
